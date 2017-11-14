@@ -1,6 +1,6 @@
 {
   "name": "integratedtabusearch",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -13,5 +13,18 @@
     "express": "~4.15.5",
     "morgan": "~1.9.0",
     "serve-favicon": "~2.4.5"
-  }
+  },
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LukasDratwa/IntegratedTabuSearch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LukasDratwa/IntegratedTabuSearch/issues"
+  },
+  "homepage": "https://github.com/LukasDratwa/IntegratedTabuSearch#readme",
+  "description": ""
 }

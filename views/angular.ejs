@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html ng-app="integratedTabuSearchApp">
+    <head>
+        <script src="/javascripts/jquery-3.2.1.min.js"></script><!-- load jquery -->
+        <script src="/javascripts/angular.min-1.5.6.js"></script><!-- load angular -->
+
+        <script src="/javascripts/controllers/integratedTabuSearchController.js"></script>
+    </head>
+
+    <body ng-controller="integratedTabuSearchController">
+    <h1>You entered: {{test}}</h1>
+
+        <input type="text" name="test" ng-model="test">
+
+        <ul ng-repeat="item in data">
+            <li>Name: {{item.name}}, City: {{item.city}}</li>
+        </ul>
+    </body>
+</html>
