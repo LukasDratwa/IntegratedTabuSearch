@@ -38,7 +38,7 @@ router.get('/parametertest', function (req, res, next) {
         if(err) {
             console.log(err);
         }
-        res.write(param);
+        res.send(param);
         res.end();
     });
 });
