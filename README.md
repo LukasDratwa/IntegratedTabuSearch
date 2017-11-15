@@ -6,10 +6,16 @@
 
 ## Aufsetzen der Datenbank
 1. Nach dem Installieren muss mit der Kommandozeile in den /bin-Ordner navigiert werden
-2. Nun muss folgende Zeile ausgeführt werden, um die Datenbank und einen entsprechenden Nutzer dafür zu erstellen
+2. Jetzt wird die Datenbank ohne Authentikationsmodus gestartet
 
-```json
-mongo.exe its --shell --eval "db.createUser({user:'folivora', pwd:'3fdonl2igv4onria8', roles:[{role:'dbAdmin', db:'its'}, {role:'userAdminAnyDatabase', db:'admin'}, {role:'readWrite', db:'its'}]})"
+```
+mongod.exe --dbpath C:/Users/Lukas/Documents/Programmieren/MongoDB/db
+```
+
+3. In einer zweiten Kommandozeile muss der erste Schritt wiederholt und die folgende Zeile ausgeführt werden, um die Datenbank und einen entsprechenden Nutzer dafür zu erstellen
+
+```
+mongo.exe its --shell --eval "db.createUser({user:'lukas', pwd:'3fdonl2igv4onria8', roles:[{role:'dbAdmin', db:'its'}, {role:'userAdminAnyDatabase', db:'admin'}, {role:'readWrite', db:'its'}]})"
 ```
 
 ## Starten der Applikation
