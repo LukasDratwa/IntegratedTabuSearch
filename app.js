@@ -17,7 +17,9 @@ require('./models/Parameter');
 // Connect Database
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "@" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
-    console.log(err);
+    if(err) {
+        console.log(err);
+    }
 });
 
 var index = require('./routes/index');

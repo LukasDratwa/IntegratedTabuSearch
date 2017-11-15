@@ -26,15 +26,13 @@ router.get('/angular', function(req, res, next) {
     res.render('angular', { title: 'Iterated Tabu Search' });
 });
 
-router.get('/parameter', function (req, res, next) {
-    var parameter = new Parameter(req.body);
-    /*var parameter = new Parameter({
+router.get('/parametertest', function (req, res, next) {
+    var parameter = new Parameter({
         "name": "test",
         "description": "test",
         "type": "Integer",
         "value": 1
-    });*/
-
+    });
 
     parameter.save(function(err, param) {
         if(err) {
