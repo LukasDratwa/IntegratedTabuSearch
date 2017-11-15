@@ -25,6 +25,7 @@ mode con: cols=200 lines=30
 cd C:/PFAD_ANPASSEN/MongoDB/Server/3.4/bin 
 mongod.exe --dbpath D:/PFAD_ZUM_SPEICHERORT_DER_DATENBANK/MongoDB/db --logpath D:/PFAD_ANPASSEN/MongoDB/logs/logs.txt --auth
 ```
+(Bei einer lokalen Instaz kann die Flag --auth ruhig weggelassen werden.)
 
 ### Node.js-Server
 Einfach den gesamten Inhalt des Repositories herunterladen und die startServer.bat-Datei ausführen.

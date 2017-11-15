@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var axios = require('axios');
 var mongoose = require('mongoose');
 
 var config = require('./config.json');
@@ -16,17 +16,25 @@ require('./models/Parameter');
 
 // Connect Database
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "@" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
-    if(err) {
-        console.log(err);
-    }
-});
+
+if(config.server.auth) {
+    mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "@" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
+        if(err) {
+            console.log(err);
+        }
+    });
+} else {
+    mongoose.connect("mongodb://" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
+        if(err) {
+            console.log(err);
+        }
+    });
+}
 
 var index = require('./routes/index');
 
-var app = express();
-
 // view engine setup
+var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -59,5 +67,19 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+axios.get("http://" + config.server.host + ":8080/checkdefaultparameters")
+    .then(function(response){
+        console.log("Status checkdefaultparameters: " , response.status); // ex.: 200
+    })
+    .catch(function(err) {
+        console.log(err);
+    });
+
+/* Performing a POST request
+axios.post('/save', { firstName: 'Marlon', lastName: 'Bernardes' })
+    .then(function(response){
+        console.log('saved successfully')
+    });*/
 
 module.exports = app;
