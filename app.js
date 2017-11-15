@@ -5,6 +5,21 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var mongoose = require('mongoose');
+
+var config = require('./config.json');
+
+/*
+    Database models
+ */
+require('./models/Parameter');
+
+// Connect Database
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "@" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
+    console.log(err);
+});
+
 var index = require('./routes/index');
 
 var app = express();

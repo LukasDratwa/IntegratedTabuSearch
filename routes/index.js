@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var formidable = require('formidable');
 var fs = require('fs');
+var mongoose = require('mongoose');
+
+var Parameter = mongoose.model('Parameter');
 
 router.post('/fileupload', function(req, res, next) {
     var form = new formidable.IncomingForm();
@@ -21,6 +24,25 @@ router.get('/', function(req, res, next) {
 
 router.get('/angular', function(req, res, next) {
     res.render('angular', { title: 'Iterated Tabu Search' });
+});
+
+router.get('/parameter', function (req, res, next) {
+    var parameter = new Parameter(req.body);
+    /*var parameter = new Parameter({
+        "name": "test",
+        "description": "test",
+        "type": "Integer",
+        "value": 1
+    });*/
+
+
+    parameter.save(function(err, param) {
+        if(err) {
+            console.log(err);
+        }
+        res.write(param);
+        res.end();
+    });
 });
 
 router.get('/datatest', function(req,res){

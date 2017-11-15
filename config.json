@@ -1,0 +1,10 @@
+{
+  "server": {
+    "host": "www.dratwabrothers.de"
+  },
+  "db": {
+    "name": "its",
+    "username": "lukas",
+    "password": "vFUnyprrLyXU53fdpr4onria8"
+  }
+}
