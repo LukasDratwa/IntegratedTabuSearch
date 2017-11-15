@@ -9,7 +9,7 @@
 2. Nun muss folgende Zeile ausgeführt werden, um die Datenbank und einen entsprechenden Nutzer dafür zu erstellen
 
 ```json
-mongo.exe folivora --shell --eval "db.createUser({user:'folivora', pwd:'3fdonl2igv4onria8', roles:[{role:'dbAdmin', db:'folviora'}, {role:'userAdminAnyDatabase', db:'admin'}, {role:'readWrite', db:'folivora'}]})"
+mongo.exe its --shell --eval "db.createUser({user:'folivora', pwd:'3fdonl2igv4onria8', roles:[{role:'dbAdmin', db:'its'}, {role:'userAdminAnyDatabase', db:'admin'}, {role:'readWrite', db:'its'}]})"
 ```
 
 ## Starten der Applikation
