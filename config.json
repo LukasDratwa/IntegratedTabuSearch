@@ -1,7 +1,6 @@
 {
   "server": {
-    "host": "127.0.0.1",
-    "auth": true
+    "host": "127.0.0.1"
   },
   "db": {
     "name": "its",

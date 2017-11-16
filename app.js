@@ -17,21 +17,27 @@ require('./models/Parameter');
 // Connect Database
 mongoose.Promise = global.Promise;
 
-if(config.server.auth) {
-    mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "@" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
-        if(err) {
-            console.log(err);
-        }
-    });
-} else {
-    mongoose.connect("mongodb://" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
-        if(err) {
-            console.log(err);
-        }
-    });
-}
+mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "@" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
+    if(err) {
+        console.log("Failed to connect with database in --auth!");
+
+        console.log("Connection to db without --auth");
+        mongoose.connect("mongodb://" + config.server.host + "/" + config.db.name, { useMongoClient: true }, function(err) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log("Successfully connected with database");
+            }
+        });
+    } else {
+        console.log("Successfully connected with database");
+    }
+});
+
+
 
 var index = require('./routes/index');
+var dataupload = require('./routes/dataupload');
 
 // view engine setup
 var app = express();
@@ -49,6 +55,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use(dataupload);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

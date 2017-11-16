@@ -20,11 +20,11 @@
     "type": "git",
     "url": "git+https://github.com/LukasDratwa/IntegratedTabuSearch.git"
   },
-  "author": "",
+  "author": "Lukas Dratwa",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/LukasDratwa/IntegratedTabuSearch/issues"
   },
   "homepage": "https://github.com/LukasDratwa/IntegratedTabuSearch#readme",
-  "description": ""
+  "description": "1. Node.js: https://nodejs.org/en/\r 2. MongoDB Community Server: https://www.mongodb.com/de"
 }

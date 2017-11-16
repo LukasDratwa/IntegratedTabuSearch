@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>
+
+    <h2>ROADEF:</h2>
+    <form action="uploadRoadef" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
+                <td><input type="file" name="optimizationObjectives"><br></td>
+            </tr>
+
+            <tr>
+                <td><label for="paintBatchLimit">Paint batch limit:</label></td>
+                <td><input type="file" name="paintBatchLimit"><br></td>
+            </tr>
+
+            <tr>
+                <td><label for="ratios">Ratios:</label></td>
+                <td><input type="file" name="ratios"><br></td>
+            </tr>
+
+            <tr>
+                <td><label for="vehicles">Vehicles:</label></td>
+                <td><input type="file" name="vehicles"><br></td>
+            </tr>
+        </table>
+
+        <input type="submit">
+    </form>
+  </body>
+</html>
