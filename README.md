@@ -33,3 +33,9 @@ Einfach den gesamten Inhalt des Repositories herunterladen und die startServer.b
 
 ## Benutzen der Applikation
 Der Server sollte nun unter http://localhost:8080 erreichbar sein.
+
+
+# Sonstiges
+
+## Robomongo
+Robomongo kann ich zur Sichtung und Bearbeitung von Daten in einer MongoDB nur wärmstens empfehlen. (Wenn die Datenbank mit der --auth flag gestartet worden ist, muss man darauf achten, dass bei Erstellen der Verbindung der Authentication-Reiter ausgefüllt wird. Die Datenbank ist "its", der Nutzername "lukas" und das Passwort "vFUnyprrLyXU53fdpr4onria8". Es wird der Authentifizierungsmechanismus "SCRAM-SHA-1" verwendet.)
