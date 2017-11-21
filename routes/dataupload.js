@@ -7,6 +7,8 @@ var csv = require('csvtojson');
 var config = require('../config.json');
 
 router.get('/dataupload', function(req, res, next) {
+    console.log(req.query);
+
     res.render('dataupload', { title: 'Upload data' });
 });
 
@@ -63,8 +65,7 @@ router.post('/uploadRoadef', function(req, res, next) {
                                         jsonData.optimizationObjectives.push(jsonObj)
                                     })
                                     .on('done', (error) => {
-                                        res.send(jsonData);
-                                        res.end();
+                                        res.redirect("/dataupload?success=true");
                                     });
                             });
                     });
