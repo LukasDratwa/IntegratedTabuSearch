@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+      <title><%= title %></title>
+      <link rel='stylesheet' href='/stylesheets/style.css' />
+      <script src="/javascripts/jquery-3.2.1.min.js"></script>
+      <script src="http://malsup.github.com/jquery.form.js"></script>
   </head>
   <body>
     <h1><%= title %></h1>
     <p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>
 
     <h2>ROADEF:</h2>
-    <form action="uploadRoadef" method="post" enctype="multipart/form-data">
+    <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
         <table>
             <tr>
                 <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>

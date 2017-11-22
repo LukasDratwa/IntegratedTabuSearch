@@ -1,3 +1,9 @@
+/**
+ * @author Lukas Dratwa
+ *
+ * Created on 15.11.2017.
+ */
+
 var express = require('express');
 var router = express.Router();
 var formidable = require('formidable');

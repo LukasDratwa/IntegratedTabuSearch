@@ -1,3 +1,9 @@
+/**
+ * @author Lukas Dratwa
+ *
+ * Created on 22.11.2017.
+ */
+
 var express = require('express');
 var router = express.Router();
 var formidable = require('formidable');
@@ -7,10 +13,15 @@ var csv = require('csvtojson');
 var config = require('../config.json');
 
 router.get('/dataupload', function(req, res, next) {
-    console.log(req.query);
-
+    // console.log(req.query);
     res.render('dataupload', { title: 'Upload data' });
 });
+
+function saveUploadedDataInDb(res, jsonData) {
+    // TODO
+    console.log("called save in db");
+    res.redirect("/dataupload?success=true");
+}
 
 router.post('/uploadRoadef', function(req, res, next) {
     var form = new formidable.IncomingForm();
@@ -65,7 +76,7 @@ router.post('/uploadRoadef', function(req, res, next) {
                                         jsonData.optimizationObjectives.push(jsonObj)
                                     })
                                     .on('done', (error) => {
-                                        res.redirect("/dataupload?success=true");
+                                        saveUploadedDataInDb(res, jsonData);
                                     });
                             });
                     });

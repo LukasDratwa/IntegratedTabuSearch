@@ -12,7 +12,10 @@ var config = require('./config.json');
 /*
     Database models
  */
+require('./models/OptimizationObjective');
 require('./models/Parameter');
+require('./models/Ratio');
+require('./models/Vehicle');
 
 // Connect Database
 mongoose.Promise = global.Promise;
@@ -38,6 +41,7 @@ mongoose.connect("mongodb://"+ config.db.username + ":" + config.db.password + "
 
 var index = require('./routes/index');
 var dataupload = require('./routes/dataupload');
+var restendpoints = require('./routes/restEndPoints');
 
 // view engine setup
 var app = express();
@@ -56,6 +60,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use(dataupload);
+app.use(restendpoints)
 
 
 // catch 404 and forward to error handler
