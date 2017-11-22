@@ -12,6 +12,7 @@ var config = require('./config.json');
 /*
     Database models
  */
+require('./models/DataSet')
 require('./models/OptimizationObjective');
 require('./models/Parameter');
 require('./models/Ratio');

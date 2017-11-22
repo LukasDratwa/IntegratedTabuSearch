@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var RatioSchema = new mongoose.Schema({
     ratio: String,
     prio: Number,
-    ident: String
+    ident: String,
+    dataSetRef: String
 });
 mongoose.model("Ratio", RatioSchema);

@@ -10,10 +10,19 @@ var router = express.Router();
 var config = require('../config.json');
 
 var mongoose = require('mongoose');
+var DataSet = mongoose.model("DataSet");
 var OptimizationObjective = mongoose.model("OptimizationObjective");
 var Parameter = mongoose.model("Parameter");
 var Ratio = mongoose.model("Ratio");
 var Vehicle = mongoose.model("Vehicle");
+
+router.post("/dataSet", function(req, res, err) {
+    var dataSet = new DataSet(req.body);
+
+    dataSet.save(function(err, doc) {
+        res.json(doc);
+    });
+});
 
 router.post("/optObjective", function(req, res, err) {
     var objective = new OptimizationObjective(req.body);
@@ -44,6 +53,12 @@ router.post("/vehicle", function(req, res, err) {
         vehicle.save(function(err, doc) {
             res.json(doc);
         });
+    });
+});
+
+router.get("/vehicles", function(req, res, err) {
+    Vehicle.find({}, function(err, docs) {
+        res.json(docs);
     });
 });
 
