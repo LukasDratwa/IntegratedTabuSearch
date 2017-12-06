@@ -10,7 +10,7 @@ var VehicleSchema = new mongoose.Schema({
     seqRank: Number,
     ident: String,
     paintColor: Number,
-    activatedFeatures: [{ type: mongoose.Schema.Types.ObjectId, ref: "Feature" }],
+    activatedFeatures: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ratio" }],
     dataSetRef: String
 });
 mongoose.model("Vehicle", VehicleSchema);

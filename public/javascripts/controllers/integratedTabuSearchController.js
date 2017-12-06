@@ -10,7 +10,7 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
     request.success(function(data) {
         $scope.data = data;
     });
-    request.error(function(data){
-        console.log('Error: ' + data);
+    request.error(function(err){
+        console.log('Error: ' + err);
     });
 });

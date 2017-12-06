@@ -13,6 +13,9 @@ var csv = require('csvtojson');
 var config = require('../config.json');
 
 var Parameter = mongoose.model('Parameter');
+var DataSet = mongoose.model("DataSet");
+var Vehicle = mongoose.model("Vehicle");
+var Ratio = mongoose.model("Ratio");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -52,6 +55,28 @@ router.get('/checkdefaultparameters', function (req, res, next) {
 
     res.sendStatus(200);
     res.end();
+});
+
+/**
+ * It's obligatory that a '#' is inserted before the query parameters to get these
+ * within the angular controller.
+ * http://localhost:8080/viewdataset#?id=5a27c790b7e065186c73d440#%3Fid
+ */
+router.get('/viewdataset', function (req, res) {
+    res.render('viewdataset');
+});
+
+router.get('/dataset', function(req, res) {
+    DataSet.findById({"_id": req.query.id}, function(err, dataset) {
+        if(dataset) {
+            dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, data) {
+                res.json(data);
+            });
+        } else {
+            res.status(404);
+            res.end();
+        }
+    });
 });
 
 router.get('/parametertest', function (req, res, next) {

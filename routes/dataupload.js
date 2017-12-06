@@ -146,32 +146,6 @@ router.post('/uploadRoadef', function(req, res, next) {
                     });
             });
     });
-
-    /*// OptimizationObjectives
-    csv({
-        noheader: false,
-        delimiter: ";"
-    })
-        .fromFile(files.optimizationObjectives.path)
-        .on('json', (jsonObj) => {
-            jsonData.optimizationObjectives.push(jsonObj)
-        })
-        .on('done', (error) => {
-            saveUploadedDataInDb(res, jsonData);
-        });
-
-    // PaintBatchLimitation
-    csv({
-        noheader: false,
-        delimiter: ";"
-    })
-        .fromFile(files.paintBatchLimit.path)
-        .on('json', (jsonObj) => {
-            jsonData.paintBatchLimit.push(jsonObj)
-        })
-        .on('done', (error) => {
-
-        });*/
 });
 
 module.exports = router;
