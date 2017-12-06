@@ -8,6 +8,33 @@
   </head>
 
   <body ng-controller="viewDataSetController">
-    <h1>Dataset Darstellung: {{id}}</h1>
+    <h1>Dataset (Id: {{id}})</h1>
+
+    <h2>Vehicles</h2>
+    <table>
+        <tr>
+            <th>Nr.</th>
+            <th>ID</th>
+            <th>DB ID</th>
+            <th>Date</th>
+            <th>Seq. rank</th>
+            <th>Paint colors</th>
+            <th>Activated features</th>
+        </tr>
+
+        <tr ng-repeat="vehicle in dataset.vehicles">
+            <td>{{vehicle.nr}}</td>
+            <td>{{vehicle.ident}}</td>
+            <td>{{vehicle._id}}</td>
+            <td>{{vehicle.dateString}}</td>
+            <td>{{vehicle.seqRank}}</td>
+            <td>{{vehicle.paintColor}}</td>
+            <td>
+                <span ng-repeat="feature in vehicle.activatedFeatures">
+                    {{feature.ident}}
+                </span>
+            </td>
+        </tr>
+    </table>
   </body>
 </html>
