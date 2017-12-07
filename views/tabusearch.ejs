@@ -5,6 +5,24 @@
         <script src="/javascripts/angular.min-1.5.6.js"></script>
 
         <script src="/javascripts/controllers/integratedTabuSearchController.js"></script>
+
+        <script src="/javascripts/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="/stylesheets/jquery-ui.min.css"/>
+
+        <style>
+            #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+            #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+            #sortable li span { position: absolute; margin-left: -1.3em; }
+        </style>
+
+        <script>
+            $(document).ready(function() {
+                $("#sortable").sortable();
+                $("#sortable").disableSelection();
+
+                // $("#sortable").sortable("toArray"); to get the order
+            });
+        </script>
     </head>
 
     <body ng-controller="integratedTabuSearchController">
@@ -13,8 +31,25 @@
         <h2>Introduction TODO</h2>
 
         <h2>1. Select Optimization Objectives</h2>
+        <ul id="sortable">
+            <li class="ui-state-default" id="high_priority_level_and_easy_to_satisfy_ratio_constraints">
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                High priority ratio constraints
+            </li>
 
-        <h2>2. Select Parameterset</h2>
+            <li class="ui-state-default" id="paint_color_batches">
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                Paint color batches
+            </li>
+
+            <li class="ui-state-default" id="low_priority_level_ratio_constraints">
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                High priority ratio constraints
+            </li>
+        </ul>
+
+
+        <h2>2. Select Parameters</h2>
 
         <h2>3. Select Dataset</h2>
         <select ng-model="selectedDatasetId">
