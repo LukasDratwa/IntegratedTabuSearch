@@ -8,12 +8,23 @@
     </head>
 
     <body ng-controller="integratedTabuSearchController">
-    <h1>You entered: {{test}}</h1>
+        <h1>Iterated Tabu Search</h1>
 
-        <input type="text" name="test" ng-model="test">
+        <h2>Introduction TODO</h2>
 
-        <ul ng-repeat="item in data">
-            <li>Name: {{item.name}}, City: {{item.city}}</li>
-        </ul>
+        <h2>1. Select Optimization Objectives</h2>
+
+        <h2>2. Select Parameterset</h2>
+
+        <h2>3. Select Dataset</h2>
+        <select ng-model="selectedDatasetId">
+            <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
+        </select>
+        <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
+
+        <h2>4. Configuration (TODO)</h2>
+
+        <h2>5. Start Algorithm</h2>
+        <input type="button" value="Start" ng-show="selectedDatasetId != ''">
     </body>
 </html>

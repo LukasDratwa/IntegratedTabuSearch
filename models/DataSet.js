@@ -9,7 +9,10 @@ var deepPopulate = require('mongoose-deep-populate')(mongoose);
 var DataSetSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now },
     ratios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ratio" }],
-    vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }]
+    ratiosAmount: Number,
+    vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }],
+    vehiclesAmount: Number,
+    description: String
 });
 
 DataSetSchema.plugin(deepPopulate, {});

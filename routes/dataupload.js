@@ -69,6 +69,10 @@ function saveCars(res, jsonData, dataSet, savedRatios) {
                         dataSet.ratios = savedRatios;
                         dataSet.vehicles = savedVehciles;
 
+                        dataSet.vehiclesAmount = dataSet.vehicles.length;
+                        dataSet.ratiosAmount = dataSet.ratios.length;
+                        dataSet.description = dataSet.vehiclesAmount + " vehicles with " + dataSet.ratiosAmount + " ratios";
+
                         dataSet.save(function(err, doc) {
                             finishUpload(dataSet, res);
                         });
