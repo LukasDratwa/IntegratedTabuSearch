@@ -70,6 +70,17 @@ router.get('/dataset', function(req, res) {
     DataSet.findById({"_id": req.query.id}, function(err, dataset) {
         if(dataset) {
             dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, data) {
+
+                data.vehicles = data.vehicles.sort(function(a, b) {
+                    if(a.orderNr > b.orderNr) {
+                        return 1;
+                    } else if(a.orderNr < b.orderNr) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+
                 res.json(data);
             });
         } else {

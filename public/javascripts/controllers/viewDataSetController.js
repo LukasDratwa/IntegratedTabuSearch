@@ -19,7 +19,6 @@ dataSetController.controller("viewDataSetController", function ($scope, $http, $
         });
     }
 
-
     function enrichDataset(dataset) {
         dataset.parsedTimestamp = new Date(dataset.timestamp).toLocaleDateString()
                                     + ", " + new Date(dataset.timestamp).toLocaleTimeString();

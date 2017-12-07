@@ -53,7 +53,8 @@ function saveCars(res, jsonData, dataSet, savedRatios) {
                     ident: vehicleRaw.Ident,
                     paintColor: parseInt(vehicleRaw["Paint Color"]),
                     dataSetRef: dataSet["_id"],
-                    activatedFeatures: []
+                    activatedFeatures: [],
+                    orderNr: x
                 };
 
                 vehicleData.activatedFeatures.push.apply(vehicleData.activatedFeatures, docs);

@@ -11,6 +11,7 @@ var VehicleSchema = new mongoose.Schema({
     ident: String,
     paintColor: Number,
     activatedFeatures: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ratio" }],
-    dataSetRef: String
+    dataSetRef: String,
+    orderNr: Number
 });
 mongoose.model("Vehicle", VehicleSchema);
