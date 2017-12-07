@@ -9,78 +9,91 @@
   },
   "standardparameter": [
     {
+      "ident": "l",
       "name": "Lota (l)",
       "description": "Maximal length of subsequence with same colour. Is a hard constraint, not allowed to violate.",
       "type": "Integer",
       "value": 0
     },
     {
+      "ident": "a",
       "name": "Alpha (a)",
       "description": "Weight colour changes.",
       "type": "Integer",
       "value": 1000000
     },
     {
+      "ident": "b",
       "name": "Beta (b)",
       "description": "Weight for the number of PRC violations.",
       "type": "Integer",
       "value": 1000
     },
     {
+      "ident": "y",
       "name": "Gamma (y)",
       "description": "Weight for the number of NPRC violations.",
       "type": "Integer",
       "value": 1
     },
     {
+      "ident": "z",
       "name": "Zeta (z)",
       "description": "Positive parameter for the relaxation mechanism (chapter 2.2.1).",
       "type": "Double",
       "value": 1.0
     },
     {
+      "ident": "n",
       "name": "Eta (n)",
       "description": "Eta = min {n, 200} and every pair of positions (i,j) is in fact considered every Eta iterations.",
       "type": "Integer",
       "value": 0
     },
     {
+      "ident": "u",
       "name": "My (u)",
       "description": "An random integer in [0,Eta - 1]. Every pair (i, j) will be assigned to one My. At every iteration t the pair is only considered for a move when My(i,j) = t (mod Eta). The My values are themself regenerated every Eta iterations.",
       "type": "Integer",
       "value": 0
     },
     {
+      "ident": "o",
       "name": "Theta (O)",
       "description": "Reinserting forbidden for Theta iterations for the type 1 of moving. Exception is allowed when a solution is found which is better than the best one at this moment. For the reswapping the same.",
       "type": "Integer",
       "value": 200
     },
     {
+      "ident": "i",
       "name": "Psi",
       "description": "? (Described in the end of 2.2.4)",
       "type": "Double",
       "value": 0.1
     },
     {
+      "ident": "k",
       "name": "Kappa (k)",
       "description": "Stopping criterion; describes the amount of iterations without an improvement of f(s).",
       "type": "Integer",
       "value": 200
     },
     {
+      "ident": "x",
       "name": "Chi (X)",
       "description": "Perturbation mechanism - Random swaps: 3 random pairs where i != j are swapped.",
       "type": "Integer",
       "value": 3
     },
     {
+      "ident": "t",
       "name": "Tau (t)",
       "description": "Perturbation mechanism - Random shuffling within a subsequence: selection of a subsequence with the length Tau and shuffling them randomly.",
       "type": "Integer",
       "value": 6
     },
     {
+      "ident": "p",
       "name": "Pi",
       "description": "Perturbation mechanism - Application of all improving swaps and of a proportion Pi of neutral swaps",
       "type": "Double",

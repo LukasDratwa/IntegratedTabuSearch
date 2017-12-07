@@ -12,7 +12,7 @@ var config = require('./config.json');
 /*
     Database models
  */
-require('./models/DataSet')
+require('./models/DataSet');
 require('./models/OptimizationObjective');
 require('./models/Parameter');
 require('./models/Ratio');
@@ -84,7 +84,15 @@ app.use(function(err, req, res, next) {
 
 axios.get("http://" + config.server.host + ":8080/checkdefaultparameters")
     .then(function(response){
-        console.log("Status checkdefaultparameters: " , response.status); // ex.: 200
+        console.log("Status checkdefaultparameters: " , response.status);
+    })
+    .catch(function(err) {
+        console.log(err);
+    });
+
+axios.get("http://" + config.server.host + ":8080/checkdefaultparametervalues")
+    .then(function(response){
+        console.log("Status checkdefaultparametervalues: " , response.status);
     })
     .catch(function(err) {
         console.log(err);

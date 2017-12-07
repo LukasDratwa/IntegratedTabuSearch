@@ -27,14 +27,15 @@ router.get('/tabusearch', function(req, res, next) {
 });
 
 router.get('/checkdefaultparameters', function (req, res, next) {
-    console.log("Check for default params...")
+    console.log("Check for default params...");
     for(var i in config.standardparameter) {
         var sParam = config.standardparameter[i];
 
         (function(sParam) {
-            Parameter.findOne(sParam, function (err, doc) {
+            Parameter.findOne({ident: sParam.ident}, function (err, doc) {
                 if(! doc) {
                     var newSParam = new Parameter({
+                        ident: sParam.ident,
                         name: sParam.name,
                         description: sParam.description,
                         type: sParam.type,
@@ -55,6 +56,36 @@ router.get('/checkdefaultparameters', function (req, res, next) {
 
     res.sendStatus(200);
     res.end();
+});
+
+router.get('/checkdefaultparametervalues', function (req, res, next) {
+    console.log("Check for default param values...");
+
+    for(var i in config.standardparameter) {
+        var sParam = config.standardparameter[i];
+
+        (function(sParam) {
+            Parameter.findOne({ident: sParam.ident}, function (err, doc) {
+                if(doc) {
+                    doc.name = sParam.name;
+                    doc.set({
+                        name: sParam.name,
+                        description: sParam.description,
+                        type: sParam.type,
+                        value: sParam.value
+                    });
+
+                    doc.save(function(err, param) {
+                        if(err) {
+                            console.log(err);
+                        } else {
+                            console.log("Updated param: " + param.name);
+                        }
+                    });
+                }
+            });
+        })(sParam);
+    }
 });
 
 /**
@@ -96,21 +127,14 @@ router.get('/alldatasetids', function(req, res) {
     });
 });
 
-router.get('/parametertest', function (req, res, next) {
-    var parameter = new Parameter({
-        name: "test",
-        description: "test",
-        type: "Integer",
-        value: 1
+router.get('/parameters', function (req, res) {
+    Parameter.find({}, function(err, parameters) {
+        res.json(parameters);
     });
+});
 
-    parameter.save(function(err, param) {
-        if(err) {
-            console.log(err);
-        }
-        res.send(param);
-        res.end();
-    });
+router.put('/parameters', function(req, res) {
+    // TODO update all parameters
 });
 
 module.exports = router;

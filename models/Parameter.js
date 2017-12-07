@@ -6,6 +6,7 @@
 var mongoose = require('mongoose');
 
 var ParameterSchema = new mongoose.Schema({
+    ident: String,
     name: String,
     description: String,
     type: String,
