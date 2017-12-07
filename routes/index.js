@@ -32,9 +32,10 @@ router.get('/checkdefaultparameters', function (req, res, next) {
         var sParam = config.standardparameter[i];
 
         (function(sParam) {
-            Parameter.findOne({ident: sParam.ident}, function (err, doc) {
+            Parameter.findOne({standard: true, ident: sParam.ident}, function (err, doc) {
                 if(! doc) {
                     var newSParam = new Parameter({
+                        standard: true,
                         ident: sParam.ident,
                         name: sParam.name,
                         description: sParam.description,
@@ -127,8 +128,8 @@ router.get('/alldatasetids', function(req, res) {
     });
 });
 
-router.get('/parameters', function (req, res) {
-    Parameter.find({}, function(err, parameters) {
+router.get('/standardparameters', function (req, res) {
+    Parameter.find({standard: true}, function(err, parameters) {
         res.json(parameters);
     });
 });
