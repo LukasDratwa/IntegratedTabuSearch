@@ -10,6 +10,43 @@
   <body ng-controller="viewDataSetController">
     <h1>Dataset (Id: {{id}})</h1>
 
+    <h2>Statistics</h2>
+    <table>
+        <tr>
+            <td>Created on: </td>
+            <td>{{dataset.parsedTimestamp}}</td>
+        </tr>
+
+        <tr>
+            <td>Amount ratios: </td>
+            <td>{{dataset.ratiosAmount}}</td>
+        </tr>
+
+        <tr>
+            <td>Amount vehicles: </td>
+            <td>{{dataset.vehiclesAmount}}</td>
+        </tr>
+    </table>
+
+    <h2>Ratios</h2>
+    <table>
+        <tr>
+            <th>Nr.</th>
+            <th>ID</th>
+            <th>DB ID</th>
+            <th>Prio</th>
+            <th>Ratio</th>
+        </tr>
+
+        <tr ng-repeat="ratio in dataset.ratios">
+            <td>{{ratio.nr}}</td>
+            <td>{{ratio.ident}}</td>
+            <td>{{ratio._id}}</td>
+            <td>{{ratio.prio}}</td>
+            <td>{{ratio.ratio}}</td>
+        </tr>
+    </table>
+
     <h2>Vehicles</h2>
     <table>
         <tr>
