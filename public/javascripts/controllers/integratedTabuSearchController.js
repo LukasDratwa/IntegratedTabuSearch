@@ -9,9 +9,15 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
     if(typeof id === "string") {
         // Performed Start of tabu search
+        $scope.performTabuSearch = true;
         var tabuSearchRequest = $http.get('/gettabusearch?id=' + id);
         tabuSearchRequest.success(function(data) {
             console.log(data);
+
+            $scope.standardParameters = data.parameters;
+            $scope.dataset = data.dataset;
+            $scope.optObjectives = data.optObjective;
+            $scope.optObjectivesNames = data.optObjective.orderDisplayingNames;
         });
         tabuSearchRequest.error(function(err){
             console.log('Error: ' + err);

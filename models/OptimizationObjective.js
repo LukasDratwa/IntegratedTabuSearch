@@ -9,6 +9,7 @@ var OptimizationObjectiveSchema = new mongoose.Schema({
     high_priority: Number,
     low_priority: Number,
     paint_color_batches: String,
-    orderArray: [String]
+    orderArray: [String],
+    orderDisplayingNames: [String]
 });
 mongoose.model("OptimizationObjective", OptimizationObjectiveSchema);

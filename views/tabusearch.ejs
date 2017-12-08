@@ -13,13 +13,20 @@
             #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
             #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
             #sortable li span { position: absolute; margin-left: -1.3em; }
+
+            .hidden {
+                visibility: hidden;
+            }
         </style>
 
         <script>
             $(document).ready(function() {
                 if(typeof $.urlParam('id') !== "string") {
+                    // Creation of the tabu search
                     $("#sortable").sortable();
                     $("#sortable").disableSelection();
+                } else {
+                    // Performing of the tabu search
                 }
             });
 
@@ -94,6 +101,10 @@
                     return decodeURI(results[1]) || 0;
                 }
             }
+
+            function toggleHiddenClass(id) {
+                $("#" + id).toggleClass("hidden");
+            }
         </script>
     </head>
 
@@ -102,7 +113,30 @@
 
         <!-- Site shown when tabu search is performed -->
         <div ng-show="performTabuSearch">
+            <h2>Selected optimization objectives</h2>
+            <div>
+                <ol>
+                    <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
+                </ol>
+            </div>
 
+            <h2>2. Selected Parameters</h2>
+            <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
+            <table id="selectedParameters" class="">
+                <thead>
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                </thead>
+                <tr ng-repeat="param in standardParameters">
+                    <td>{{param.name}}</td>
+                    <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                    <td>{{param.description}}</td>
+                </tr>
+            </table>
+
+            <h2>3. Selected Dataset</h2>
+            <a href="/viewdataset#?id={{dataset._id}}" target="_blank">View selected dataset</a>
         </div>
 
         <!-- Site shown when run is configured -->
@@ -131,9 +165,9 @@
             <h2>2. Select Parameters</h2>
             <table>
                 <thead>
-                <th>Name</th>
-                <th>Value</th>
-                <th>Description</th>
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th>Description</th>
                 </thead>
                 <tr ng-repeat="param in standardParameters">
                     <td>{{param.name}}</td>
