@@ -30,9 +30,9 @@
                     callingCounter = 0;
 
                     $.post("/tabusearch", payload, function(data) {
-                        console.log(data);
+                        console.log("Created TabuSearchSet " , data);
 
-                        // TODO redirect to same side with #?id=
+                        window.location.href = "/tabusearch#?id=" + data._id;
                     }, "json");
                 }
             }
@@ -102,7 +102,7 @@
 
             <li class="ui-state-default" id="low_priority">
                 <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                High priority ratio constraints
+                Low priority ratio constraints
             </li>
         </ul>
 

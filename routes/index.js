@@ -17,6 +17,7 @@ var DataSet = mongoose.model("DataSet");
 var Vehicle = mongoose.model("Vehicle");
 var TabuSearch = mongoose.model("TabuSearch");
 var Ratio = mongoose.model("Ratio");
+var OptimizationObjective = mongoose.model("OptimizationObjective");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -171,13 +172,82 @@ router.get('/tabusearches', function(req, res) {
 });
 
 router.post('/tabusearch', function(req, res) {
-    var newTabuSearch = {
+    var saveTabuSearchCounter = 0;
 
-    };
+    var tabuSearch = new TabuSearch({
+        dataset: null,
+        optObjective: null,
+        parameters: []
+    });
 
-    /*dataset: { type: mongoose.Schema.Types.ObjectId, ref: "DataSet" },
-    optObjective: { type: mongoose.Schema.Types.ObjectId, ref: "OptimizationObjective" },
-    parameters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Parameter" }]*/
+    // Find referenced dataset
+    DataSet.findById({"_id": req.body.dataSetId}, function(err, dataset) {
+        if(dataset) {
+            dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, data) {
+
+                data.vehicles = data.vehicles.sort(function(a, b) {
+                    if(a.orderNr > b.orderNr) {
+                        return 1;
+                    } else if(a.orderNr < b.orderNr) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                });
+
+                tabuSearch.dataset = data;
+                saveTabuSearch(tabuSearch, res);
+            });
+        } else {
+            res.status(404);
+            res.end();
+        }
+    });
+
+    // Save ordered optimization objectives
+    var optObjective = new OptimizationObjective({
+        high_priority: -1,
+        low_priority: -1,
+        paint_color_batches: -1,
+        orderArray: req.body.optimizationObjectiveOrder
+    });
+    for(var i in req.body.optimizationObjectiveOrder) {
+        var optObj = req.body.optimizationObjectiveOrder[i];
+
+        if(optObj == "high_priority") {
+            optObjective.high_priority = i;
+        } else if(optObj == "low_priority") {
+            optObjective.low_priority = i;
+        } else {
+            optObjective.paint_color_batches = i;
+        }
+    }
+    optObjective.save(function(err, doc) {
+        tabuSearch.optObjective = doc;
+        saveTabuSearch(tabuSearch, res);
+    });
+
+    // Get referenced parameters
+    Parameter.find({
+        "_id": {
+            $in: req.body.parameterIds
+        }
+    }, function(err, parameterDocs) {
+        tabuSearch.parameters.push.apply(tabuSearch.parameters, parameterDocs);
+        saveTabuSearch(tabuSearch, res);
+    });
+
+    function saveTabuSearch(tabusearch, res) {
+        saveTabuSearchCounter++;
+
+        if(saveTabuSearchCounter == 3) {
+            saveTabuSearchCounter = 0;
+
+            tabusearch.save(function(err, doc) {
+                res.json(doc);
+            });
+        }
+    }
 });
 
 module.exports = router;
