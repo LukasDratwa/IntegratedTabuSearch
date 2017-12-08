@@ -16,6 +16,7 @@ require('./models/DataSet');
 require('./models/OptimizationObjective');
 require('./models/Parameter');
 require('./models/Ratio');
+require('./models/TabuSearch');
 require('./models/Vehicle');
 
 // Connect Database

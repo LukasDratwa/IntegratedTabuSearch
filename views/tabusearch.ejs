@@ -21,6 +21,11 @@
                 $("#sortable").disableSelection();
 
                 // $("#sortable").sortable("toArray"); to get the order
+
+
+                $("btnTabuSearch").click(function() {
+
+                });
             });
         </script>
     </head>
@@ -32,7 +37,7 @@
 
         <h2>1. Select Optimization Objectives</h2>
         <ul id="sortable">
-            <li class="ui-state-default" id="high_priority_level_and_easy_to_satisfy_ratio_constraints">
+            <li class="ui-state-default" id="high_priority">
                 <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
                 High priority ratio constraints
             </li>
@@ -42,7 +47,7 @@
                 Paint color batches
             </li>
 
-            <li class="ui-state-default" id="low_priority_level_ratio_constraints">
+            <li class="ui-state-default" id="low_priority">
                 <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
                 High priority ratio constraints
             </li>
@@ -50,6 +55,18 @@
 
 
         <h2>2. Select Parameters</h2>
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Description</th>
+            </thead>
+            <tr ng-repeat="param in standardParameters">
+                <td>{{param.name}}</td>
+                <td><input id="{{param.ident}}" type="number" value="{{param.value}}"></td>
+                <td>{{param.description}}</td>
+            </tr>
+        </table>
 
         <h2>3. Select Dataset</h2>
         <select ng-model="selectedDatasetId">
@@ -60,6 +77,6 @@
         <h2>4. Configuration (TODO)</h2>
 
         <h2>5. Start Algorithm</h2>
-        <input type="button" value="Start" ng-show="selectedDatasetId != ''">
+        <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''">
     </body>
 </html>

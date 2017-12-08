@@ -30,13 +30,13 @@
 
     <h2>Ratios</h2>
     <table>
-        <tr>
+        <thead>
             <th>Nr.</th>
             <th>ID</th>
             <th>DB ID</th>
             <th>Prio</th>
             <th>Ratio</th>
-        </tr>
+        </thead>
 
         <tr ng-repeat="ratio in dataset.ratios">
             <td>{{ratio.nr}}</td>
@@ -49,7 +49,7 @@
 
     <h2>Vehicles</h2>
     <table>
-        <tr>
+        <thead>
             <th>Nr.</th>
             <th>ID</th>
             <th>DB ID</th>
@@ -57,7 +57,7 @@
             <th>Seq. rank</th>
             <th>Paint colors</th>
             <th>Activated features</th>
-        </tr>
+        </thead>
 
         <tr ng-repeat="vehicle in dataset.vehicles">
             <td>{{vehicle.nr}}</td>

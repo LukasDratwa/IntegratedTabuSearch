@@ -15,15 +15,12 @@ var config = require('../config.json');
 var Parameter = mongoose.model('Parameter');
 var DataSet = mongoose.model("DataSet");
 var Vehicle = mongoose.model("Vehicle");
+var TabuSearch = mongoose.model("TabuSearch");
 var Ratio = mongoose.model("Ratio");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Iterated Tabu Search' });
-});
-
-router.get('/tabusearch', function(req, res, next) {
-    res.render('tabusearch', { title: 'Iterated Tabu Search' });
 });
 
 router.get('/checkdefaultparameters', function (req, res, next) {
@@ -87,6 +84,21 @@ router.get('/checkdefaultparametervalues', function (req, res, next) {
             });
         })(sParam);
     }
+
+    res.sendStatus(200);
+    res.end();
+});
+
+router.get('/standardparameters', function (req, res) {
+    Parameter.find({standard: true}, function(err, parameters) {
+        res.json(parameters);
+    });
+});
+
+router.get('/parameters', function(req, res) {
+    Parameter.find({}, function(err, parameters) {
+        res.json(parameters);
+    });
 });
 
 /**
@@ -128,14 +140,14 @@ router.get('/alldatasetids', function(req, res) {
     });
 });
 
-router.get('/standardparameters', function (req, res) {
-    Parameter.find({standard: true}, function(err, parameters) {
-        res.json(parameters);
-    });
+router.get('/tabusearch', function(req, res, next) {
+    res.render('tabusearch', { title: 'Iterated Tabu Search' });
 });
 
-router.put('/parameters', function(req, res) {
-    // TODO update all parameters
+router.get('/tabusearches', function(req, res) {
+    TabuSearch.find({}, function(err, datasets) {
+        res.json(datasets);
+    });
 });
 
 module.exports = router;

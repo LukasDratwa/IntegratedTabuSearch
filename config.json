@@ -59,14 +59,14 @@
     },
     {
       "ident": "o",
-      "name": "Theta (O)",
+      "name": "Theta (o)",
       "description": "Reinserting forbidden for Theta iterations for the type 1 of moving. Exception is allowed when a solution is found which is better than the best one at this moment. For the reswapping the same.",
       "type": "Integer",
       "value": 200
     },
     {
       "ident": "i",
-      "name": "Psi",
+      "name": "Psi (i)",
       "description": "? (Described in the end of 2.2.4)",
       "type": "Double",
       "value": 0.1
@@ -80,7 +80,7 @@
     },
     {
       "ident": "x",
-      "name": "Chi (X)",
+      "name": "Chi (x)",
       "description": "Perturbation mechanism - Random swaps: 3 random pairs where i != j are swapped.",
       "type": "Integer",
       "value": 3
@@ -94,7 +94,7 @@
     },
     {
       "ident": "p",
-      "name": "Pi",
+      "name": "Pi (p)",
       "description": "Perturbation mechanism - Application of all improving swaps and of a proportion Pi of neutral swaps",
       "type": "Double",
       "value": 0.1
