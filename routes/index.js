@@ -208,9 +208,9 @@ router.post('/tabusearch', function(req, res) {
 
     // Save ordered optimization objectives
     var optObjective = new OptimizationObjective({
-        high_priority: -1,
-        low_priority: -1,
-        paint_color_batches: -1,
+        high_priority: 1000,
+        low_priority: 1000,
+        paint_color_batches: 1000,
         orderArray: req.body.optimizationObjectiveOrder,
         orderDisplayingNames: []
     });
