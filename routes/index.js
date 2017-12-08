@@ -101,6 +101,26 @@ router.get('/parameters', function(req, res) {
     });
 });
 
+router.post('/parameter', function(req, res) {
+    var newParam = new Parameter({
+        standard: false,
+        ident: req.body.ident,
+        name: req.body.name,
+        description: req.body.description,
+        type: req.body.type,
+        value: req.body.value
+    });
+
+    newParam.save(function(err, param) {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log("Created new param: " + param.name);
+            res.json(param);
+        }
+    });
+});
+
 /**
  * It's obligatory that a '#' is inserted before the query parameters to get these
  * within the angular controller.
@@ -148,6 +168,16 @@ router.get('/tabusearches', function(req, res) {
     TabuSearch.find({}, function(err, datasets) {
         res.json(datasets);
     });
+});
+
+router.post('/tabusearch', function(req, res) {
+    var newTabuSearch = {
+
+    };
+
+    /*dataset: { type: mongoose.Schema.Types.ObjectId, ref: "DataSet" },
+    optObjective: { type: mongoose.Schema.Types.ObjectId, ref: "OptimizationObjective" },
+    parameters: [{ type: mongoose.Schema.Types.ObjectId, ref: "Parameter" }]*/
 });
 
 module.exports = router;

@@ -19,14 +19,67 @@
             $(document).ready(function() {
                 $("#sortable").sortable();
                 $("#sortable").disableSelection();
-
-                // $("#sortable").sortable("toArray"); to get the order
-
-
-                $("btnTabuSearch").click(function() {
-
-                });
             });
+
+            var callingCounter = 0;
+            function finishPost(amountOfParameters, payload) {
+                callingCounter++;
+
+                if(callingCounter == amountOfParameters) {
+                    // All parameters were checked
+                    callingCounter = 0;
+
+                    $.post("/tabusearch", payload, function(data) {
+                        console.log(data);
+
+                        // TODO redirect to same side with #?id=
+                    }, "json");
+                }
+            }
+
+            function postTabuSearch() {
+                var payload = {
+                    dataSetId: $("#dropwdownDatasetSelection").find(":selected").get(0).value,
+                    parameterIds: [],
+                    optimizationObjectiveOrder: $("#sortable").sortable("toArray")
+                };
+
+                $.get("/standardparameters", function(standardparameters) {
+                    $(".parameter").each(function() {
+                        var sParam = getStandardParameterWithIdent(standardparameters, $(this).get(0).id);
+
+                        if(sParam.value != $(this).get(0).value) {
+                            var newParameter = {
+                                ident: sParam.ident,
+                                name: sParam.name,
+                                description: sParam.description,
+                                type: sParam.type,
+                                value: $(this).get(0).value
+                            };
+
+                            $.post("/parameter", newParameter, function(data) {
+                                payload.parameterIds.push(data._id);
+                                finishPost(standardparameters.length, payload);
+                            }, "json");
+                        } else {
+                            payload.parameterIds.push(sParam._id);
+                            finishPost(standardparameters.length, payload);
+                        }
+                    });
+                });
+            }
+
+            function getStandardParameterWithIdent(parameters, ident) {
+                for(var i in parameters) {
+                    var sParameter = parameters[i];
+
+                    if(sParameter.ident == ident) {
+                        return sParameter;
+                    }
+                }
+
+                return null;
+            }
         </script>
     </head>
 
@@ -63,13 +116,13 @@
             </thead>
             <tr ng-repeat="param in standardParameters">
                 <td>{{param.name}}</td>
-                <td><input id="{{param.ident}}" type="number" value="{{param.value}}"></td>
+                <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
                 <td>{{param.description}}</td>
             </tr>
         </table>
 
         <h2>3. Select Dataset</h2>
-        <select ng-model="selectedDatasetId">
+        <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
             <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
         </select>
         <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
@@ -77,6 +130,6 @@
         <h2>4. Configuration (TODO)</h2>
 
         <h2>5. Start Algorithm</h2>
-        <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''">
+        <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" onclick="postTabuSearch()">
     </body>
 </html>
