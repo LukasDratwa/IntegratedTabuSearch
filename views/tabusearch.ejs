@@ -17,8 +17,10 @@
 
         <script>
             $(document).ready(function() {
-                $("#sortable").sortable();
-                $("#sortable").disableSelection();
+                if(typeof $.urlParam('id') !== "string") {
+                    $("#sortable").sortable();
+                    $("#sortable").disableSelection();
+                }
             });
 
             var callingCounter = 0;
@@ -32,7 +34,9 @@
                     $.post("/tabusearch", payload, function(data) {
                         console.log("Created TabuSearchSet " , data);
 
-                        window.location.href = "/tabusearch#?id=" + data._id;
+                        var url = "/tabusearch#?id=" + data._id;
+                        $(location).attr("href", url);
+                        window.setTimeout('location.reload()', 1000);
                     }, "json");
                 }
             }
@@ -80,56 +84,74 @@
 
                 return null;
             }
+
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                if (results==null){
+                    return null;
+                }
+                else{
+                    return decodeURI(results[1]) || 0;
+                }
+            }
         </script>
     </head>
 
     <body ng-controller="integratedTabuSearchController">
         <h1>Iterated Tabu Search</h1>
 
-        <h2>Introduction TODO</h2>
+        <!-- Site shown when tabu search is performed -->
+        <div ng-show="performTabuSearch">
 
-        <h2>1. Select Optimization Objectives</h2>
-        <ul id="sortable">
-            <li class="ui-state-default" id="high_priority">
-                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                High priority ratio constraints
-            </li>
+        </div>
 
-            <li class="ui-state-default" id="paint_color_batches">
-                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                Paint color batches
-            </li>
+        <!-- Site shown when run is configured -->
+        <div ng-show="!performTabuSearch">
+            <h2>Introduction TODO</h2>
 
-            <li class="ui-state-default" id="low_priority">
-                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                Low priority ratio constraints
-            </li>
-        </ul>
+            <h2>1. Select Optimization Objectives</h2>
+            <ul id="sortable">
+                <li class="ui-state-default" id="high_priority">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                    High priority ratio constraints
+                </li>
+
+                <li class="ui-state-default" id="paint_color_batches">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                    Paint color batches
+                </li>
+
+                <li class="ui-state-default" id="low_priority">
+                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                    Low priority ratio constraints
+                </li>
+            </ul>
 
 
-        <h2>2. Select Parameters</h2>
-        <table>
-            <thead>
+            <h2>2. Select Parameters</h2>
+            <table>
+                <thead>
                 <th>Name</th>
                 <th>Value</th>
                 <th>Description</th>
-            </thead>
-            <tr ng-repeat="param in standardParameters">
-                <td>{{param.name}}</td>
-                <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
-                <td>{{param.description}}</td>
-            </tr>
-        </table>
+                </thead>
+                <tr ng-repeat="param in standardParameters">
+                    <td>{{param.name}}</td>
+                    <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
+                    <td>{{param.description}}</td>
+                </tr>
+            </table>
 
-        <h2>3. Select Dataset</h2>
-        <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
-            <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
-        </select>
-        <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
+            <h2>3. Select Dataset</h2>
+            <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
+                <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
+            </select>
+            <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
 
-        <h2>4. Configuration (TODO)</h2>
+            <h2>4. Configuration (TODO)</h2>
 
-        <h2>5. Start Algorithm</h2>
-        <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" onclick="postTabuSearch()">
+            <h2>5. Start Algorithm</h2>
+            <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" onclick="postTabuSearch()">
+        </div>
     </body>
 </html>

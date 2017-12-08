@@ -165,6 +165,21 @@ router.get('/tabusearch', function(req, res, next) {
     res.render('tabusearch', { title: 'Iterated Tabu Search' });
 });
 
+router.get('/gettabusearch', function(req, res) {
+    TabuSearch.findById({"_id": req.query.id}, function(err, tabusearch) {
+        if(tabusearch) {
+            tabusearch.deepPopulate("dataset dataset.ratios dataset.vehicles dataset.vehicles.activatedFeatures " +
+                "optObjective parameters", function(err, data) {
+
+                res.json(data);
+            });
+        } else {
+            res.status(404);
+            res.end();
+        }
+    });
+});
+
 router.get('/tabusearches', function(req, res) {
     TabuSearch.find({}, function(err, datasets) {
         res.json(datasets);
@@ -183,21 +198,8 @@ router.post('/tabusearch', function(req, res) {
     // Find referenced dataset
     DataSet.findById({"_id": req.body.dataSetId}, function(err, dataset) {
         if(dataset) {
-            dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, data) {
-
-                data.vehicles = data.vehicles.sort(function(a, b) {
-                    if(a.orderNr > b.orderNr) {
-                        return 1;
-                    } else if(a.orderNr < b.orderNr) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
-
-                tabuSearch.dataset = data;
-                saveTabuSearch(tabuSearch, res);
-            });
+            tabuSearch.dataset = dataset;
+            saveTabuSearch(tabuSearch, res);
         } else {
             res.status(404);
             res.end();
