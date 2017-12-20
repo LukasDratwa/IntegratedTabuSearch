@@ -122,6 +122,32 @@ router.post('/parameter', function(req, res) {
     });
 });
 
+router.get('/overviewdata', function(req, res) {
+    res.render('overviewdata');
+});
+
+router.post('/overviewdata', function(req, res) {
+    var responseObj = {
+       tabusearches: [],
+       standardParameters: [],
+       datasetIds: []
+    };
+
+
+    TabuSearch.find({}, function(err, tabusearches) {
+        responseObj.tabusearches = tabusearches;
+
+        Parameter.find({standard: true}, function(err, standardparameters) {
+            responseObj.standardParameters = standardparameters;
+
+            DataSet.find({}, "_id description timestamp", function(err, datasetIds) {
+                responseObj.datasetIds = datasetIds;
+                res.json(responseObj);
+            });
+        });
+    });
+});
+
 /**
  * It's obligatory that a '#' is inserted before the query parameters to get these
  * within the angular controller.
