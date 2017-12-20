@@ -22,5 +22,14 @@ dataSetController.controller("dataOverviewController", function ($scope, $http, 
             datasetId.parsedTimestamp = new Date(datasetId.timestamp).toLocaleDateString()
                 + ", " + new Date(datasetId.timestamp).toLocaleTimeString();
         }
+
+        // Tabusearches
+        for(var i in data.tabusearches) {
+            var tabusearch = data.tabusearches[i];
+            tabusearch.nr = parseInt(i) + 1;
+
+            tabusearch.parsedTimestamp = new Date(datasetId.timestamp).toLocaleDateString()
+                + ", " + new Date(datasetId.timestamp).toLocaleTimeString();
+        }
     }
 });

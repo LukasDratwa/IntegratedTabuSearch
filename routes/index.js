@@ -133,8 +133,7 @@ router.post('/overviewdata', function(req, res) {
        datasetIds: []
     };
 
-
-    TabuSearch.find({}, function(err, tabusearches) {
+    TabuSearch.find({}).deepPopulate('optObjective parameters').exec(function (err, tabusearches) {
         responseObj.tabusearches = tabusearches;
 
         Parameter.find({standard: true}, function(err, standardparameters) {

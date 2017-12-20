@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="integratedTabuSearchApp">
+<html lang="de" ng-app="integratedTabuSearchApp">
   <head>
       <script src="/javascripts/jquery-3.2.1.min.js"></script>
       <script src="/javascripts/angular.min-1.5.6.js"></script>
@@ -10,7 +10,8 @@
   <body ng-controller="dataOverviewController">
     <h1>Overview over the saved data</h1>
 
-    <h2>1. Standard Server Parameters</h2>
+    <hr>
+    <h2>Server Standardparameters</h2>
     <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
     <table id="selectedParameters" class="">
         <thead>
@@ -22,6 +23,54 @@
             <td>{{param.name}}</td>
             <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
             <td>{{param.description}}</td>
+        </tr>
+    </table>
+    <hr>
+
+    <h2>Saved Datasets</h2>
+    <table>
+        <thead>
+            <th>Nr.</th>
+            <th>Description</th>
+            <th>Creation timestamp</th>
+            <th>Link</th>
+        </thead>
+
+        <tr ng-repeat="datasetId in data.datasetIds">
+            <td>{{datasetId.nr}}</td>
+            <td>{{datasetId.description}}</td>
+            <td>{{datasetId.parsedTimestamp}}</td>
+            <td><a href="/viewdataset#?id={{datasetId._id}}" target="_blank">View dataset</a></td>
+        </tr>
+    </table>
+
+    <hr>
+    <h2>Performed Tabu Searches</h2>
+    <table>
+        <thead>
+            <th>Nr.</th>
+            <th>Opt. Objectives</th>
+            <th>Non-Standard Parameters</th>
+            <th>Used Dataset</th>
+            <th>Run timestmap</th>
+            <th>Results</th>
+        </thead>
+
+        <tr ng-repeat="tabusearch in data.tabusearches">
+            <td>{{tabusearch.nr}}</td>
+            <td>
+                <ol>
+                    <li ng-repeat="optObj in tabusearch.optObjective.orderDisplayingNames">{{optObj}}</li>
+                </ol>
+            </td>
+            <td>
+                <ul>
+                    <li ng-repeat="param in tabusearch.parameters" ng-hide="param.standard">{{param.name}} = {{param.value}}</li>
+                </ul>
+            </td>
+            <td><a href="/viewdataset#?id={{tabusearch.dataset._id}}" target="_blank">View dataset</a></td>
+            <td>{{tabusearch.parsedTimestamp}}</td>
+            <td>TODO Link to results</td>
         </tr>
     </table>
   </body>
