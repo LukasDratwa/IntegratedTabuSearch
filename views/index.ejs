@@ -1,18 +1,191 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="de">
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
 
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+<head>
+  <title><%= title %></title>
 
-    <a href="/dataupload">Data-Uploadsite</a>
-    <br><br><br>
-    <a href="/tabusearch">Tabu-Search</a>
-    <br><br><br>
-    <a href="/overviewdata">Dataoverviewpage</a>
-  </body>
+  <meta charset="utf-8">
+  <title>ITS - Home</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <script src="/javascripts/tether.min.js" type="text/javascript"></script>
+  <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
+
+
+  <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div class="cover">
+  <div class="navbar">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <!--<a class="navbar-brand" href="#"><span>Brand</span></a>-->
+        <!-- TODO insert branding <img src="res/img/brand.png" class="img-responsive index-brand">-->
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="/dataupload">Datenupload</a>
+          </li>
+          <li>
+            <a href="/tabusearch">ITS</a>
+          </li>
+          <li>
+            <a href="/overviewdata">Datenüberblick</a>
+          </li>
+          <li>
+            <a id="navbar-benefits" href="#benefits" onclick="scrollTo('#section-benefits', 1500)">Prototyp</a>
+          </li>
+          <li>
+            <a href="#team" id="navbar-team" onclick="scrollTo('#section-team', 1500)">Team</a>
+          </li>
+          <li>
+            <a href="#contact" id="navbar-contact" onclick="scrollTo('#section-contact', 1500)">Kontakt</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="cover-image" style="background-image: url('/images/Landing-forrest-background.jpg')"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1 class="text-inverse">Iterated Tabu Search</h1>
+        <p class="text-inverse">Ein studentisches Seminarprojekt der TU Darmstadt</p>
+        <br>
+        <a class="btn btn-lg btn-primary" id="startTheTour" onclick="scrollTo('#section-problem', 2000)">Starte die Tour</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="section-problem">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <!--TODO find img <img src="" class="img-responsive">-->
+      </div>
+      <div class="col-md-6">
+        <h1 class="text-primary">Wo wir ansetzen</h1>
+        <h3>...</h3>
+        <p>...</p>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="section-solution">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h1 class="text-primary">Was wir dagegen machen</h1>
+        <h3>...</h3>
+        <p>...</p>
+        <p>...</p>
+      </div>
+      <div class="col-md-6">
+        <!--TODO find img <img src="" class="img-responsive">-->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="section-benefits">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <!--TODO find img <img src="" class="img-responsive">-->
+      </div>
+      <div class="col-md-6">
+        <h1 class="text-primary">Was wir bieten</h1>
+        <h3>...</h3>
+        <p>...</p>
+        <p>....</p>
+        <p>...</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="section-future">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h1 class="text-primary">Wo wir unseren Prototyp zukünftig sehen</h1>
+        <h3>...</h3>
+        <p>...</p>
+      </div>
+      <div class="col-md-6">
+        <!--TODO find img <img src="" class="img-responsive">-->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="section-team">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="text-center text-primary">Wer wir sind</h1>
+        <p class="text-center">Eine Gruppe höchstmotiverter Masterstudenten der TU Darmstadt</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <img src="/images/team/Lukas.png" class="center-block img-circle img-responsive team-picture" width="200px">
+        <h3 class="text-center">Lukas Dratwa</h3>
+        <p class="text-center">Wirtschaftsinformatik M.Sc.</p>
+      </div>
+      <div class="col-md-4">
+        <img src="/images/team/Lukas.png" class="center-block img-circle img-responsive team-picture" width="200px">
+        <h3 class="text-center">Thomas Emig</h3>
+        <p class="text-center">Wirtschaftsingenieurwesen (MB)</p>
+      </div>
+      <div class="col-md-4">
+        <img src="/images/team/Lukas.png" class="center-block img-circle img-responsive team-picture" width="200px">
+        <h3 class="text-center">Jochen Kevin Rudnick</h3>
+        <p class="text-center">Wirtschaftsingenieurwesen (MB)</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section" id="section-contact">
+  <div class="container">
+    <div class="row">
+      <h1 class="text-center text-primary">So erreichst Du uns</h1>
+      <p class="text-center">Mit folgender Kontaktadresse
+        <a href="mailto:lukas.dratwa@stud.tu-darmstadt.de">Lukas Dratwa</a> kannst Du Dich gerne im Falle von Feedback
+        & Co. in Verbindung setzen; wir freuen uns über Deine Nachricht! Sollte Dich das Thema der Optimierungsprobleme
+       in der Automobilbranche allgemein interessieren, kannst Du gerne auch direkt dem Fachgebiet <a href="http://www.or.wi.tu-darmstadt.de/bwl3_start/index.de.jsp">
+          Management Science &amp Operations Research</a> von Herrn Jun.-Prof. Dr. Simon Emde einen Besuch abstatten.</p>
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-xs-3 text-center">
+        <a><i class="fa fa-5x fa-fw fa-instagram"></i></a>
+      </div>
+      <div class="col-xs-3">
+        <a><i class="fa fa-5x fa-fw fa-twitter"></i></a>
+      </div>
+      <div class="col-xs-3">
+        <a><i class="fa fa-5x fa-facebook fa-fw"></i></a>
+      </div>
+      <div class="col-xs-3 text-center">
+        <a><i class="fa fa-5x fa-fw fa-github"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
 </html>
