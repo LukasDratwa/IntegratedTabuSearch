@@ -1,40 +1,88 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="de">
   <head>
-      <title><%= title %></title>
-      <link rel='stylesheet' href='/stylesheets/style.css' />
-      <script src="/javascripts/jquery-3.2.1.min.js"></script>
+      <meta charset="utf-8">
+      <title>ITS - Dataupload</title>
+      <link rel="shortcut icon" href="/images/or-favicon.png"/>
+
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
       <script src="http://malsup.github.com/jquery.form.js"></script>
+      <script src="/javascripts/tether.min.js" type="text/javascript"></script>
+      <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
+      <script src="/javascripts/its-utility.js" type="text/javascript"></script>
+
+      <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
+      <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+      <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>
+  <div class="navbar">
+      <div class="container">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <!--<a class="navbar-brand" href="#"><span>Brand</span></a>-->
+              <!-- TODO insert branding <img src="res/img/brand.png" class="img-responsive index-brand">-->
+          </div>
+          <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+              <ul class="nav navbar-nav navbar-right">
+                  <li>
+                      <a href="/dataupload">Datenupload</a>
+                  </li>
+                  <li>
+                      <a href="/tabusearch">ITS</a>
+                  </li>
+                  <li>
+                      <a href="/overviewdata">Datenüberblick</a>
+                  </li>
+                  <li>
+                      <a id="navbar-benefits" href="/#section-benefits" onclick="customScrollTo('#section-benefits', 1500)">Prototyp</a>
+                  </li>
+                  <li>
+                      <a href="/#section-team" id="navbar-team" onclick="customScrollTo('#section-team', 1500)">Team</a>
+                  </li>
+                  <li>
+                      <a href="/#section-contact" id="navbar-contact" onclick="customScrollTo('#section-contact', 1500)">Kontakt</a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+  </div>
+  <div class="container">
+      <h1><%= title %></h1>
+      <p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>
 
-    <h2>ROADEF:</h2>
-    <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
-        <table>
-            <!--<tr>
-                <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
-                <td><input type="file" name="optimizationObjectives"><br></td>
-            </tr>
+      <h2>ROADEF:</h2>
+      <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
+          <table>
+              <!--<tr>
+                  <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
+                  <td><input type="file" name="optimizationObjectives"><br></td>
+              </tr>
 
-            <tr>
-                <td><label for="paintBatchLimit">Paint batch limit:</label></td>
-                <td><input type="file" name="paintBatchLimit"><br></td>
-            </tr>-->
+              <tr>
+                  <td><label for="paintBatchLimit">Paint batch limit:</label></td>
+                  <td><input type="file" name="paintBatchLimit"><br></td>
+              </tr>-->
 
-            <tr>
-                <td><label for="ratios">Ratios:</label></td>
-                <td><input type="file" name="ratios"><br></td>
-            </tr>
+              <tr>
+                  <td><label for="ratios">Ratios:</label></td>
+                  <td><input type="file" name="ratios"><br></td>
+              </tr>
 
-            <tr>
-                <td><label for="vehicles">Vehicles:</label></td>
-                <td><input type="file" name="vehicles"><br></td>
-            </tr>
-        </table>
+              <tr>
+                  <td><label for="vehicles">Vehicles:</label></td>
+                  <td><input type="file" name="vehicles"><br></td>
+              </tr>
+          </table>
 
-        <input type="submit">
-    </form>
+          <input type="submit">
+      </form>
+  </div>
   </body>
 </html>

@@ -1,191 +1,238 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="de" ng-app="integratedTabuSearchApp">
-    <head>
-        <script src="/javascripts/jquery-3.2.1.min.js"></script>
-        <script src="/javascripts/angular.min-1.5.6.js"></script>
+<head>
+    <meta charset="utf-8">
+    <title>ITS - Dataupload</title>
+    <link rel="shortcut icon" href="/images/or-favicon.png"/>
 
-        <script src="/javascripts/controllers/integratedTabuSearchController.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="/javascripts/angular.min-1.5.6.js"></script>
+    <script src="/javascripts/controllers/integratedTabuSearchController.js"></script>
+    <script src="/javascripts/jquery-ui.min.js"></script>
+    <script src="/javascripts/tether.min.js" type="text/javascript"></script>
+    <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/javascripts/its-utility.js" type="text/javascript"></script>
 
-        <script src="/javascripts/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="/stylesheets/jquery-ui.min.css"/>
+    <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
+    <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/stylesheets/jquery-ui.min.css"/>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
-        <style>
-            #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-            #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
-            #sortable li span { position: absolute; margin-left: -1.3em; }
+    <style>
+        #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+        #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
+        #sortable li span { position: absolute; margin-left: -1.3em; }
 
-            .hidden {
-                visibility: hidden;
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            if(typeof $.urlParam('id') !== "string") {
+                // Creation of the tabu search
+                $("#sortable").sortable();
+                $("#sortable").disableSelection();
+            } else {
+                // Performing of the tabu search
             }
-        </style>
+        });
 
-        <script>
-            $(document).ready(function() {
-                if(typeof $.urlParam('id') !== "string") {
-                    // Creation of the tabu search
-                    $("#sortable").sortable();
-                    $("#sortable").disableSelection();
-                } else {
-                    // Performing of the tabu search
-                }
-            });
+        var callingCounter = 0;
+        function finishPost(amountOfParameters, payload) {
+            callingCounter++;
 
-            var callingCounter = 0;
-            function finishPost(amountOfParameters, payload) {
-                callingCounter++;
+            if(callingCounter == amountOfParameters) {
+                // All parameters were checked
+                callingCounter = 0;
 
-                if(callingCounter == amountOfParameters) {
-                    // All parameters were checked
-                    callingCounter = 0;
+                $.post("/tabusearch", payload, function(data) {
+                    console.log("Created TabuSearchSet " , data);
 
-                    $.post("/tabusearch", payload, function(data) {
-                        console.log("Created TabuSearchSet " , data);
-
-                        var url = "/tabusearch#?id=" + data._id;
-                        $(location).attr("href", url);
-                        window.setTimeout('location.reload()', 1000);
-                    }, "json");
-                }
+                    var url = "/tabusearch#?id=" + data._id;
+                    $(location).attr("href", url);
+                    window.setTimeout('location.reload()', 1000);
+                }, "json");
             }
+        }
 
-            function postTabuSearch() {
-                var payload = {
-                    dataSetId: $("#dropwdownDatasetSelection").find(":selected").get(0).value,
-                    parameterIds: [],
-                    optimizationObjectiveOrder: $("#sortable").sortable("toArray")
-                };
+        function postTabuSearch() {
+            var payload = {
+                dataSetId: $("#dropwdownDatasetSelection").find(":selected").get(0).value,
+                parameterIds: [],
+                optimizationObjectiveOrder: $("#sortable").sortable("toArray")
+            };
 
-                $.get("/standardparameters", function(standardparameters) {
-                    $(".parameter").each(function() {
-                        var sParam = getStandardParameterWithIdent(standardparameters, $(this).get(0).id);
+            $.get("/standardparameters", function(standardparameters) {
+                $(".parameter").each(function() {
+                    var sParam = getStandardParameterWithIdent(standardparameters, $(this).get(0).id);
 
-                        if(sParam.value != $(this).get(0).value) {
-                            var newParameter = {
-                                ident: sParam.ident,
-                                name: sParam.name,
-                                description: sParam.description,
-                                type: sParam.type,
-                                value: $(this).get(0).value
-                            };
+                    if(sParam.value != $(this).get(0).value) {
+                        var newParameter = {
+                            ident: sParam.ident,
+                            name: sParam.name,
+                            description: sParam.description,
+                            type: sParam.type,
+                            value: $(this).get(0).value
+                        };
 
-                            $.post("/parameter", newParameter, function(data) {
-                                payload.parameterIds.push(data._id);
-                                finishPost(standardparameters.length, payload);
-                            }, "json");
-                        } else {
-                            payload.parameterIds.push(sParam._id);
+                        $.post("/parameter", newParameter, function(data) {
+                            payload.parameterIds.push(data._id);
                             finishPost(standardparameters.length, payload);
-                        }
-                    });
+                        }, "json");
+                    } else {
+                        payload.parameterIds.push(sParam._id);
+                        finishPost(standardparameters.length, payload);
+                    }
                 });
+            });
+        }
+
+        function getStandardParameterWithIdent(parameters, ident) {
+            for(var i in parameters) {
+                var sParameter = parameters[i];
+
+                if(sParameter.ident == ident) {
+                    return sParameter;
+                }
             }
 
-            function getStandardParameterWithIdent(parameters, ident) {
-                for(var i in parameters) {
-                    var sParameter = parameters[i];
+            return null;
+        }
 
-                    if(sParameter.ident == ident) {
-                        return sParameter;
-                    }
-                }
-
+        $.urlParam = function(name){
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results==null){
                 return null;
             }
-
-            $.urlParam = function(name){
-                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-                if (results==null){
-                    return null;
-                }
-                else{
-                    return decodeURI(results[1]) || 0;
-                }
+            else{
+                return decodeURI(results[1]) || 0;
             }
+        }
 
-            function toggleHiddenClass(id) {
-                $("#" + id).toggleClass("hidden");
-            }
-        </script>
-    </head>
-
-    <body ng-controller="integratedTabuSearchController">
-        <h1>Iterated Tabu Search</h1>
-
-        <!-- Site shown when tabu search is performed -->
-        <div ng-show="performTabuSearch">
-            <h2>Selected optimization objectives</h2>
-            <div>
-                <ol>
-                    <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
-                </ol>
-            </div>
-
-            <h2>2. Selected Parameters</h2>
-            <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-            <table id="selectedParameters" class="">
-                <thead>
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th>Description</th>
-                </thead>
-                <tr ng-repeat="param in standardParameters">
-                    <td>{{param.name}}</td>
-                    <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
-                    <td>{{param.description}}</td>
-                </tr>
-            </table>
-
-            <h2>3. Selected Dataset</h2>
-            <a href="/viewdataset#?id={{dataset._id}}" target="_blank">View selected dataset</a>
+        function toggleHiddenClass(id) {
+            $("#" + id).toggleClass("hidden");
+        }
+    </script>
+</head>
+<body ng-controller="integratedTabuSearchController">
+<div class="navbar">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--<a class="navbar-brand" href="#"><span>Brand</span></a>-->
+            <!-- TODO insert branding <img src="res/img/brand.png" class="img-responsive index-brand">-->
         </div>
-
-        <!-- Site shown when run is configured -->
-        <div ng-show="!performTabuSearch">
-            <h2>Introduction TODO</h2>
-
-            <h2>1. Select Optimization Objectives</h2>
-            <ul id="sortable">
-                <li class="ui-state-default" id="high_priority">
-                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                    High priority ratio constraints
+        <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/dataupload">Datenupload</a>
                 </li>
-
-                <li class="ui-state-default" id="paint_color_batches">
-                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                    Paint color batches
+                <li>
+                    <a href="/tabusearch">ITS</a>
                 </li>
-
-                <li class="ui-state-default" id="low_priority">
-                    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                    Low priority ratio constraints
+                <li>
+                    <a href="/overviewdata">Datenüberblick</a>
+                </li>
+                <li>
+                    <a id="navbar-benefits" href="/#section-benefits" onclick="customScrollTo('#section-benefits', 1500)">Prototyp</a>
+                </li>
+                <li>
+                    <a href="/#section-team" id="navbar-team" onclick="customScrollTo('#section-team', 1500)">Team</a>
+                </li>
+                <li>
+                    <a href="/#section-contact" id="navbar-contact" onclick="customScrollTo('#section-contact', 1500)">Kontakt</a>
                 </li>
             </ul>
-
-
-            <h2>2. Select Parameters</h2>
-            <table>
-                <thead>
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th>Description</th>
-                </thead>
-                <tr ng-repeat="param in standardParameters">
-                    <td>{{param.name}}</td>
-                    <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
-                    <td>{{param.description}}</td>
-                </tr>
-            </table>
-
-            <h2>3. Select Dataset</h2>
-            <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
-                <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
-            </select>
-            <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
-
-            <h2>4. Configuration (TODO)</h2>
-
-            <h2>5. Start Algorithm</h2>
-            <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" onclick="postTabuSearch()">
         </div>
-    </body>
+    </div>
+</div>
+<div class="container">
+    <h1>Iterated Tabu Search</h1>
+
+    <!-- Site shown when tabu search is performed -->
+    <div ng-show="performTabuSearch">
+        <h2>Selected optimization objectives</h2>
+        <div>
+            <ol>
+                <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
+            </ol>
+        </div>
+
+        <h2>2. Selected Parameters</h2>
+        <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
+        <table id="selectedParameters" class="">
+            <thead>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Description</th>
+            </thead>
+            <tr ng-repeat="param in standardParameters">
+                <td>{{param.name}}</td>
+                <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                <td>{{param.description}}</td>
+            </tr>
+        </table>
+
+        <h2>3. Selected Dataset</h2>
+        <a href="/viewdataset#?id={{dataset._id}}" target="_blank">View selected dataset</a>
+    </div>
+
+    <!-- Site shown when run is configured -->
+    <div ng-show="!performTabuSearch">
+        <h2>Introduction TODO</h2>
+
+        <h2>1. Select Optimization Objectives</h2>
+        <ul id="sortable">
+            <li class="ui-state-default" id="high_priority">
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                High priority ratio constraints
+            </li>
+
+            <li class="ui-state-default" id="paint_color_batches">
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                Paint color batches
+            </li>
+
+            <li class="ui-state-default" id="low_priority">
+                <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+                Low priority ratio constraints
+            </li>
+        </ul>
+
+
+        <h2>2. Select Parameters</h2>
+        <table>
+            <thead>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Description</th>
+            </thead>
+            <tr ng-repeat="param in standardParameters">
+                <td>{{param.name}}</td>
+                <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
+                <td>{{param.description}}</td>
+            </tr>
+        </table>
+
+        <h2>3. Select Dataset</h2>
+        <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
+            <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
+        </select>
+        <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
+
+        <h2>4. Configuration (TODO)</h2>
+
+        <h2>5. Start Algorithm</h2>
+        <input type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" onclick="postTabuSearch()">
+    </div>
+</div>
+</body>
 </html>
