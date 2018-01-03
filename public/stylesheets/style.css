@@ -1,0 +1,15 @@
+.optObjOrder {
+    display: table;
+    height: 30px !important;
+    width: 100%;
+}
+
+.optObjOrderIcon {
+    margin-top: 5px;
+}
+
+.optObjOrderText {
+    display: table-cell;
+    vertical-align: center;
+    width: 100%;
+}

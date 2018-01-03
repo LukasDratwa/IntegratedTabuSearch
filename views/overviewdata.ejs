@@ -2,7 +2,7 @@
 <html lang="de" ng-app="integratedTabuSearchApp">
 <head>
     <meta charset="utf-8">
-    <title>ITS - Dataupload</title>
+    <title>ITS - Dataoverview</title>
     <link rel="shortcut icon" href="/images/or-favicon.png"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,17 +58,17 @@
     </div>
 </div>
 <div class="container">
-    <h1>Overview over the saved data</h1>
+    <h1>Überblick der gespeicherten Datensätze</h1>
 
     <hr>
-    <h2>Server Standardparameters</h2>
+    <h2>Serverseitige Standardwerte der Parameter</h2>
     <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
     <table id="selectedParameters" data-table-list class="table-striped table-bordered">
         <thead>
             <tr>
                 <th scope="col">Name</th>
-                <th>Value</th>
-                <th>Description</th>
+                <th>Wert</th>
+                <th>Beschreibung</th>
             </tr>
         </thead>
         <tr ng-repeat="param in data.standardParameters">
@@ -79,13 +79,13 @@
     </table>
     <hr>
 
-    <h2>Saved Datasets</h2>
+    <h2>Gespeicherte Datensätze</h2>
     <table id="datasetsTable" data-table-list class="table-striped table-bordered">
         <thead>
             <tr>
                 <th scope="col">Nr.</th>
-                <th>Description</th>
-                <th>Creation timestamp</th>
+                <th>Beschreibung</th>
+                <th>Erstellungszeitstempel</th>
                 <th>Link</th>
             </tr>
         </thead>
@@ -99,16 +99,16 @@
     </table>
 
     <hr>
-    <h2>Performed Tabu Searches</h2>
+    <h2>Ausgeführte Tabu Searches</h2>
     <table id="performedTabuSearchesTable" data-table-list class="table-striped table-bordered">
         <thead>
             <tr scope="col">
                 <th>Nr.</th>
                 <th>Opt. Objectives</th>
-                <th>Non-Standard Parameters</th>
-                <th>Used Dataset</th>
-                <th>Run timestmap</th>
-                <th>Results</th>
+                <th>Geänderte Parameterwerte</th>
+                <th>Verwendeter Datensatz</th>
+                <th>Ausführungszeitstempel</th>
+                <th>Ergebnisse</th>
             </tr>
         </thead>
 
@@ -124,7 +124,7 @@
                     <li ng-repeat="param in tabusearch.parameters" ng-hide="param.standard">{{param.name}} = {{param.value}}</li>
                 </ul>
             </td>
-            <td><a href="/viewdataset#?id={{tabusearch.dataset._id}}" target="_blank">View dataset</a></td>
+            <td><a href="/viewdataset#?id={{tabusearch.dataset}}" target="_blank">View dataset</a></td>
             <td>{{tabusearch.parsedTimestamp}}</td>
             <td>TODO Link to results</td>
         </tr>

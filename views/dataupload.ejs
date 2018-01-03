@@ -11,10 +11,18 @@
       <script src="/javascripts/tether.min.js" type="text/javascript"></script>
       <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
       <script src="/javascripts/its-utility.js" type="text/javascript"></script>
+      <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
 
       <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
       <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+      <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
       <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+
+      <script type="text/javascript">
+          $(document).ready(function() {
+              $("#uploadTable").tablelist();
+          });
+      </script>
   </head>
   <body>
   <div class="navbar">
@@ -46,12 +54,15 @@
       </div>
   </div>
   <div class="container">
-      <h1><%= title %></h1>
-      <p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>
+      <h1>Hochladen der Daten</h1>
+      <p>Bis jetzt ist es nur möglich Daten gleichen Format wie bei der <a href="http://challenge.roadef.org/2005/en/">ROADEF 2005 Herausforderung</a> hochzuladen
+       Diese müssen im CSV-Format, getrennt mit Semikolons in einzelnen Textdateien gespeichert sein. Beispieldaten: <a href="http://challenge.roadef.org/2005/files/Instances_set_A.zip">
+              Downloadlink</a></p>
+      <!--<p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>-->
 
       <h2>ROADEF:</h2>
       <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
-          <table>
+          <table id="uploadTable" data-table-list class="table-striped table-bordered">
               <!--<tr>
                   <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
                   <td><input type="file" name="optimizationObjectives"><br></td>
@@ -68,7 +79,7 @@
               </tr>
 
               <tr>
-                  <td><label for="vehicles">Vehicles:</label></td>
+                  <td><label for="vehicles">Fahrzeuge:</label></td>
                   <td><input type="file" name="vehicles"><br></td>
               </tr>
           </table>
