@@ -12,10 +12,20 @@
     <script src="/javascripts/tether.min.js" type="text/javascript"></script>
     <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
     <script src="/javascripts/its-utility.js" type="text/javascript"></script>
+    <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
 
     <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
     <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+    <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#selectedParameters").tablelist();
+            $("#datasetsTable").tablelist();
+            $("#performedTabuSearchesTable").tablelist();
+        });
+    </script>
 </head>
 
 <body ng-controller="dataOverviewController">
@@ -53,14 +63,16 @@
     <hr>
     <h2>Server Standardparameters</h2>
     <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-    <table id="selectedParameters" class="">
+    <table id="selectedParameters" data-table-list class="table-striped table-bordered">
         <thead>
-        <th>Name</th>
-        <th>Value</th>
-        <th>Description</th>
+            <tr>
+                <th scope="col">Name</th>
+                <th>Value</th>
+                <th>Description</th>
+            </tr>
         </thead>
         <tr ng-repeat="param in data.standardParameters">
-            <td>{{param.name}}</td>
+            <td scope="row">{{param.name}}</td>
             <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
             <td>{{param.description}}</td>
         </tr>
@@ -68,16 +80,18 @@
     <hr>
 
     <h2>Saved Datasets</h2>
-    <table>
+    <table id="datasetsTable" data-table-list class="table-striped table-bordered">
         <thead>
-        <th>Nr.</th>
-        <th>Description</th>
-        <th>Creation timestamp</th>
-        <th>Link</th>
+            <tr>
+                <th scope="col">Nr.</th>
+                <th>Description</th>
+                <th>Creation timestamp</th>
+                <th>Link</th>
+            </tr>
         </thead>
 
         <tr ng-repeat="datasetId in data.datasetIds">
-            <td>{{datasetId.nr}}</td>
+            <td scope="row">{{datasetId.nr}}</td>
             <td>{{datasetId.description}}</td>
             <td>{{datasetId.parsedTimestamp}}</td>
             <td><a href="/viewdataset#?id={{datasetId._id}}" target="_blank">View dataset</a></td>
@@ -86,18 +100,20 @@
 
     <hr>
     <h2>Performed Tabu Searches</h2>
-    <table>
+    <table id="performedTabuSearchesTable" data-table-list class="table-striped table-bordered">
         <thead>
-        <th>Nr.</th>
-        <th>Opt. Objectives</th>
-        <th>Non-Standard Parameters</th>
-        <th>Used Dataset</th>
-        <th>Run timestmap</th>
-        <th>Results</th>
+            <tr scope="col">
+                <th>Nr.</th>
+                <th>Opt. Objectives</th>
+                <th>Non-Standard Parameters</th>
+                <th>Used Dataset</th>
+                <th>Run timestmap</th>
+                <th>Results</th>
+            </tr>
         </thead>
 
         <tr ng-repeat="tabusearch in data.tabusearches">
-            <td>{{tabusearch.nr}}</td>
+            <td scope="row">{{tabusearch.nr}}</td>
             <td>
                 <ol>
                     <li ng-repeat="optObj in tabusearch.optObjective.orderDisplayingNames">{{optObj}}</li>

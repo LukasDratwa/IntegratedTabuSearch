@@ -12,10 +12,20 @@
     <script src="/javascripts/tether.min.js" type="text/javascript"></script>
     <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
     <script src="/javascripts/its-utility.js" type="text/javascript"></script>
+    <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
 
     <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
     <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+    <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#statisticsTable").tablelist();
+            $("#ratiosTables").tablelist();
+            $("#vehiclesTable").tablelist();
+        });
+    </script>
 </head>
 <body ng-controller="viewDataSetController">
 <div class="navbar">
@@ -50,7 +60,7 @@
     <h1>Dataset (Id: {{id}})</h1>
 
     <h2>Statistics</h2>
-    <table>
+    <table id="statisticsTable" data-table-list class="table-striped table-bordered">
         <tr>
             <td>Created on: </td>
             <td>{{dataset.parsedTimestamp}}</td>
@@ -68,17 +78,19 @@
     </table>
 
     <h2>Ratios</h2>
-    <table>
+    <table id="ratiosTables" data-table-list class="table-striped table-bordered">
         <thead>
-        <th>Nr.</th>
-        <th>ID</th>
-        <th>DB ID</th>
-        <th>Prio</th>
-        <th>Ratio</th>
+            <tr>
+                <th scope="col">Nr.</th>
+                <th>ID</th>
+                <th>DB ID</th>
+                <th>Prio</th>
+                <th>Ratio</th>
+            </tr>
         </thead>
 
         <tr ng-repeat="ratio in dataset.ratios">
-            <td>{{ratio.nr}}</td>
+            <td scope="row">{{ratio.nr}}</td>
             <td>{{ratio.ident}}</td>
             <td>{{ratio._id}}</td>
             <td>{{ratio.prio}}</td>
@@ -87,19 +99,21 @@
     </table>
 
     <h2>Vehicles</h2>
-    <table>
+    <table id="vehiclesTable" data-table-list class="table-striped table-bordered">
         <thead>
-        <th>Nr.</th>
-        <th>ID</th>
-        <th>DB ID</th>
-        <th>Date</th>
-        <th>Seq. rank</th>
-        <th>Paint colors</th>
-        <th>Activated features</th>
+            <tr>
+                <th scope="col">Nr.</th>
+                <th>ID</th>
+                <th>DB ID</th>
+                <th>Date</th>
+                <th>Seq. rank</th>
+                <th>Paint colors</th>
+                <th>Activated features</th>
+            </tr>
         </thead>
 
         <tr ng-repeat="vehicle in dataset.vehicles">
-            <td>{{vehicle.nr}}</td>
+            <td scope="row">{{vehicle.nr}}</td>
             <td>{{vehicle.ident}}</td>
             <td>{{vehicle._id}}</td>
             <td>{{vehicle.dateString}}</td>
