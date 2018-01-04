@@ -47,21 +47,67 @@
             }
         });
 
+        function arrayContainsString(string, array) {
+            for(var i in array) {
+                if(array[i] === string) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         var callingCounter = 0;
-        function finishPost(amountOfParameters, payload) {
+        var amountOfParameters = -1;
+        function finishPost(payload) {
             callingCounter++;
 
             if(callingCounter == amountOfParameters) {
                 // All parameters were checked
                 callingCounter = 0;
+                amountOfParameters = -1;
 
-                $.post("/tabusearch", payload, function(data) {
-                    console.log("Created TabuSearchSet " , data);
+                setTimeout(function() {
+                    // Remove the standard parameters for which the user has entered a new custom value
+                    var parameterIdsToIgnore = [];
+                    for(var x in payload.parameters) {
+                        var param = payload.parameters[x];
 
-                    var url = "/tabusearch#?id=" + data._id;
-                    $(location).attr("href", url);
-                    window.setTimeout('location.reload()', 1000);
-                }, "json");
+                        if(! param.standard) {
+                            // Find index of the same standard param
+                            var indexToDelte = -1;
+                            for(var i in payload.parameters) {
+                                var sParam = payload.parameters[i];
+
+                                if(sParam.standard && sParam.ident === param.ident) {
+                                    parameterIdsToIgnore.push(sParam._id);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    var newParamIdList = [];
+                    for(var i in payload.parameters) {
+                        var param = payload.parameters[i];
+
+                        if(! arrayContainsString(param._id, parameterIdsToIgnore)) {
+                            if(! arrayContainsString(param._id, newParamIdList)) {
+                                newParamIdList.push(param._id);
+                            }
+                        }
+                    }
+                    payload.parameterIds = [];
+                    payload.parameterIds = newParamIdList;
+
+                    $.post("/tabusearch", payload, function(data) {
+                        console.log("Created TabuSearchSet " , data);
+
+                        var url = "/tabusearch#?id=" + data._id;
+                        $(location).attr("href", url);
+                        window.setTimeout('location.reload()', 500);
+                    }, "json");
+                }, 1000);
             }
         }
 
@@ -69,10 +115,21 @@
             var payload = {
                 dataSetId: $("#dropwdownDatasetSelection").find(":selected").get(0).value,
                 parameterIds: [],
+                parameters: [],
                 optimizationObjectiveOrder: $("#sortable").sortable("toArray")
             };
 
             $.get("/standardparameters", function(standardparameters) {
+                // Count parameters
+                $(".parameter").each(function() {
+                    var sParam = getStandardParameterWithIdent(standardparameters, $(this).get(0).id);
+                    amountOfParameters = standardparameters.length;
+
+                    if(sParam.value != $(this).get(0).value) {
+                        amountOfParameters++;
+                    };
+                });
+
                 $(".parameter").each(function() {
                     var sParam = getStandardParameterWithIdent(standardparameters, $(this).get(0).id);
 
@@ -87,11 +144,13 @@
 
                         $.post("/parameter", newParameter, function(data) {
                             payload.parameterIds.push(data._id);
-                            finishPost(standardparameters.length, payload);
+                            payload.parameters.push(data);
+                            finishPost(payload);
                         }, "json");
                     } else {
                         payload.parameterIds.push(sParam._id);
-                        finishPost(standardparameters.length, payload);
+                        payload.parameters.push(sParam);
+                        finishPost(payload);
                     }
                 });
             });
