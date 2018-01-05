@@ -1,136 +1,116 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="de" ng-app="integratedTabuSearchApp">
-<head>
-    <meta charset="utf-8">
-    <title>ITS - Dataoverview</title>
-    <link rel="shortcut icon" href="/images/or-favicon.png"/>
+    <head>
+        <meta charset="utf-8">
+        <title>ITS - Dataoverview</title>
+        <link rel="shortcut icon" href="/images/or-favicon.png"/>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
-    <script src="/javascripts/angular.min-1.5.6.js"></script>
-    <script src="/javascripts/controllers/dataOverviewController.js"></script>
-    <script src="/javascripts/tether.min.js" type="text/javascript"></script>
-    <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
-    <script src="/javascripts/its-utility.js" type="text/javascript"></script>
-    <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+        <script src="/javascripts/angular.min-1.5.6.js"></script>
+        <script src="/javascripts/controllers/dataOverviewController.js"></script>
+        <script src="/javascripts/tether.min.js" type="text/javascript"></script>
+        <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/javascripts/its-utility.js" type="text/javascript"></script>
+        <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
 
-    <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
-    <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
-    <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+        <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
+        <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+        <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
+        <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#selectedParameters").tablelist();
-            $("#datasetsTable").tablelist();
-            $("#performedTabuSearchesTable").tablelist();
-        });
-    </script>
-</head>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#selectedParameters").tablelist();
+                $("#datasetsTable").tablelist();
+                $("#performedTabuSearchesTable").tablelist();
+            });
+        </script>
+    </head>
 
-<body ng-controller="dataOverviewController">
-<div class="navbar">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+    <body ng-controller="dataOverviewController">
+        <div class="topnav" id="customNavbar">
+            <a href="/">Home</a>
+            <a href="/dataupload">Datenupload</a>
+            <a href="/tabusearch">ITS</a>
+            <a href="/overviewdata">Datenüberblick</a>
+            <a href="javascript:void(0);" class="icon" onclick="toggleNavbarClass('customNavbar')">&#9776;</a>
         </div>
-        <div class="collapse navbar-collapse" id="navbar-ex-collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="/">Home</a>
-                </li>
-                <li>
-                    <a href="/dataupload">Datenupload</a>
-                </li>
-                <li>
-                    <a href="/tabusearch">ITS</a>
-                </li>
-                <li>
-                    <a href="/overviewdata">Datenüberblick</a>
-                </li>
-            </ul>
+
+        <div class="container">
+            <h1>Überblick der gespeicherten Datensätze</h1>
+
+            <hr>
+            <h2>Serverseitige Standardwerte der Parameter</h2>
+            <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
+            <table id="selectedParameters" data-table-list class="table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th>Wert</th>
+                        <th>Beschreibung</th>
+                    </tr>
+                </thead>
+                <tr ng-repeat="param in data.standardParameters">
+                    <td scope="row">{{param.name}}</td>
+                    <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                    <td>{{param.description}}</td>
+                </tr>
+            </table>
+            <hr>
+
+            <h2>Gespeicherte Datensätze</h2>
+            <table id="datasetsTable" data-table-list class="table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Nr.</th>
+                        <th>Beschreibung</th>
+                        <th>Erstellungszeitstempel</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+
+                <tr ng-repeat="datasetId in data.datasetIds">
+                    <td scope="row">{{datasetId.nr}}</td>
+                    <td>{{datasetId.description}}</td>
+                    <td>{{datasetId.parsedTimestamp}}</td>
+                    <td><a href="/viewdataset#?id={{datasetId._id}}" target="_blank">View dataset</a></td>
+                </tr>
+            </table>
+
+            <hr>
+            <h2>Ausgeführte Tabu Searches</h2>
+            <table id="performedTabuSearchesTable" data-table-list class="table-striped table-bordered">
+                <thead>
+                    <tr scope="col">
+                        <th>Nr.</th>
+                        <th>Opt. Objectives</th>
+                        <th>Geänderte Parameterwerte</th>
+                        <th>Verwendeter Datensatz</th>
+                        <th>Ausführungszeitstempel</th>
+                        <th>Ergebnisse</th>
+                        <th>Erneute Ausführung</th>
+                    </tr>
+                </thead>
+
+                <tr ng-repeat="tabusearch in data.tabusearches">
+                    <td scope="row">{{tabusearch.nr}}</td>
+                    <td>
+                        <ol>
+                            <li ng-repeat="optObj in tabusearch.optObjective.orderDisplayingNames">{{optObj}}</li>
+                        </ol>
+                    </td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="param in tabusearch.parameters" ng-hide="param.standard">{{param.name}} = {{param.value}}</li>
+                        </ul>
+                    </td>
+                    <td><a href="/viewdataset#?id={{tabusearch.dataset}}" target="_blank">View dataset</a></td>
+                    <td>{{tabusearch.parsedTimestamp}}</td>
+                    <td>TODO Link to results</td>
+                    <td><a href="/tabusearch#?id={{tabusearch._id}}" target="_blank">Link</a></td>
+                </tr>
+            </table>
         </div>
-    </div>
-</div>
-<div class="container">
-    <h1>Überblick der gespeicherten Datensätze</h1>
-
-    <hr>
-    <h2>Serverseitige Standardwerte der Parameter</h2>
-    <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-    <table id="selectedParameters" data-table-list class="table-striped table-bordered">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th>Wert</th>
-                <th>Beschreibung</th>
-            </tr>
-        </thead>
-        <tr ng-repeat="param in data.standardParameters">
-            <td scope="row">{{param.name}}</td>
-            <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
-            <td>{{param.description}}</td>
-        </tr>
-    </table>
-    <hr>
-
-    <h2>Gespeicherte Datensätze</h2>
-    <table id="datasetsTable" data-table-list class="table-striped table-bordered">
-        <thead>
-            <tr>
-                <th scope="col">Nr.</th>
-                <th>Beschreibung</th>
-                <th>Erstellungszeitstempel</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-
-        <tr ng-repeat="datasetId in data.datasetIds">
-            <td scope="row">{{datasetId.nr}}</td>
-            <td>{{datasetId.description}}</td>
-            <td>{{datasetId.parsedTimestamp}}</td>
-            <td><a href="/viewdataset#?id={{datasetId._id}}" target="_blank">View dataset</a></td>
-        </tr>
-    </table>
-
-    <hr>
-    <h2>Ausgeführte Tabu Searches</h2>
-    <table id="performedTabuSearchesTable" data-table-list class="table-striped table-bordered">
-        <thead>
-            <tr scope="col">
-                <th>Nr.</th>
-                <th>Opt. Objectives</th>
-                <th>Geänderte Parameterwerte</th>
-                <th>Verwendeter Datensatz</th>
-                <th>Ausführungszeitstempel</th>
-                <th>Ergebnisse</th>
-                <th>Erneute Ausführung</th>
-            </tr>
-        </thead>
-
-        <tr ng-repeat="tabusearch in data.tabusearches">
-            <td scope="row">{{tabusearch.nr}}</td>
-            <td>
-                <ol>
-                    <li ng-repeat="optObj in tabusearch.optObjective.orderDisplayingNames">{{optObj}}</li>
-                </ol>
-            </td>
-            <td>
-                <ul>
-                    <li ng-repeat="param in tabusearch.parameters" ng-hide="param.standard">{{param.name}} = {{param.value}}</li>
-                </ul>
-            </td>
-            <td><a href="/viewdataset#?id={{tabusearch.dataset}}" target="_blank">View dataset</a></td>
-            <td>{{tabusearch.parsedTimestamp}}</td>
-            <td>TODO Link to results</td>
-            <td><a href="/tabusearch#?id={{tabusearch._id}}" target="_blank">Link</a></td>
-        </tr>
-    </table>
-</div>
-</body>
+    </body>
 </html>

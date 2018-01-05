@@ -24,68 +24,49 @@
           });
       </script>
   </head>
+
   <body>
-  <div class="navbar">
-      <div class="container">
-          <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-          </div>
-          <div class="collapse navbar-collapse" id="navbar-ex-collapse">
-              <ul class="nav navbar-nav navbar-right">
-                  <li>
-                      <a href="/">Home</a>
-                  </li>
-                  <li>
-                      <a href="/dataupload">Datenupload</a>
-                  </li>
-                  <li>
-                      <a href="/tabusearch">ITS</a>
-                  </li>
-                  <li>
-                      <a href="/overviewdata">Datenüberblick</a>
-                  </li>
-              </ul>
-          </div>
+      <div class="topnav" id="customNavbar">
+          <a href="/">Home</a>
+          <a href="/dataupload">Datenupload</a>
+          <a href="/tabusearch">ITS</a>
+          <a href="/overviewdata">Datenüberblick</a>
+          <a href="javascript:void(0);" class="icon" onclick="toggleNavbarClass('customNavbar')">&#9776;</a>
       </div>
-  </div>
-  <div class="container">
-      <h1>Hochladen der Daten</h1>
-      <p>Bis jetzt ist es nur möglich Daten gleichen Format wie bei der <a href="http://challenge.roadef.org/2005/en/">ROADEF 2005 Herausforderung</a> hochzuladen
-       Diese müssen im CSV-Format, getrennt mit Semikolons in einzelnen Textdateien gespeichert sein. Beispieldaten: <a href="http://challenge.roadef.org/2005/files/Instances_set_A.zip">
-              Downloadlink</a></p>
-      <!--<p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>-->
 
-      <h2>ROADEF:</h2>
-      <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
-          <table id="uploadTable" data-table-list class="table-striped table-bordered">
-              <!--<tr>
-                  <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
-                  <td><input type="file" name="optimizationObjectives"><br></td>
-              </tr>
+      <div class="container">
+          <h1>Hochladen der Daten</h1>
+          <p>Bis jetzt ist es nur möglich Daten gleichen Format wie bei der <a href="http://challenge.roadef.org/2005/en/">ROADEF 2005 Herausforderung</a> hochzuladen
+           Diese müssen im CSV-Format, getrennt mit Semikolons in einzelnen Textdateien gespeichert sein. Beispieldaten: <a href="http://challenge.roadef.org/2005/files/Instances_set_A.zip">
+                  Downloadlink</a></p>
+          <!--<p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>-->
 
-              <tr>
-                  <td><label for="paintBatchLimit">Paint batch limit:</label></td>
-                  <td><input type="file" name="paintBatchLimit"><br></td>
-              </tr>-->
+          <h2>ROADEF:</h2>
+          <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
+              <table id="uploadTable" data-table-list class="table-striped table-bordered">
+                  <!--<tr>
+                      <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
+                      <td><input type="file" name="optimizationObjectives"><br></td>
+                  </tr>
 
-              <tr>
-                  <td><label for="ratios">Ratios:</label></td>
-                  <td><input type="file" name="ratios"><br></td>
-              </tr>
+                  <tr>
+                      <td><label for="paintBatchLimit">Paint batch limit:</label></td>
+                      <td><input type="file" name="paintBatchLimit"><br></td>
+                  </tr>-->
 
-              <tr>
-                  <td><label for="vehicles">Fahrzeuge:</label></td>
-                  <td><input type="file" name="vehicles"><br></td>
-              </tr>
-          </table>
+                  <tr>
+                      <td><label for="ratios">Ratios:</label></td>
+                      <td><input type="file" name="ratios"><br></td>
+                  </tr>
 
-          <input type="submit">
-      </form>
-  </div>
+                  <tr>
+                      <td><label for="vehicles">Fahrzeuge:</label></td>
+                      <td><input type="file" name="vehicles"><br></td>
+                  </tr>
+              </table>
+
+              <input type="submit">
+          </form>
+      </div>
   </body>
 </html>
