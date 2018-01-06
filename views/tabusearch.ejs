@@ -7,9 +7,10 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
-        <script src="/javascripts/angular.min-1.5.6.js"></script>
-        <script src="/javascripts/controllers/integratedTabuSearchController.js"></script>
-        <script src="/javascripts/jquery-ui.min.js"></script>
+        <script src="/javascripts/notify.min.js" type="text/javascript"></script>
+        <script src="/javascripts/angular.min-1.5.6.js" type="text/javascript"></script>
+        <script src="/javascripts/controllers/integratedTabuSearchController.js" type="text/javascript"></script>
+        <script src="/javascripts/jquery-ui.min.js" type="text/javascript"></script>
         <script src="/javascripts/tether.min.js" type="text/javascript"></script>
         <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
         <script src="/javascripts/its-utility.js" type="text/javascript"></script>
@@ -188,7 +189,7 @@
         <div class="topnav" id="customNavbar">
             <a href="/">Home</a>
             <a href="/dataupload">Datenupload</a>
-            <a href="/tabusearch">ITS</a>
+            <a href="javascript:window.location = '/tabusearch'">ITS</a>
             <a href="/overviewdata">Datenüberblick</a>
             <a href="javascript:void(0);" class="icon" onclick="toggleNavbarClass('customNavbar')">&#9776;</a>
         </div>
@@ -226,25 +227,29 @@
                 <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Ausgewählter Datensatz</a>
             </div>
 
+            <!-- ################################# -->
             <!-- Site shown when run is configured -->
+            <!-- ################################# -->
             <div ng-show="!performTabuSearch">
                 <h2>Introduction TODO</h2>
 
                 <h2>1. Wahl der Optimization Objectives</h2>
                 <ul id="sortable" style="width: 100%;">
-                    <li class="ui-state-default optObjOrder" id="high_priority">
-                        <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                        <p class="optObjOrderText">High priority ratio constraints</p>
-                    </li>
-
                     <li class="ui-state-default optObjOrder" id="paint_color_batches">
                         <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
                         <p class="optObjOrderText">Paint color batches</p>
                     </li>
 
+                    <li class="ui-state-default optObjOrder" id="high_priority" >
+                        <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
+                        <p class="optObjOrderText">High priority ratio constraints</p>
+                        <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('high_priority')"></span>
+                    </li>
+
                     <li class="ui-state-default optObjOrder" id="low_priority">
                         <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
                         <p class="optObjOrderText">Low priority ratio constraints</p>
+                        <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('low_priority')"></span>
                     </li>
                 </ul>
 

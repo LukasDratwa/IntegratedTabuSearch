@@ -16,3 +16,11 @@ var toggleNavbarClass = function(id) {
         x.className = "topnav";
     }
 };
+
+var removeOptObj = function(id) {
+    $("#" + id).remove();
+    $(".optObjOrderIconDelte").remove();
+
+    var otherId = id === "low_priority" ? "high_priority" : "low_priority";
+    $($("#" + otherId + " p")[0]).text("High & low priority constraints")
+};

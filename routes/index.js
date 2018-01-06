@@ -239,20 +239,37 @@ router.post('/tabusearch', function(req, res) {
         orderArray: req.body.optimizationObjectiveOrder,
         orderDisplayingNames: []
     });
-    for(var i in req.body.optimizationObjectiveOrder) {
-        var optObj = req.body.optimizationObjectiveOrder[i];
 
-        if(optObj == "high_priority") {
-            optObjective.high_priority = i;
-            optObjective.orderDisplayingNames.push("High priority ratio constraints");
-        } else if(optObj == "low_priority") {
-            optObjective.low_priority = i;
-            optObjective.orderDisplayingNames.push("Low priority ratio constraints");
-        } else {
-            optObjective.paint_color_batches = i;
-            optObjective.orderDisplayingNames.push("Paint color batches");
+    if(req.body.optimizationObjectiveOrder.length == 3) {
+        for(var i in req.body.optimizationObjectiveOrder) {
+            var optObj = req.body.optimizationObjectiveOrder[i];
+
+            if(optObj === "high_priority") {
+                optObjective.high_priority = i;
+                optObjective.orderDisplayingNames.push("High priority ratio constraints");
+            } else if(optObj === "low_priority") {
+                optObjective.low_priority = i;
+                optObjective.orderDisplayingNames.push("Low priority ratio constraints");
+            } else {
+                optObjective.paint_color_batches = i;
+                optObjective.orderDisplayingNames.push("Paint color batches");
+            }
+        }
+    } else {
+        // Low and high priority objectives were merged by the user
+        for(var i in req.body.optimizationObjectiveOrder) {
+            var optObj = req.body.optimizationObjectiveOrder[i];
+
+            if(optObj === "high_priority" || optObj === "low_priority") {
+                optObjective.high_priority = i;
+                optObjective.orderDisplayingNames.push("High & low priority ratio constraints");
+            } else {
+                optObjective.paint_color_batches = i;
+                optObjective.orderDisplayingNames.push("Paint color batches");
+            }
         }
     }
+
     optObjective.save(function(err, doc) {
         tabuSearch.optObjective = doc;
         saveTabuSearch(tabuSearch, res);
