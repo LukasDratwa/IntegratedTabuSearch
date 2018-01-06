@@ -5,12 +5,22 @@ function ParameterSet(parameters) {
 }
 
 function Solution(vehicles) {
-    this.vehicles = vehicles;
+    this.vehicles = cloneVehicles(vehicles);
 
     this.actColourChanges = 0;
     this.actColourViolations = 0;
     this.actLowPrioViolations = 0;
     this.actHighPrioViolations = 0;
+
+    this.updateActViolations = function() {
+        // 1. Count colour changes
+
+        // 2. Calc colour violations
+
+        // 3. Calc low priority violations
+
+        // 4. Calc high priority violations
+    };
 
     this.obligatoryUpdateAfterEveryMove = function() {
         // 1. Every car should know how big their colour-group is
@@ -55,6 +65,7 @@ function Solution(vehicles) {
         }
         // EOF 1.
     };
+    this.obligatoryUpdateAfterEveryMove();
 
     this.insertVehicle = function(index, vehicle) {
         this.vehicles.splice(index, 0, vehicle);
@@ -84,6 +95,45 @@ function Iteration() {
 
 }
 
+function cloneActivatedFeatures(activatedFeatures) {
+    var result = [];
+
+    for(var i in activatedFeatures) {
+        var f = activatedFeatures[i];
+
+        result.push({
+            dataSetRef: f.dataSetRef,
+            ident: f.ident,
+            prio: f.prio,
+            ratio: f.ratio,
+            _id: f._id
+        });
+    }
+
+    return result;
+}
+
+function cloneVehicles(vehicles) {
+    var result = [];
+
+    for(var i in vehicles) {
+        var v = vehicles[i];
+
+        result.push({
+            activatedFeatures: cloneActivatedFeatures(v.activatedFeatures),
+            dataSetRef: v.dataSetRef,
+            dateString: v.dateString,
+            ident: v.ident,
+            orderNr: v.orderNr,
+            paintColor: v.paintColor,
+            seqRank: v.seqRank,
+            _id: v._id
+        });
+    }
+
+    return result;
+}
+
 tabuController.controller("integratedTabuSearchController", function ($scope, $http, $location) {
     function performITS(data) {
         // !! Sort the vehicles
@@ -99,9 +149,10 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
         console.log("Start ITS: " , data);
 
-        var initialSoulution = new Solution(data.dataset.vehicles);
-        initialSoulution.obligatoryUpdateAfterEveryMove();
-        console.log(initialSoulution);
+        var s1 = new Solution(data.dataset.vehicles);
+        var s2 = new Solution(data.dataset.vehicles);
+        s2.vehicles[0] = {};
+        console.log(s1);
 
         $scope.standardParameters = data.parameters;
         $scope.dataset = data.dataset;

@@ -235,6 +235,7 @@ router.post('/tabusearch', function(req, res) {
     var optObjective = new OptimizationObjective({
         high_priority: 1000,
         low_priority: 1000,
+        high_low_priority: 1000,
         paint_color_batches: 1000,
         orderArray: req.body.optimizationObjectiveOrder,
         orderDisplayingNames: []
@@ -261,7 +262,7 @@ router.post('/tabusearch', function(req, res) {
             var optObj = req.body.optimizationObjectiveOrder[i];
 
             if(optObj === "high_priority" || optObj === "low_priority") {
-                optObjective.high_priority = i;
+                optObjective.high_low_priority = i;
                 optObjective.orderDisplayingNames.push("High & low priority ratio constraints");
             } else {
                 optObjective.paint_color_batches = i;
