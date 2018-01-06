@@ -2,20 +2,79 @@ var tabuController = angular.module('integratedTabuSearchApp', []);
 
 function ParameterSet(parameters) {
     this.parameters = parameters;
+
+    this.getParamWithIdent = function(ident) {
+        for(var i in this.parameters) {
+            if(this.parameters[i].ident === ident) {
+                return this.parameters[i];
+            }
+        }
+
+        return null;
+    };
 }
 
-function Solution(vehicles) {
+function Solution(vehicles, parameters) {
     this.vehicles = cloneVehicles(vehicles);
+    this.parameterSet = new ParameterSet(parameters);
 
-    this.actColourChanges = 0;
-    this.actColourViolations = 0;
+    this.actColorChanges = 0;
+    this.actColorViolations = 0;
     this.actLowPrioViolations = 0;
     this.actHighPrioViolations = 0;
 
-    this.updateActViolations = function() {
-        // 1. Count colour changes
+    this.getNextPaintGroupVehicle = function(vehicle) {
+        var foundParamVehicle = false;
 
-        // 2. Calc colour violations
+        for(var i in this.vehicles) {
+            var v = this.vehicles[i];
+
+            if(v._id === vehicle._id) {
+                foundParamVehicle = true;
+            }
+
+            if(foundParamVehicle && v.paintColor != vehicle.paintColor) {
+                return v;
+            }
+        }
+
+        return null;
+    };
+
+    this.updateActViolations = function() {
+        // 1. Count color changes
+        var lastColor = -1;
+        for(var i in this.vehicles) {
+            var v = vehicles[i];
+
+            if(lastColor == -1) {
+                lastColor = v.paintColor;
+                continue;
+            }
+
+            if(v.paintColor != lastColor) {
+                this.actColorChanges++;
+            }
+
+            lastColor = v.paintColor;
+        }
+
+        // 2. Calc color violations
+        var paramLota = this.parameterSet.getParamWithIdent("l");
+        var nextPaintGroupVehicle = this.vehicles[0];
+        var counterPaintGroups = 0;
+        while(nextPaintGroupVehicle != null) {
+            counterPaintGroups++;
+            var restPaintGroupSize = nextPaintGroupVehicle.sizePaintGroup;
+
+            while(restPaintGroupSize > paramLota.value) {
+                restPaintGroupSize = restPaintGroupSize - paramLota.value;
+                this.actColorViolations++;
+            }
+
+            nextPaintGroupVehicle = this.getNextPaintGroupVehicle(nextPaintGroupVehicle);
+        }
+        // console.log("Checked " + counterPaintGroups + " paint groups");
 
         // 3. Calc low priority violations
 
@@ -45,6 +104,9 @@ function Solution(vehicles) {
                 // Special case that the next car will be too in another colour
                 if(i < this.vehicles.length-1 && this.vehicles[parseInt(i)+1].paintColor != actPaintGroupColour) {
                     v.sizePaintGroup = 1;
+                } else if(i < this.vehicles.length-1 && this.vehicles[parseInt(i)+1].paintColor == actPaintGroupColour) {
+                    // Fix that the first car of every paint group wasn't updated
+                    carsToUpdate.push(i);
                 }
 
                 // Special case that the last car is alone in its paint group
@@ -66,6 +128,7 @@ function Solution(vehicles) {
         // EOF 1.
     };
     this.obligatoryUpdateAfterEveryMove();
+    this.updateActViolations();
 
     this.insertVehicle = function(index, vehicle) {
         this.vehicles.splice(index, 0, vehicle);
@@ -121,13 +184,13 @@ function cloneVehicles(vehicles) {
 
         result.push({
             activatedFeatures: cloneActivatedFeatures(v.activatedFeatures),
-            dataSetRef: v.dataSetRef,
             dateString: v.dateString,
             ident: v.ident,
             orderNr: v.orderNr,
             paintColor: v.paintColor,
             seqRank: v.seqRank,
-            _id: v._id
+            _id: v._id,
+            dataSetRef: v.dataSetRef
         });
     }
 
@@ -149,9 +212,8 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
         console.log("Start ITS: " , data);
 
-        var s1 = new Solution(data.dataset.vehicles);
-        var s2 = new Solution(data.dataset.vehicles);
-        s2.vehicles[0] = {};
+        var s1 = new Solution(data.dataset.vehicles, data.parameters);
+        var s2 = new Solution(data.dataset.vehicles, data.parameters);
         console.log(s1);
 
         $scope.standardParameters = data.parameters;
