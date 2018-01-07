@@ -248,19 +248,31 @@ function Solution(vehicles, parameters, ratios) {
         }
         // EOF 1.
 
-
+        this.updateActViolations();
         console.log("Performed obl. update after every move", this);
     };
     this.obligatoryUpdateAfterEveryMove();
-    this.updateActViolations();
+
+    this.addMovingProhibition = function(vehicle, indexTo) {
+        if(typeof vehicle.movingProhibition === "undefined") {
+            vehicle.movingProhibition = [];
+        }
+
+        vehicle.movingProhibition.push(new MovingProhibition(indexTo, this.parameterSet.getParamWithIdent("o").value));
+    };
 
     this.insertVehicle = function(index, vehicle) {
+        this.addMovingProhibition(vehicle, index);
+
         this.vehicles.splice(index, 0, vehicle);
         this.obligatoryUpdateAfterEveryMove();
         return this;
     };
 
     this.swapVehicles = function(firstIndex, secondIndex) {
+        this.addMovingProhibition(this.vehicles[firstIndex], secondIndex);
+        this.addMovingProhibition(this.vehicles[secondIndex], firstIndex);
+
         var tmpVehicle = this.vehicles[firstIndex];
         this.vehicles[firstIndex] = this.vehicles[secondIndex];
         this.vehicles[secondIndex] = this.vehicles[firstIndex];
@@ -278,6 +290,11 @@ function Solution(vehicles, parameters, ratios) {
 
         return null;
     };
+}
+
+function MovingProhibition(toIndex, theta) {
+    this.toIndex = toIndex;
+    this.restTheta = theta;
 }
 
 function Iteration() {
@@ -394,6 +411,17 @@ function getNeighbourhood(s, iterationCounter) {
                 // Re-assign random number
                 vehicleI.lockArray[i] = getRandomNumber(0, eta - 1);
                 // console.log("Would look at: " + i + " " + j);
+            }
+        }
+
+        // Reduce the moving prohibition of every car
+        if(typeof vehicleI !== "undefined") {
+            for(var z in vehicleI.movingProhibition) {
+                var movingP = vehicleI.movingProhibition[z];
+
+                if(movingP.restTheta >= 1) {
+                    movingP.restTheta--;
+                }
             }
         }
     }
