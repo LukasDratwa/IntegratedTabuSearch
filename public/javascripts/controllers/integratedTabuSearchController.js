@@ -14,14 +14,28 @@ function ParameterSet(parameters) {
     };
 }
 
-function Solution(vehicles, parameters) {
+function RatioSet(ratios) {
+    this.ratios = ratios;
+
+    this.getRatioIntValues = function(ratio) {
+        var result = [];
+        var splitted = ratio.ratio.split("/");
+        result.push(parseInt(splitted[0]));
+        result.push(parseInt(splitted[1]));
+
+        return result;
+    };
+}
+
+function Solution(vehicles, parameters, ratios) {
     this.vehicles = cloneVehicles(vehicles);
     this.parameterSet = new ParameterSet(parameters);
+    this.ratioSet = new RatioSet(ratios);
 
     this.actColorChanges = 0;
     this.actColorViolations = 0;
-    this.actLowPrioViolations = 0;
-    this.actHighPrioViolations = 0;
+    this.actLowPrioViolations = [];
+    this.actHighPrioViolations = [];
 
     this.getNextPaintGroupVehicle = function(vehicle) {
         var foundParamVehicle = false;
@@ -39,6 +53,23 @@ function Solution(vehicles, parameters) {
         }
 
         return null;
+    };
+
+    this.getSubSeq = function(startIndex, length) {
+        var result = [];
+
+        for(var i=startIndex; i<startIndex+length; i++) {
+            if(result.length == length) {
+                break;
+            }
+
+            if(i <= this.vehicles.length-1) {
+                var vehicle = this.vehicles[i];
+                result.push(vehicle);
+            }
+        }
+
+        return result;
     };
 
     this.updateActViolations = function() {
@@ -76,9 +107,17 @@ function Solution(vehicles, parameters) {
         }
         // console.log("Checked " + counterPaintGroups + " paint groups");
 
-        // 3. Calc low priority violations
+        // 3. Calc low priority violations && 4. Calc high priority violations
+        for(var i in this.ratioSet.ratios) {
+            var ratio = this.ratioSet.ratios[i];
+            var ratioValues = this.ratioSet.getRatioIntValues(ratio);
 
-        // 4. Calc high priority violations
+            for(var x in this.vehicles) {
+                var vehicle = this.vehicles[x];
+
+                var subSequence = this.getSubSeq(x, ratioValues[1]);
+            }
+        }
     };
 
     this.obligatoryUpdateAfterEveryMove = function() {
@@ -212,8 +251,8 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
         console.log("Start ITS: " , data);
 
-        var s1 = new Solution(data.dataset.vehicles, data.parameters);
-        var s2 = new Solution(data.dataset.vehicles, data.parameters);
+        var s1 = new Solution(data.dataset.vehicles, data.parameters, data.dataset.ratios);
+        var s2 = new Solution(data.dataset.vehicles, data.parameters, data.dataset.ratios);
         console.log(s1);
 
         $scope.standardParameters = data.parameters;
