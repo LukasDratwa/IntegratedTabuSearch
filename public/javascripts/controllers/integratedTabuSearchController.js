@@ -254,11 +254,50 @@ function Solution(vehicles, parameters, ratios) {
     this.obligatoryUpdateAfterEveryMove();
 
     this.addMovingProhibition = function(vehicle, indexTo) {
-        if(typeof vehicle.movingProhibition === "undefined") {
-            vehicle.movingProhibition = [];
+        if(typeof vehicle.movingProhibitions === "undefined") {
+            vehicle.movingProhibitions = [];
         }
 
-        vehicle.movingProhibition.push(new MovingProhibition(indexTo, this.parameterSet.getParamWithIdent("o").value));
+        vehicle.movingProhibitions.push(new MovingProhibition(indexTo, this.parameterSet.getParamWithIdent("o").value));
+    };
+
+    this.isActiveMovingProhibitionForIndex = function(index, movingProhibitions) {
+        for(var i in movingProhibitions) {
+            var mP = movingProhibitions[i];
+
+            if(movingProhibitions.toIndex == index && movingProhibitions.restTheta > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    this.isInsertAllowed = function(index, vehicle) {
+        if(index == this.vehicles.indexOf(vehicle)) {
+            return false;
+        }
+
+        if(this.isActiveMovingProhibitionForIndex(index, vehicle.movingProhibitions)) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
+    this.isSwapAllowed = function(firstIndex, secondIndex) {
+        if(firstIndex == secondIndex) {
+            return false;
+        }
+
+        var firstV = this.vehicles[firstIndex];
+        var secondV = this.vehicles[secondIndex];
+
+        if(this.isInsertAllowed(secondIndex, firstV) && this.isInsertAllowed(firstIndex, secondV)) {
+            return true;
+        } else {
+            return false;
+        }
     };
 
     this.insertVehicle = function(index, vehicle) {
@@ -368,7 +407,9 @@ function costFunctionG(s, numOfWeightSet) {
         zetaValue = zetaValue / 2;
     }
 
-    return costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations);
+    var result = costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations);
+
+    return result;
 }
 
 /**
@@ -410,23 +451,28 @@ function getNeighbourhood(s, iterationCounter) {
             if(i != j && vehicleI.lockArray[j] == iterationCounter % eta) {
                 // Re-assign random number
                 vehicleI.lockArray[i] = getRandomNumber(0, eta - 1);
-                // console.log("Would look at: " + i + " " + j);
+
+                // Generate neighbour solution
+                // TODO Always do both moving methods if possible?
+                console.log("Would look at: " + i + " " + j);
+
+                // Only swap a pair if you improve the current solution
             }
         }
 
         // Reduce the moving prohibition of every car
         if(typeof vehicleI !== "undefined") {
-            for(var z in vehicleI.movingProhibition) {
-                var movingP = vehicleI.movingProhibition[z];
+            for(var z in vehicleI.movingProhibitions) {
+                var movingP = vehicleI.movingProhibitions[z];
 
-                if(movingP.restTheta >= 1) {
+                if(movingP.restTheta > 1) {
                     movingP.restTheta--;
+                } else {
+                    vehicleI.movingProhibitions.splice(z, 1); // FIXME could cause errors?
                 }
             }
         }
     }
-
-    // Only swap a pair if you improve the current solution
 
     /* Re-Inserting into previous position is forbidden for o (Theta) iterations
     * --> If swapped, re-inserting is forbidden either (of both cars in both old positions)
