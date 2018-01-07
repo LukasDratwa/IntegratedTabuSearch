@@ -16,22 +16,64 @@
       "value": 0
     },
     {
-      "ident": "a",
-      "name": "Alpha (a)",
+      "ident": "a1",
+      "name": "Alpha (a) 1",
       "description": "Weight colour changes.",
       "type": "Integer",
       "value": 1000000
     },
     {
-      "ident": "b",
-      "name": "Beta (b)",
+      "ident": "b1",
+      "name": "Beta (b) 1",
       "description": "Weight for the number of PRC violations.",
       "type": "Integer",
       "value": 1000
     },
     {
-      "ident": "y",
-      "name": "Gamma (y)",
+      "ident": "y1",
+      "name": "Gamma (y) 1",
+      "description": "Weight for the number of NPRC violations.",
+      "type": "Integer",
+      "value": 1
+    },
+    {
+      "ident": "a2",
+      "name": "Alpha (a) 2",
+      "description": "Weight colour changes.",
+      "type": "Integer",
+      "value": 10000
+    },
+    {
+      "ident": "b2",
+      "name": "Beta (b) 2",
+      "description": "Weight for the number of PRC violations.",
+      "type": "Integer",
+      "value": 100
+    },
+    {
+      "ident": "y2",
+      "name": "Gamma (y) 2",
+      "description": "Weight for the number of NPRC violations.",
+      "type": "Integer",
+      "value": 1
+    },
+    {
+      "ident": "a3",
+      "name": "Alpha (a) 3",
+      "description": "Weight colour changes.",
+      "type": "Integer",
+      "value": 10000
+    },
+    {
+      "ident": "b3",
+      "name": "Beta (b) 3",
+      "description": "Weight for the number of PRC violations.",
+      "type": "Integer",
+      "value": 10000
+    },
+    {
+      "ident": "y3",
+      "name": "Gamma (y) 3",
       "description": "Weight for the number of NPRC violations.",
       "type": "Integer",
       "value": 1

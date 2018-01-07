@@ -24,6 +24,37 @@ function ParameterSet(parameters) {
 
         return null;
     };
+
+    this.getWeightSet = function(number) {
+        if(number < 1 || number > 3) {
+            console.err("The requested weight set should be in [1, 3]!");
+        }
+
+        var result = [];
+
+        switch(number) {
+            case 3:
+                result.push(this.getParamWithIdent("a1"));
+                result.push(this.getParamWithIdent("b1"));
+                result.push(this.getParamWithIdent("y1"));
+                break;
+
+            case 2:
+                result.push(this.getParamWithIdent("a2"));
+                result.push(this.getParamWithIdent("b2"));
+                result.push(this.getParamWithIdent("y2"));
+                break;
+
+            default:
+            case 1:
+                result.push(this.getParamWithIdent("a3"));
+                result.push(this.getParamWithIdent("b3"));
+                result.push(this.getParamWithIdent("y3"));
+                break;
+        }
+
+        return result;
+    }
 }
 
 function RatioSet(ratios) {
@@ -292,16 +323,35 @@ function cloneVehicles(vehicles) {
     return result;
 }
 
-function costFunctionG(s) {
+function costFunctionF(s, numOfWeightSet) {
+    // f(s) = a * c(s) + b * FOR EVERY r: dr(s) + y * FOR EVERY r: dr(s)
+    // ------> c(s) = number of colour changes; dr(s) = number of constraint violations
+    var weightSet = s.parameterSet.getWeightSet(numOfWeightSet);
+    var alpha = weightSet[0].value;
+    var beta = weightSet[1].value;
+    var gamma = weightSet[2].value;
+
+    return alpha * s.actColorChanges + beta * s.actHighPrioViolations + gamma * s.actLowPrioViolations;
+}
+
+function costFunctionG(s, numOfWeightSet) {
     // Chapter 2.2.1: g(s) = f(s) + z * t(s)
     // --> f(s) = a * c(s) + b * FOR EVERY r: dr(s) + y * FOR EVERY r: dr(s)
     // ------> c(s) = number of colour changes; dr(s) = number of constraint violations
     // --> t(s) = number of paint constraint violations
 
     /** IMPORTANT NOTES
-     * "At each iteration, the value of z is multiplied by 2 if the current solution is infeasible, and divided
+     * "At each iteration, the value of Zeta (z) is multiplied by 2 if the current solution is infeasible, and divided
      * by 2 otherwise." --> To get a mix of feasible and infeasible solutions.
      */
+    var zetaValue = s.parameterSet.getParamWithIdent("z").value;
+    if(s.actColorViolations > 0) {
+        zetaValue = zetaValue * 2;
+    } else {
+        zetaValue = zetaValue / 2;
+    }
+
+    return costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations);
 }
 
 /**
@@ -343,7 +393,7 @@ function getNeighbourhood(s, iterationCounter) {
             if(i != j && vehicleI.lockArray[j] == iterationCounter % eta) {
                 // Re-assign random number
                 vehicleI.lockArray[i] = getRandomNumber(0, eta - 1);
-                console.log("Would look at: " + i + " " + j);
+                // console.log("Would look at: " + i + " " + j);
             }
         }
     }
