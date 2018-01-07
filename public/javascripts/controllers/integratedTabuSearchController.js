@@ -275,6 +275,106 @@ function cloneVehicles(vehicles) {
     return result;
 }
 
+function costFunctionG(s) {
+    // Chapter 2.2.1: g(s) = f(s) + z * t(s)
+    // --> f(s) = a * c(s) + b * FOR EVERY r: dr(s) + y * FOR EVERY r: dr(s)
+    // ------> c(s) = number of colour changes; dr(s) = number of constraint violations
+    // --> t(s) = number of paint constraint violations
+
+    /** IMPORTANT NOTES
+     * "At each iteration, the value of z is multiplied by 2 if the current solution is infeasible, and divided
+     * by 2 otherwise." --> To get a mix of feasible and infeasible solutions.
+     *
+     */
+}
+
+/**
+ * Only a subset of all potential exchanges is considered through sampling.
+ *
+ * @param s - a given solution
+ */
+function getNeighbourhood(s) {
+    // 1. Assign each pair of positions (i, j) an integer µij in [0, n-1] ([0, Eta-1]) and in each iteration t, consider
+    //    this pair only if µij = t (mod n) --> (mod Eta)
+    //    --> Re-assign µij every Eta iterations
+
+
+    // Only swap a pair if you improve the current solution
+
+    /* Re-Inserting into previous position is forbidden for o (Theta) iterations
+    * --> If swapped, re-inserting is forbidden either (of both cars in both old positions)
+    * --> Insertion is allowed, if this would lead to a better solution with lower costs
+    * -----> Each car v has for every position i a value lambda vi, which is representing the cost of the best solution
+    *        found during the search in which car v appeared in position i
+    * -----> Swaps are only allowed if this criterion is met for both cars
+    */
+
+}
+
+// To escape a local optimum and reach new good solutions
+function continuousDiversification() {
+    /*
+     * Insertion leads to worse solution
+     * --> g(s) = g(s) + h(s) + p(s)
+     * ----> h(s) = SQUARE(n) * SELECT ONE:
+     *          1. number of times a car has moved from i to j
+     *          2. number of times a car has moved from it's current position
+     *       ---> Select multiplier method in every performed tabu search (TODO random?!)
+     *       To penalize (bestrafen) frequently performed moves
+     * ----> p(s) = 0 IF vi.color == vj.color && vi.paintGroupSize < vj.paintGroupSize
+     *            = 0 IF vi.color == vj+1.color && vi.paintGroupSize < vj+1.paintGroupSize
+     *            ELSE = a * PSI (i)
+     *       Encourage the creation of big paint groups while satisfying l
+     *
+     *       We should point out that this term is considered only when it is theoretically possible to reduce the
+     *       number of groups of cars of a given colour. This is not always the case since the number of groups in
+     *       the current solution may already be equal to the lowest feasible number of groups.
+     *
+     */
+}
+
+
+function PertubationMechanisms(solution) {
+    this.solution = solution;
+
+    this.randomSwaps = function() {
+
+    };
+
+    this.randomShufflingWithinSubSeq = function() {
+
+    };
+
+    this.mirrorTransformingOfSubSeq = function() {
+
+    };
+
+    this.randomMoveOfSubSeq = function() {
+
+    };
+
+    this.reinsertionOfPaintGroups = function() {
+
+    };
+
+    this.applyImprovingAndPiNeutralSwaps = function() {
+
+    };
+
+    /* Pertubation is applied in 3a
+     *
+     * After every pertubation the parameters a, b and y are modified. Three different configurations:
+     *  - f1 = (10^6, 10^3, 1)
+     *  - f2 = (10^4, 10^2, 1)
+     *  - f3 = 10^4, 10^4, 1)
+     * Following structure is used: (f1, f2, f1, f3, f1, f2, ...)
+     */
+}
+
+function performTabuSearch() {
+    // Perform till no improvement of f(s) since k (Kappa) iterations
+}
+
 tabuController.controller("integratedTabuSearchController", function ($scope, $http, $location) {
     function performITS(data) {
         // !! Sort the vehicles
