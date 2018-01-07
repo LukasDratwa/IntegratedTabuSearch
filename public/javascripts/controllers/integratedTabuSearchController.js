@@ -25,6 +25,23 @@ function RatioSet(ratios) {
 
         return result;
     };
+
+    this.countRatioInSubSeq = function(ratio, subSeq) {
+        var counter = 0;
+
+        for(var i in subSeq) {
+            var vehicle = subSeq[i];
+
+            activatedFeatureLoop: for(var x in vehicle.activatedFeatures) {
+                if(vehicle.activatedFeatures[x].ident === ratio.ident) {
+                    counter++;
+                    break activatedFeatureLoop;
+                }
+            }
+        }
+
+        return counter;
+    }
 }
 
 function Solution(vehicles, parameters, ratios) {
@@ -34,8 +51,11 @@ function Solution(vehicles, parameters, ratios) {
 
     this.actColorChanges = 0;
     this.actColorViolations = 0;
-    this.actLowPrioViolations = [];
-    this.actHighPrioViolations = [];
+    this.actLowPrioViolations = 0;
+    this.actHighPrioViolations = 0;
+    this.actLowPrioViolationsExtended = [];
+    this.actHighPrioViolationsExtended = [];
+
 
     this.getNextPaintGroupVehicle = function(vehicle) {
         var foundParamVehicle = false;
@@ -110,12 +130,31 @@ function Solution(vehicles, parameters, ratios) {
         // 3. Calc low priority violations && 4. Calc high priority violations
         for(var i in this.ratioSet.ratios) {
             var ratio = this.ratioSet.ratios[i];
+
+            // [0] = nr = max amount of features in pr; [1] = pr = length of sub sequence
             var ratioValues = this.ratioSet.getRatioIntValues(ratio);
 
             for(var x in this.vehicles) {
                 var vehicle = this.vehicles[x];
 
                 var subSequence = this.getSubSeq(x, ratioValues[1]);
+                var endIndex = parseInt(x) + ratioValues[1] - 1;
+
+                if(subSequence.length == ratioValues[1]) {
+                    var amountOfActivatedRatioInSubSeq = this.ratioSet.countRatioInSubSeq(ratio, subSequence);
+
+                    if(amountOfActivatedRatioInSubSeq > ratioValues[0]) {
+                        if(ratio.prio == 0) {
+                            // High priority ratio
+                            this.actHighPrioViolations++;
+                            this.actHighPrioViolationsExtended.push([x, endIndex])
+                        } else {
+                            // Low priority ratio
+                            this.actLowPrioViolations++;
+                            this.actLowPrioViolationsExtended.push([x, endIndex])
+                        }
+                    }
+                }
             }
         }
     };
