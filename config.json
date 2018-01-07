@@ -46,9 +46,9 @@
     {
       "ident": "n",
       "name": "Eta (n)",
-      "description": "Eta = min {n, 200} and every pair of positions (i,j) is in fact considered every Eta iterations.",
+      "description": "Represents the max value for the definition of Eta = min {n, maxValue}. Every pair of positions (i,j) is in fact considered every Eta iterations.",
       "type": "Integer",
-      "value": 0
+      "value": 200
     },
     {
       "ident": "u",
