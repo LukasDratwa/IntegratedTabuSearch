@@ -27,7 +27,7 @@ function ParameterSet(parameters) {
 
     this.getWeightSet = function(number) {
         if(number < 1 || number > 3) {
-            console.err("The requested weight set should be in [1, 3]!");
+            console.error("The requested weight set should be in [1, 3]!");
         }
 
         var result = [];
@@ -87,6 +87,49 @@ function RatioSet(ratios) {
     }
 }
 
+var Helper = function(vehicles) {
+    this.vehicles = [];
+
+    for(var i in vehicles) {
+        var newV = {
+            _id: vehicles[i]._id,
+            movedFromCurrentToPositionArray: [],
+
+            countMovesFromPositionToAnyOther: function(fromIndex) {
+                var result = 0;
+
+                for(var i in this.movedFromCurrentToPositionArray[fromIndex]) {
+                    result += this.movedFromCurrentToPositionArray[fromIndex][i];
+                }
+
+                return result;
+            },
+
+            initMovedFromCurrentToPositionArray: function() {
+                this.movedFromCurrentToPositionArray = [];
+
+                for(var o=0; o<vehicles.length; o++) {
+                    var toPositionArray = [];
+                    for(var z=0; z<vehicles.length; z++) {
+                        toPositionArray.push(0);
+                    }
+                    this.movedFromCurrentToPositionArray.push(toPositionArray);
+                }
+            }
+        };
+        newV.initMovedFromCurrentToPositionArray();
+        this.vehicles.push(newV);
+    }
+
+    this.registerMove = function(_id, indexFrom, indexTo) {
+        for(var i in this.vehicles) {
+            if(this.vehicles[i]._id === _id) {
+                this.vehicles[i].movedFromCurrentToPositionArray[indexFrom][indexTo] += 1;
+            }
+        }
+    };
+};
+
 function Solution(vehicles, parameters, ratios) {
     this.vehicles = cloneVehicles(vehicles);
     this.parameterSet = new ParameterSet(parameters);
@@ -139,7 +182,7 @@ function Solution(vehicles, parameters, ratios) {
         return result;
     };
 
-    this.updateActViolations = function() {
+    this.updateActViolations = function(moveId) {
         // 1. Count color changes
         var lastColor = -1;
         for(var i in this.vehicles) {
@@ -175,7 +218,7 @@ function Solution(vehicles, parameters, ratios) {
 
             // FIXME From time to time the loop is stucked when following indexorder (f.e.) is analyzed: 8, 9, 8, 9, ...
             if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < lastCheckedIndex) {
-                console.err("-----> Had to break counting of paint group");
+                console.error("-----> Had to break counting of paint group (" + moveId + ")", this);
                 break;
             }
 
@@ -215,7 +258,7 @@ function Solution(vehicles, parameters, ratios) {
         }
     };
 
-    this.obligatoryUpdateAfterEveryMove = function() {
+    this.obligatoryUpdateAfterEveryMove = function(moveId) {
         // 1. Every car should know how big their colour-group is
         var carsToUpdate = [];
         var actPaintGroupColour = -1;
@@ -261,7 +304,7 @@ function Solution(vehicles, parameters, ratios) {
         }
         // EOF 1.
 
-        this.updateActViolations();
+        this.updateActViolations(moveId);
         // console.log("Performed obl. update after every move", this);
     };
     this.obligatoryUpdateAfterEveryMove();
@@ -322,7 +365,7 @@ function Solution(vehicles, parameters, ratios) {
         this.vehicles.splice(index+1, 0, vehicle);
         this.vehicles.splice(vehicleOldIndex, 1);
 
-        this.obligatoryUpdateAfterEveryMove();
+        this.obligatoryUpdateAfterEveryMove("INSERTION");
         return this;
     };
 
@@ -336,7 +379,8 @@ function Solution(vehicles, parameters, ratios) {
         var tmpVehicle = this.vehicles[firstIndex];
         this.vehicles[firstIndex] = this.vehicles[secondIndex];
         this.vehicles[secondIndex] = this.vehicles[firstIndex];
-        this.obligatoryUpdateAfterEveryMove();
+
+        this.obligatoryUpdateAfterEveryMove("SWAP");
         return this;
     };
 
@@ -421,6 +465,31 @@ function cloneVehicles(vehicles) {
     return result;
 }
 
+// To escape a local optimum and reach new good solutions
+var continuousDiversificationValue = 0;
+function increaseContinuousDiversificationValue(s) {
+    /*
+     * Method will return h(s) + p(s)
+     *
+     * Insertion leads to worse solution
+     * --> g(s) = g(s) + h(s) + p(s)
+     * ----> h(s) = SQUARE(n) * SELECT ONE:
+     *          1. number of times a car has moved from i to j
+     *          2. number of times a car has moved from it's current position
+     *       ---> Select multiplier method in every performed tabu search (TODO random?!)
+     *       To penalize (bestrafen) frequently performed moves
+     * ----> p(s) = 0 IF vi.color == vj.color && vi.paintGroupSize < vj.paintGroupSize
+     *            = 0 IF vi.color == vj+1.color && vi.paintGroupSize < vj+1.paintGroupSize
+     *            ELSE = a * PSI (i)
+     *       Encourage the creation of big paint groups while satisfying l
+     *
+     *       We should point out that this term is considered only when it is theoretically possible to reduce the
+     *       number of groups of cars of a given colour. This is not always the case since the number of groups in
+     *       the current solution may already be equal to the lowest feasible number of groups.
+     */
+
+}
+
 function costFunctionF(s, numOfWeightSet) {
     // f(s) = a * c(s) + b * FOR EVERY r: dr(s) + y * FOR EVERY r: dr(s)
     // ------> c(s) = number of colour changes; dr(s) = number of constraint violations
@@ -449,20 +518,20 @@ function costFunctionG(s, numOfWeightSet) {
         zetaValue = zetaValue / 2;
     }
 
-    var result = costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations);
+    var result = costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations) + continuousDiversificationValue;
     s.actCostFunctionGResult = result;
 
     return result;
 }
 
-/**
+/*
  * Only a subset of all potential exchanges is considered through sampling.
  *
  * @param s - a given solution
  * @param iterationCounter - the actual iteration counter
  * @param numOfWeightSet - the number of the weight set to select / use
  */
-function getNeighbourhood(s, iterationCounter, numOfWeightSet) {
+function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper) {
     var neighbourhood = [];
 
     // 1. Assign each pair of positions (i, j) an integer µij in [0, n-1] ([0, Eta-1]) and in each iteration t, consider
@@ -501,12 +570,14 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet) {
                 // TODO Always do both moving methods if possible?
                 // console.log("Would look at: " + i + " " + j);
                 var newNeighbourhoodSolutionInsertion = new Solution(s.vehicles, s.parameterSet.parameters, s.ratioSet.ratios);
-                if(newNeighbourhoodSolutionInsertion.isInsertAllowed(j, vehicleI)) {
+                if(newNeighbourhoodSolutionInsertion.isInsertAllowed(j, newNeighbourhoodSolutionInsertion.vehicles[i])) {
                     // Perform insertion
-                    // console.log("Performing INSERTION");
-                    newNeighbourhoodSolutionInsertion.insertVehicle(j, vehicleI);
+                    newNeighbourhoodSolutionInsertion.insertVehicle(j, newNeighbourhoodSolutionInsertion.vehicles[i]);
                     var costFunctionValue = costFunctionG(newNeighbourhoodSolutionInsertion, numOfWeightSet);
                     neighbourhood.push(newNeighbourhoodSolutionInsertion);
+
+                    // 2.2.4 Continuous diversification if new solution is worse than given s
+                    helper.registerMove(vehicleI._id, i, j);
                 } else {
                     // Check for "Attribute based aspiration criterion (2.2.3)
                 }
@@ -515,8 +586,11 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet) {
 
                 var newNeighbourhoodSolutionSwap = new Solution(s.vehicles, s.parameterSet.parameters, s.ratioSet.ratios);
                 if(newNeighbourhoodSolutionSwap.isSwapAllowed(i, j)) {
+                    // 2.2.4 Continuous diversification if new solution is worse than given s
+                    helper.registerMove(newNeighbourhoodSolutionSwap.vehicles[i]._id, i, j);
+                    helper.registerMove(newNeighbourhoodSolutionSwap.vehicles[j]._id, j, i);
+
                     // Perform swap
-                    // console.log("Performing SWAP");
                     newNeighbourhoodSolutionSwap.swapVehicles(i, j);
                     var costFunctionValue = costFunctionG(newNeighbourhoodSolutionSwap, numOfWeightSet);
 
@@ -554,29 +628,6 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet) {
     console.log(neighbourhood.length);
     return neighbourhood;
 }
-
-// To escape a local optimum and reach new good solutions
-function continuousDiversification() {
-    /*
-     * Insertion leads to worse solution
-     * --> g(s) = g(s) + h(s) + p(s)
-     * ----> h(s) = SQUARE(n) * SELECT ONE:
-     *          1. number of times a car has moved from i to j
-     *          2. number of times a car has moved from it's current position
-     *       ---> Select multiplier method in every performed tabu search (TODO random?!)
-     *       To penalize (bestrafen) frequently performed moves
-     * ----> p(s) = 0 IF vi.color == vj.color && vi.paintGroupSize < vj.paintGroupSize
-     *            = 0 IF vi.color == vj+1.color && vi.paintGroupSize < vj+1.paintGroupSize
-     *            ELSE = a * PSI (i)
-     *       Encourage the creation of big paint groups while satisfying l
-     *
-     *       We should point out that this term is considered only when it is theoretically possible to reduce the
-     *       number of groups of cars of a given colour. This is not always the case since the number of groups in
-     *       the current solution may already be equal to the lowest feasible number of groups.
-     *
-     */
-}
-
 
 function PertubationMechanisms() {
     this.randomSwaps = function() {
@@ -627,9 +678,14 @@ function solutionSatisfiesAcceptanceCriterion() {
     return false;
 }
 
-function performTabuSearch(solution, iterationCounter, numOfWeightSet) {
+function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
+    // Perform before every search:
     solution.aspirationCriterionArray = [];
-    var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet);
+    for(var i in helper.vehicles) {
+        console.log(helper.vehicles[i].countMovesFromPositionToAnyOther(i));
+    }
+
+    var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet, helper);
 
     var bestSolutionInN = neighbourhood[0];
     neighbourhood = [];
@@ -644,6 +700,7 @@ function performIteratedTabuSearch(s) {
     var iterationCounter = 1;
     var pertubationMechanism = new PertubationMechanisms();
     var startingTimestamp = new Date();
+    var helper = new Helper(s.vehicles);
 
     // 1. Init
     var s0 = s;
@@ -651,7 +708,7 @@ function performIteratedTabuSearch(s) {
     console.log(s0);
 
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
-    sImproved = performTabuSearch(s0, iterationCounter, 1);
+    sImproved = performTabuSearch(s0, iterationCounter, 1, helper);
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
     var iterationsWithoutImprovement = 0;
@@ -664,7 +721,7 @@ function performIteratedTabuSearch(s) {
         sCurrent = pertubationMechanism.performPertubation(sImproved);
 
         // b) Apply tabu search on sCurrent to obtain sLocalOptimum
-        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, 1); // TODO Switch weight set number
+        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, 1, helper); // TODO Switch weight set number
 
         // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
         if(solutionSatisfiesAcceptanceCriterion(sLocalOptimum)) {
@@ -672,6 +729,12 @@ function performIteratedTabuSearch(s) {
             iterationsWithoutImprovement = 0;
         } else {
             iterationsWithoutImprovement++;
+        }
+
+
+        // TODO delete me
+        if(iterationCounter == 10) {
+            break;
         }
     }
 
