@@ -339,6 +339,30 @@ function Solution(vehicles, parameters, ratios) {
         this.obligatoryUpdateAfterEveryMove();
         return this;
     };
+
+    this.updateAspirationCriterion = function(indexNow, costFunctionValue) {
+        if(this.vehicles.aspirationCriterionArray[indexNow] == -1
+            || this.vehicles.aspirationCriterionArray[indexNow] > costFunctionValue) {
+            this.vehicles.aspirationCriterionArray[indexNow] = costFunctionValue;
+        }
+    };
+
+    this.aspirationCriterionSatisfiedForInsert = function(indexFrom, indexTo, costFunctionValue) {
+        var aspCriterionValue = this.vehicles[indexFrom].aspirationCriterionArray[indexTo];
+
+        if(aspCriterionValue != -1 && aspCriterionValue < costFunctionValue) {
+            return true;
+        }
+    };
+
+    this.aspirationCriterionSatisfiedForSwap = function(indexFrom, indexTo, costFunctionValue) {
+        if(this.aspirationCriterionSatisfiedForInsert(indexFrom, indexTo, costFunctionValue)
+            && this.aspirationCriterionSatisfiedForInsert(indexTo, indexFrom, costFunctionValue)) {
+            return true;
+        } else {
+            return false;
+        }
+    };
 }
 
 function MovingProhibition(toIndex, theta) {
@@ -374,7 +398,7 @@ function cloneVehicles(vehicles) {
     for(var i in vehicles) {
         var v = vehicles[i];
 
-        result.push({
+        var newVehicle = {
             activatedFeatures: cloneActivatedFeatures(v.activatedFeatures),
             dateString: v.dateString,
             ident: v.ident,
@@ -383,8 +407,15 @@ function cloneVehicles(vehicles) {
             seqRank: v.seqRank,
             _id: v._id,
             dataSetRef: v.dataSetRef,
-            movingProhibitions: v.movingProhibitions
-        });
+            movingProhibitions: v.movingProhibitions,
+            aspirationCriterionArray: []
+        };
+
+        for(var j=0; j<vehicles.length; j++) {
+            newVehicle.aspirationCriterionArray.push(-1);
+        }
+
+        result.push(newVehicle);
     }
 
     return result;
@@ -474,21 +505,27 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet) {
                     // Perform insertion
                     // console.log("Performing INSERTION");
                     newNeighbourhoodSolutionInsertion.insertVehicle(j, vehicleI);
-                    costFunctionG(newNeighbourhoodSolutionInsertion, numOfWeightSet);
+                    var costFunctionValue = costFunctionG(newNeighbourhoodSolutionInsertion, numOfWeightSet);
                     neighbourhood.push(newNeighbourhoodSolutionInsertion);
+                } else {
+                    // Check for "Attribute based aspiration criterion (2.2.3)
                 }
+
+                // TODO Moving prohibitions from inserting are not in the second new solution object (swap)
 
                 var newNeighbourhoodSolutionSwap = new Solution(s.vehicles, s.parameterSet.parameters, s.ratioSet.ratios);
                 if(newNeighbourhoodSolutionSwap.isSwapAllowed(i, j)) {
                     // Perform swap
                     // console.log("Performing SWAP");
                     newNeighbourhoodSolutionSwap.swapVehicles(i, j);
-                    costFunctionG(newNeighbourhoodSolutionSwap, numOfWeightSet);
+                    var costFunctionValue = costFunctionG(newNeighbourhoodSolutionSwap, numOfWeightSet);
 
                     // Only add the swapped neighbour solution if it's better than the current one
                     if(newNeighbourhoodSolutionSwap.actCostFunctionGResult < s.actCostFunctionGResult) {
                         neighbourhood.push(newNeighbourhoodSolutionSwap);
                     }
+                } else {
+                    // Check for "Attribute based aspiration criterion (2.2.3)
                 }
             }
         }
@@ -591,6 +628,7 @@ function solutionSatisfiesAcceptanceCriterion() {
 }
 
 function performTabuSearch(solution, iterationCounter, numOfWeightSet) {
+    solution.aspirationCriterionArray = [];
     var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet);
 
     var bestSolutionInN = neighbourhood[0];
