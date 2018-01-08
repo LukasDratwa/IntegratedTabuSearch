@@ -1,7 +1,7 @@
 var tabuController = angular.module('integratedTabuSearchApp', []);
 
 function getRandomNumber(min, max) {
-    return Math.floor((Math.random() * (max + 1)) + min);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function getMinOfPair(first, second) {
@@ -10,6 +10,28 @@ function getMinOfPair(first, second) {
     } else {
         return second;
     }
+}
+
+/**
+ * Shuffles array in place.
+ * @param {Array} a items An array containing the items.
+ */
+function shuffleArray(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+}
+
+function getSubArray(array, start, end) {
+    if(!end){
+        end=-1;
+    }
+
+    return array.slice(start, array.length+1-(end*-1));
 }
 
 function ParameterSet(parameters) {
@@ -147,6 +169,40 @@ function Solution(vehicles, parameters, ratios) {
     this.actHighPrioViolations = 0;
     this.actLowPrioViolationsExtended = [];
     this.actHighPrioViolationsExtended = [];
+
+    this.solutionHasDuplicatedVehicles = function() {
+        for(var i in this.vehicles) {
+            var orderNr = this.vehicles[i];
+
+            var foundOrderNumbers = 0 ;
+            for(var z in this.vehicles) {
+                if(this.vehicles[z].orderNr == orderNr) {
+                    foundOrderNumbers++;
+                }
+            }
+
+            if(foundOrderNumbers > 1) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    this.printOrderNrOfVehicleSubSeq = function(startIndex, endIndex) {
+        var order = "";
+        var counter = 0;
+        for(var i=0; i<endIndex; i++) {
+            order += this.vehicles[i].orderNr + " ";
+            counter++;
+        }
+        console.log("[startI: " + startIndex + ", endI:" + endIndex + ", length:" + counter + "]: " + order);
+        return order;
+    };
+
+    this.printOrderNrOfVehicles = function() {
+        this.printOrderNrOfVehicleSubSeq(0, this.vehicles.length-1);
+    };
 
     this.getIndexOfVehicleInS = function(vehicle) {
         for(var i in this.vehicles) {
@@ -368,23 +424,38 @@ function Solution(vehicles, parameters, ratios) {
         var vehicleOldIndex = this.getIndexOfVehicleInS(vehicle);
         this.addMovingProhibition(index, vehicle);
 
+        // console.log("-------- Start Insertion [iFrom: " + vehicleOldIndex + ", iTo: " + index + "]");
+        // this.printOrderNrOfVehicles();
         this.vehicles.splice(index+1, 0, vehicle);
         this.vehicles.splice(vehicleOldIndex, 1);
+        // this.printOrderNrOfVehicles();
+        // console.log("-------- End Insertion");
 
         this.obligatoryUpdateAfterEveryMove("INSERTION");
         return this;
     };
 
-    this.swapVehicles = function(firstIndex, secondIndex) {
+    // TODO überüprüfen & testemn!!!
+    this.swapVehicles = function(firstIndex, secondIndex, addMovingProhibition) {
         firstIndex = parseInt(firstIndex);
         secondIndex = parseInt(secondIndex);
 
-        this.addMovingProhibition(secondIndex, this.vehicles[firstIndex]);
-        this.addMovingProhibition(firstIndex, this.vehicles[secondIndex]);
+        if(addMovingProhibition) {
+            this.addMovingProhibition(secondIndex, this.vehicles[firstIndex]);
+            this.addMovingProhibition(firstIndex, this.vehicles[secondIndex]);
+        }
 
+        //console.log("-------- Start Swap [i1: " + firstIndex + ", i2: " + secondIndex + "]");
+        // this.printOrderNrOfVehicles();
         var tmpVehicle = this.vehicles[firstIndex];
         this.vehicles[firstIndex] = this.vehicles[secondIndex];
-        this.vehicles[secondIndex] = this.vehicles[firstIndex];
+        this.vehicles[secondIndex] = tmpVehicle;
+        // this.printOrderNrOfVehicles();
+        // console.log("-------- End Swap");
+
+        if(this.vehicles[firstIndex].orderNr == this.vehicles[secondIndex].orderNr) {
+            console.warn("Duplicated vehicles in solution!")
+        }
 
         this.obligatoryUpdateAfterEveryMove("SWAP");
         return this;
@@ -629,7 +700,7 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper, hFunction
                     helper.registerMove(newNeighbourhoodSolutionSwap.vehicles[j]._id, j, i);
 
                     // Perform swap
-                    newNeighbourhoodSolutionSwap.swapVehicles(i, j);
+                    newNeighbourhoodSolutionSwap.swapVehicles(i, j, true);
                     var costFunctionValue = costFunctionG(newNeighbourhoodSolutionSwap, numOfWeightSet);
 
                     // Only add the swapped neighbour solution if it's better than the current one
@@ -668,42 +739,94 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper, hFunction
 }
 
 function PertubationMechanisms() {
-    this.randomSwaps = function() {
+    this.randomSwaps = function(s) {
+        var chi = s.parameterSet.getParamWithIdent("x");
+
+        for(var i=0; i<chi.value; i++) {
+            var randomI = getRandomNumber(0, s.vehicles.length-1);
+            var randomJ = getRandomNumber(0, s.vehicles.length-1);
+
+            while(randomI == randomJ) {
+                var randomI = getRandomNumber(0, s.vehicles.length-1);
+                var randomJ = getRandomNumber(0, s.vehicles.length-1);
+            }
+
+            s.swapVehicles(randomI, randomJ, false);
+        }
+    };
+
+    this.randomShufflingWithinSubSeq = function(s) {
+        var tau = s.parameterSet.getParamWithIdent("t");
+
+        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value - 1);
+        while(randomStartIndex > s.vehicles.length - tau.value - 1) {
+            console.log("---------------------------------------------------");
+            randomStartIndex = getRandomNumber(0, s.vehicles.length-1);
+        }
+
+        // Shuffle sub sequence randomly
+        for(var x=0; x<tau.value*2; x++) {
+
+            var randomI = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
+            var randomJ = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
+            while(randomI == randomJ) {
+                randomI = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
+                randomJ = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
+            }
+
+            s.swapVehicles(randomI, randomJ, false);
+
+            // s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value);
+        }
+    };
+
+    this.mirrorTransformingOfSubSeq = function(s) {
 
     };
 
-    this.randomShufflingWithinSubSeq = function() {
+    this.randomMoveOfSubSeq = function(s) {
 
     };
 
-    this.mirrorTransformingOfSubSeq = function() {
+    this.reinsertionOfPaintGroups = function(s) {
 
     };
 
-    this.randomMoveOfSubSeq = function() {
-
-    };
-
-    this.reinsertionOfPaintGroups = function() {
-
-    };
-
-    this.applyImprovingAndPiNeutralSwaps = function() {
+    this.applyImprovingAndPiNeutralSwaps = function(s) {
 
     };
 
     this.performPertubation = function(solution) {
+        /*switch(getRandomNumber(0, 5)) {
+            case 0:
+                this.randomSwaps(solution);
+                break;
+
+            case 1:
+                this.randomShufflingWithinSubSeq(solution);
+                break;
+
+            case 2:
+                this.mirrorTransformingOfSubSeq(solution);
+                break;
+
+            case 3:
+                this.randomMoveOfSubSeq(solution);
+                break;
+
+            case 4:
+                this.reinsertionOfPaintGroups(solution);
+                break;
+
+            case 5:
+                this.applyImprovingAndPiNeutralSwaps(solution);
+                break;
+        }*/
+
+        this.randomShufflingWithinSubSeq(solution);
+
         return solution;
     };
-
-    /* Pertubation is applied in 3a
-     *
-     * After every pertubation the parameters a, b and y are modified. Three different configurations:
-     *  - f1 = (10^6, 10^3, 1)
-     *  - f2 = (10^4, 10^2, 1)
-     *  - f3 = 10^4, 10^4, 1)
-     * Following structure is used: (f1, f2, f1, f3, f1, f2, ...)
-     */
 }
 
 function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
@@ -734,6 +857,15 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
 
 var tookF3LastTime = true;
 function getNextWeightSetNumber(iterationCounter, oldWeightSetNumber) {
+    /* Pertubation is applied in 3a
+     *
+     * After every pertubation the parameters a, b and y are modified. Three different configurations:
+     *  - f1 = (10^6, 10^3, 1)
+     *  - f2 = (10^4, 10^2, 1)
+     *  - f3 = 10^4, 10^4, 1)
+     * Following structure is used: (f1, f2, f1, f3, f1, f2, ...)
+     */
+
     if(iterationCounter % 2 == 0) {
         // Take f1
         return 1;
@@ -773,9 +905,11 @@ function performIteratedTabuSearch(s) {
     while(iterationsWithoutImprovement < paramSet.getParamWithIdent("k").value - 1) {
         iterationCounter++;
 
-        console.log("###### ITERATION " + iterationCounter + " (Without impr.: " + iterationsWithoutImprovement + ") ######");
         // Select numOfWeightSet
         var numOfWeightSet = getNextWeightSetNumber(iterationCounter, 1);
+
+        console.log("###### ITERATION " + iterationCounter + " (Without impr.: " + iterationsWithoutImprovement
+            + "; Weighset: " + numOfWeightSet + ") ######");
 
         // a) Apply pertubation on sImproved to obtain sCurrent
         sCurrent = pertubationMechanism.performPertubation(sImproved);
