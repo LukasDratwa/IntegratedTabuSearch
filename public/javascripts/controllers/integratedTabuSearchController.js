@@ -99,18 +99,22 @@ function Solution(vehicles, parameters, ratios) {
     this.actLowPrioViolationsExtended = [];
     this.actHighPrioViolationsExtended = [];
 
+    this.getIndexOfVehicleInS = function(vehicle) {
+        for(var i in this.vehicles) {
+            var tmp = this.vehicles[i];
+            if(vehicle._id === tmp._id) {
+                return i;
+            }
+        }
+
+        return null;
+    };
 
     this.getNextPaintGroupVehicle = function(vehicle) {
-        var foundParamVehicle = false;
-
-        for(var i in this.vehicles) {
+        for(var i=this.getIndexOfVehicleInS(vehicle)+1; i<this.vehicles.length; i++) {
             var v = this.vehicles[i];
 
-            if(v._id === vehicle._id) {
-                foundParamVehicle = true;
-            }
-
-            if(foundParamVehicle && v.paintColor != vehicle.paintColor) {
+            if(typeof v !== "undefined" && v.paintColor != vehicle.paintColor) {
                 return v;
             }
         }
@@ -156,6 +160,7 @@ function Solution(vehicles, parameters, ratios) {
         // 2. Calc color violations
         var paramLota = this.parameterSet.getParamWithIdent("l");
         var nextPaintGroupVehicle = this.vehicles[0];
+        var lastCheckedIndex = this.getIndexOfVehicleInS(nextPaintGroupVehicle);
         var counterPaintGroups = 0;
         while(nextPaintGroupVehicle != null) {
             counterPaintGroups++;
@@ -167,6 +172,14 @@ function Solution(vehicles, parameters, ratios) {
             }
 
             nextPaintGroupVehicle = this.getNextPaintGroupVehicle(nextPaintGroupVehicle);
+
+            // FIXME From time to time the loop is stucked when following indexorder (f.e.) is analyzed: 8, 9, 8, 9, ...
+            if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < lastCheckedIndex) {
+                console.err("-----> Had to break counting of paint group");
+                break;
+            }
+
+            lastCheckedIndex = nextPaintGroupVehicle != null ? this.getIndexOfVehicleInS(nextPaintGroupVehicle) : lastCheckedIndex;
         }
         // console.log("Checked " + counterPaintGroups + " paint groups");
 
@@ -249,11 +262,11 @@ function Solution(vehicles, parameters, ratios) {
         // EOF 1.
 
         this.updateActViolations();
-        console.log("Performed obl. update after every move", this);
+        // console.log("Performed obl. update after every move", this);
     };
     this.obligatoryUpdateAfterEveryMove();
 
-    this.addMovingProhibition = function(vehicle, indexTo) {
+    this.addMovingProhibition = function(indexTo, vehicle) {
         if(typeof vehicle.movingProhibitions === "undefined") {
             vehicle.movingProhibitions = [];
         }
@@ -261,11 +274,11 @@ function Solution(vehicles, parameters, ratios) {
         vehicle.movingProhibitions.push(new MovingProhibition(indexTo, this.parameterSet.getParamWithIdent("o").value));
     };
 
-    this.isActiveMovingProhibitionForIndex = function(index, movingProhibitions) {
+    this.hasActiveMovingProhibitionForIndex = function(index, movingProhibitions) {
         for(var i in movingProhibitions) {
             var mP = movingProhibitions[i];
 
-            if(movingProhibitions.toIndex == index && movingProhibitions.restTheta > 0) {
+            if(mP.toIndex == index && mP.restTheta > 0) {
                 return true;
             }
         }
@@ -274,11 +287,11 @@ function Solution(vehicles, parameters, ratios) {
     };
 
     this.isInsertAllowed = function(index, vehicle) {
-        if(index == this.vehicles.indexOf(vehicle)) {
+        if(index == this.getIndexOfVehicleInS(vehicle)) {
             return false;
         }
 
-        if(this.isActiveMovingProhibitionForIndex(index, vehicle.movingProhibitions)) {
+        if(this.hasActiveMovingProhibitionForIndex(index, vehicle.movingProhibitions)) {
             return false;
         } else {
             return true;
@@ -301,33 +314,30 @@ function Solution(vehicles, parameters, ratios) {
     };
 
     this.insertVehicle = function(index, vehicle) {
-        this.addMovingProhibition(vehicle, index);
+        index = parseInt(index);
 
-        this.vehicles.splice(index, 0, vehicle);
+        var vehicleOldIndex = this.getIndexOfVehicleInS(vehicle);
+        this.addMovingProhibition(index, vehicle);
+
+        this.vehicles.splice(index+1, 0, vehicle);
+        this.vehicles.splice(vehicleOldIndex, 1);
+
         this.obligatoryUpdateAfterEveryMove();
         return this;
     };
 
     this.swapVehicles = function(firstIndex, secondIndex) {
-        this.addMovingProhibition(this.vehicles[firstIndex], secondIndex);
-        this.addMovingProhibition(this.vehicles[secondIndex], firstIndex);
+        firstIndex = parseInt(firstIndex);
+        secondIndex = parseInt(secondIndex);
+
+        this.addMovingProhibition(secondIndex, this.vehicles[firstIndex]);
+        this.addMovingProhibition(firstIndex, this.vehicles[secondIndex]);
 
         var tmpVehicle = this.vehicles[firstIndex];
         this.vehicles[firstIndex] = this.vehicles[secondIndex];
         this.vehicles[secondIndex] = this.vehicles[firstIndex];
         this.obligatoryUpdateAfterEveryMove();
         return this;
-    };
-
-    this.getIndexOfVehicleInS = function(vehicle) {
-        for(var i in this.vehicles) {
-            var tmp = this.vehicles[i];
-            if(vehicle._id === tmp._id) {
-                return tmp;
-            }
-        }
-
-        return null;
     };
 }
 
@@ -372,7 +382,8 @@ function cloneVehicles(vehicles) {
             paintColor: v.paintColor,
             seqRank: v.seqRank,
             _id: v._id,
-            dataSetRef: v.dataSetRef
+            dataSetRef: v.dataSetRef,
+            movingProhibitions: v.movingProhibitions
         });
     }
 
@@ -408,6 +419,7 @@ function costFunctionG(s, numOfWeightSet) {
     }
 
     var result = costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations);
+    s.actCostFunctionGResult = result;
 
     return result;
 }
@@ -417,8 +429,9 @@ function costFunctionG(s, numOfWeightSet) {
  *
  * @param s - a given solution
  * @param iterationCounter - the actual iteration counter
+ * @param numOfWeightSet - the number of the weight set to select / use
  */
-function getNeighbourhood(s, iterationCounter) {
+function getNeighbourhood(s, iterationCounter, numOfWeightSet) {
     var neighbourhood = [];
 
     // 1. Assign each pair of positions (i, j) an integer µij in [0, n-1] ([0, Eta-1]) and in each iteration t, consider
@@ -444,46 +457,64 @@ function getNeighbourhood(s, iterationCounter) {
     for(var i in s.vehicles) {
         var vehicleI = s.vehicles[i];
 
+        var length = typeof vehicleI.movingProhibitions !== "undefined" ? vehicleI.movingProhibitions.length : "undefined";
+        // console.log(vehicleI.ident + " ----------> Moving prohibitions: " + length)
+
         // Consider only if condition applies
         for(var j in s.vehicles) {
-            var verhicleJ = s.vehicles[j];
-
             if(i != j && vehicleI.lockArray[j] == iterationCounter % eta) {
                 // Re-assign random number
                 vehicleI.lockArray[i] = getRandomNumber(0, eta - 1);
 
                 // Generate neighbour solution
                 // TODO Always do both moving methods if possible?
-                console.log("Would look at: " + i + " " + j);
+                // console.log("Would look at: " + i + " " + j);
+                var newNeighbourhoodSolutionInsertion = new Solution(s.vehicles, s.parameterSet.parameters, s.ratioSet.ratios);
+                if(newNeighbourhoodSolutionInsertion.isInsertAllowed(j, vehicleI)) {
+                    // Perform insertion
+                    // console.log("Performing INSERTION");
+                    newNeighbourhoodSolutionInsertion.insertVehicle(j, vehicleI);
+                    costFunctionG(newNeighbourhoodSolutionInsertion, numOfWeightSet);
+                    neighbourhood.push(newNeighbourhoodSolutionInsertion);
+                }
 
-                // Only swap a pair if you improve the current solution
+                var newNeighbourhoodSolutionSwap = new Solution(s.vehicles, s.parameterSet.parameters, s.ratioSet.ratios);
+                if(newNeighbourhoodSolutionSwap.isSwapAllowed(i, j)) {
+                    // Perform swap
+                    // console.log("Performing SWAP");
+                    newNeighbourhoodSolutionSwap.swapVehicles(i, j);
+                    costFunctionG(newNeighbourhoodSolutionSwap, numOfWeightSet);
+
+                    // Only add the swapped neighbour solution if it's better than the current one
+                    if(newNeighbourhoodSolutionSwap.actCostFunctionGResult < s.actCostFunctionGResult) {
+                        neighbourhood.push(newNeighbourhoodSolutionSwap);
+                    }
+                }
             }
         }
 
+        /* Re-Inserting into previous position is forbidden for o (Theta) iterations
+        * --> If swapped, re-inserting is forbidden either (of both cars in both old positions)
+        * --> Insertion is allowed, if this would lead to a better solution with lower costs
+        * -----> Each car v has for every position i a value lambda vi, which is representing the cost of the best solution
+        *        found during the search in which car v appeared in position i
+        * -----> Swaps are only allowed if this criterion is met for both cars
+        */
         // Reduce the moving prohibition of every car
         if(typeof vehicleI !== "undefined") {
             for(var z in vehicleI.movingProhibitions) {
                 var movingP = vehicleI.movingProhibitions[z];
 
                 if(movingP.restTheta > 1) {
-                    movingP.restTheta--;
+                    movingP.restTheta = movingP.restTheta-1;
                 } else {
-                    vehicleI.movingProhibitions.splice(z, 1); // FIXME could cause errors?
+                    vehicleI.movingProhibitions.splice(parseInt(z), 1); // FIXME could cause errors?
                 }
             }
         }
     }
 
-    /* Re-Inserting into previous position is forbidden for o (Theta) iterations
-    * --> If swapped, re-inserting is forbidden either (of both cars in both old positions)
-    * --> Insertion is allowed, if this would lead to a better solution with lower costs
-    * -----> Each car v has for every position i a value lambda vi, which is representing the cost of the best solution
-    *        found during the search in which car v appeared in position i
-    * -----> Swaps are only allowed if this criterion is met for both cars
-    */
-
-
-    neighbourhood.push(s); // FIXME delete me
+    console.log(neighbourhood.length);
     return neighbourhood;
 }
 
@@ -559,10 +590,13 @@ function solutionSatisfiesAcceptanceCriterion() {
     return false;
 }
 
-function performTabuSearch(solution, iterationCounter) {
-    var neighbourhood = getNeighbourhood(solution, iterationCounter);
+function performTabuSearch(solution, iterationCounter, numOfWeightSet) {
+    var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet);
 
-    return neighbourhood[0];
+    var bestSolutionInN = neighbourhood[0];
+    neighbourhood = [];
+
+    return bestSolutionInN;
 }
 
 
@@ -571,23 +605,28 @@ function performIteratedTabuSearch(s) {
     var paramSet = s.parameterSet;
     var iterationCounter = 1;
     var pertubationMechanism = new PertubationMechanisms();
+    var startingTimestamp = new Date();
 
     // 1. Init
     var s0 = s;
+    costFunctionG(s0, 1);
+    console.log(s0);
 
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
-    sImproved = performTabuSearch(s0, iterationCounter);
+    sImproved = performTabuSearch(s0, iterationCounter, 1);
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
     var iterationsWithoutImprovement = 0;
     while(iterationsWithoutImprovement < paramSet.getParamWithIdent("k").value - 1) {
         iterationCounter++;
 
+        console.log("###### ITERATION " + iterationCounter + " ######");
+
         // a) Apply pertubation on sImproved to obtain sCurrent
         sCurrent = pertubationMechanism.performPertubation(sImproved);
 
         // b) Apply tabu search on sCurrent to obtain sLocalOptimum
-        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter);
+        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, 1); // TODO Switch weight set number
 
         // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
         if(solutionSatisfiesAcceptanceCriterion(sLocalOptimum)) {
@@ -597,6 +636,8 @@ function performIteratedTabuSearch(s) {
             iterationsWithoutImprovement++;
         }
     }
+
+    console.log("Calculation time needed: " + (new Date().valueOf() - startingTimestamp.valueOf()));
 
     // 4. Return the best found solution
     return sImproved;
@@ -633,7 +674,6 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.optObjectivesNames = data.optObjective.orderDisplayingNames;
 
             var s = new Solution(data.dataset.vehicles, data.parameters, data.dataset.ratios);
-            console.log("Solution ", s);
             performIteratedTabuSearch(s);
         });
         tabuSearchRequest.error(function(err){
