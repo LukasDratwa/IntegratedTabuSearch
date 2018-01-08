@@ -122,11 +122,17 @@ var Helper = function(vehicles) {
     }
 
     this.registerMove = function(_id, indexFrom, indexTo) {
+        this.getVehicleWithId(_id).movedFromCurrentToPositionArray[indexFrom][indexTo] += 1;
+    };
+
+    this.getVehicleWithId = function(_id) {
         for(var i in this.vehicles) {
             if(this.vehicles[i]._id === _id) {
-                this.vehicles[i].movedFromCurrentToPositionArray[indexFrom][indexTo] += 1;
+                return this.vehicles[i];
             }
         }
+
+        return null;
     };
 };
 
@@ -466,10 +472,10 @@ function cloneVehicles(vehicles) {
 }
 
 // To escape a local optimum and reach new good solutions
-var continuousDiversificationValue = 0;
-function increaseContinuousDiversificationValue(s) {
+var continuousDiversificationValue = 0; // TODO Ask if this value should be resetted after every tabu search
+function increaseContinuousDiversificationValue(s, indexFrom, indexTo, helper, hFunctionNumber, weightSetNumber) {
     /*
-     * Method will return h(s) + p(s)
+     * Method will return h(s) + p(s) and set it to 'continuousDiversificationValue'
      *
      * Insertion leads to worse solution
      * --> g(s) = g(s) + h(s) + p(s)
@@ -480,14 +486,41 @@ function increaseContinuousDiversificationValue(s) {
      *       To penalize (bestrafen) frequently performed moves
      * ----> p(s) = 0 IF vi.color == vj.color && vi.paintGroupSize < vj.paintGroupSize
      *            = 0 IF vi.color == vj+1.color && vi.paintGroupSize < vj+1.paintGroupSize
-     *            ELSE = a * PSI (i)
+     *            ELSE = alpha * Psi
      *       Encourage the creation of big paint groups while satisfying l
      *
      *       We should point out that this term is considered only when it is theoretically possible to reduce the
      *       number of groups of cars of a given colour. This is not always the case since the number of groups in
      *       the current solution may already be equal to the lowest feasible number of groups.
      */
+    var h = 0;
+    if(hFunctionNumber == 1) {
+        h = Math.sqrt(s.vehicles.length)
+            * helper.getVehicleWithId(s.vehicles[indexFrom]._id).movedFromCurrentToPositionArray[indexFrom][indexTo];
+    } else {
+        h = Math.sqrt(s.vehicles.length)
+            * helper.getVehicleWithId(s.vehicles[indexFrom]._id).countMovesFromPositionToAnyOther(indexFrom);
+    }
 
+    var p = 0;
+    var vehicleFrom = s.vehicles[indexFrom];
+    var vehicleTo = s.vehicles[indexTo];
+
+    var vehicleToNext = (indexTo < s.vehicles.length-1) ? s.vehicles[parseInt(indexTo) + 1] : null;
+
+    if(vehicleFrom.paintColor == vehicleTo.paintColor && vehicleFrom.sizePaintGroup < vehicleTo.sizePaintGroup
+        || vehicleToNext != null
+            && vehicleFrom.paintColor == vehicleToNext.paintColor && vehicleFrom.sizePaintGroup < vehicleToNext.sizePaintGroup) {
+        p = 0;
+    } else {
+        var alpha = s.parameterSet.getWeightSet(weightSetNumber)[0];
+        var psi = s.parameterSet.getParamWithIdent("i");
+        p = alpha.value * psi.value;
+    }
+
+    continuousDiversificationValue += (h + p);
+
+    return continuousDiversificationValue;
 }
 
 function costFunctionF(s, numOfWeightSet) {
@@ -531,7 +564,7 @@ function costFunctionG(s, numOfWeightSet) {
  * @param iterationCounter - the actual iteration counter
  * @param numOfWeightSet - the number of the weight set to select / use
  */
-function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper) {
+function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper, hFunctionNumber) {
     var neighbourhood = [];
 
     // 1. Assign each pair of positions (i, j) an integer µij in [0, n-1] ([0, Eta-1]) and in each iteration t, consider
@@ -576,8 +609,11 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper) {
                     var costFunctionValue = costFunctionG(newNeighbourhoodSolutionInsertion, numOfWeightSet);
                     neighbourhood.push(newNeighbourhoodSolutionInsertion);
 
-                    // 2.2.4 Continuous diversification if new solution is worse than given s
+                    // For 2.2.4 Continuous diversification --> register moves and adapt 'continuousDiversificationValue'
                     helper.registerMove(vehicleI._id, i, j);
+                    if(typeof hFunctionNumber != "undefined" && hFunctionNumber != -1 && costFunctionValue > s.actCostFunctionGResult) {
+                        increaseContinuousDiversificationValue(s, i, j, helper, hFunctionNumber, numOfWeightSet);
+                    }
                 } else {
                     // Check for "Attribute based aspiration criterion (2.2.3)
                 }
@@ -586,7 +622,7 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper) {
 
                 var newNeighbourhoodSolutionSwap = new Solution(s.vehicles, s.parameterSet.parameters, s.ratioSet.ratios);
                 if(newNeighbourhoodSolutionSwap.isSwapAllowed(i, j)) {
-                    // 2.2.4 Continuous diversification if new solution is worse than given s
+                    // For 2.2.4 Continuous diversification --> register moves
                     helper.registerMove(newNeighbourhoodSolutionSwap.vehicles[i]._id, i, j);
                     helper.registerMove(newNeighbourhoodSolutionSwap.vehicles[j]._id, j, i);
 
@@ -682,15 +718,25 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     // Perform before every search:
     solution.aspirationCriterionArray = [];
     for(var i in helper.vehicles) {
-        console.log(helper.vehicles[i].countMovesFromPositionToAnyOther(i));
+        // console.log(helper.vehicles[i].countMovesFromPositionToAnyOther(i));
     }
 
-    var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet, helper);
+    // For 2.2.4 Continuous diversification --> Select random hFunctionNumber
+    var hFunctionNumber = getRandomNumber(1, 2);
 
-    var bestSolutionInN = neighbourhood[0];
+    var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet, helper, hFunctionNumber);
+
+    var bestS = null;
+    for(var i in neighbourhood) {
+        if(bestS == null) {
+            bestS = neighbourhood[i];
+        } else if(neighbourhood[i].actCostFunctionGResult < bestS.actCostFunctionGResult){
+            bestS = neighbourhood[i];
+        }
+    }
+
     neighbourhood = [];
-
-    return bestSolutionInN;
+    return bestS;
 }
 
 
