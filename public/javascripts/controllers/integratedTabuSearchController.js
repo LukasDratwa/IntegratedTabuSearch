@@ -27,7 +27,7 @@ function ParameterSet(parameters) {
 
     this.getWeightSet = function(number) {
         if(number < 1 || number > 3) {
-            console.error("The requested weight set should be in [1, 3]!");
+            console.warn("The requested weight set should be in [1, 3]!");
         }
 
         var result = [];
@@ -224,7 +224,7 @@ function Solution(vehicles, parameters, ratios) {
 
             // FIXME From time to time the loop is stucked when following indexorder (f.e.) is analyzed: 8, 9, 8, 9, ...
             if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < lastCheckedIndex) {
-                console.error("-----> Had to break counting of paint group (" + moveId + ")", this);
+                console.warn("-----> Had to break counting of paint group (" + moveId + ")", this);
                 break;
             }
 
@@ -551,8 +551,10 @@ function costFunctionG(s, numOfWeightSet) {
         zetaValue = zetaValue / 2;
     }
 
-    var result = costFunctionF(s, numOfWeightSet) + zetaValue * (s.actColorViolations) + continuousDiversificationValue;
+    var costFunctionFValue = costFunctionF(s, numOfWeightSet);
+    var result = costFunctionFValue + zetaValue * (s.actColorViolations) + continuousDiversificationValue;
     s.actCostFunctionGResult = result;
+    s.actCostFunctionFResult = costFunctionFValue;
 
     return result;
 }
@@ -704,22 +706,13 @@ function PertubationMechanisms() {
      */
 }
 
-function solutionSatisfiesAcceptanceCriterion() {
-    /*
-     * - If f1 or f2 was used in the pertuabation and if a better solution in 3b was found, it replaces
-     *   the current solution
-     * - If f3 ... TODO ?!
-     */
-
-    return false;
-}
-
 function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     // Perform before every search:
     solution.aspirationCriterionArray = [];
     for(var i in helper.vehicles) {
         // console.log(helper.vehicles[i].countMovesFromPositionToAnyOther(i));
     }
+    continuousDiversificationValue = 0;
 
     // For 2.2.4 Continuous diversification --> Select random hFunctionNumber
     var hFunctionNumber = getRandomNumber(1, 2);
@@ -730,7 +723,7 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     for(var i in neighbourhood) {
         if(bestS == null) {
             bestS = neighbourhood[i];
-        } else if(neighbourhood[i].actCostFunctionGResult < bestS.actCostFunctionGResult){
+        } else if(neighbourhood[i].actCostFunctionGResult < bestS.actCostFunctionGResult){ // TODO Ask - with g or f function?!
             bestS = neighbourhood[i];
         }
     }
@@ -739,9 +732,25 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     return bestS;
 }
 
+var tookF3LastTime = true;
+function getNextWeightSetNumber(iterationCounter, oldWeightSetNumber) {
+    if(iterationCounter % 2 == 0) {
+        // Take f1
+        return 1;
+    } else {
+        // take f2 or f3
+        if(tookF3LastTime) {
+            tookF3LastTime = false;
+            return 2;
+        } else {
+            tookF3LastTime = true;
+            return 3;
+        }
+    }
+}
 
 function performIteratedTabuSearch(s) {
-    var sImproved, sImprovedCosts, sCurrent, sLocalOptimum;
+    var sImproved, sCurrent, sLocalOptimum, sBestSolution;
     var paramSet = s.parameterSet;
     var iterationCounter = 1;
     var pertubationMechanism = new PertubationMechanisms();
@@ -755,31 +764,70 @@ function performIteratedTabuSearch(s) {
 
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
     sImproved = performTabuSearch(s0, iterationCounter, 1, helper);
+    sBestSolution = sImproved;
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
     var iterationsWithoutImprovement = 0;
+    var secondCaseOfAcceptanceCriterionWasMatched = false;
+    var secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
     while(iterationsWithoutImprovement < paramSet.getParamWithIdent("k").value - 1) {
         iterationCounter++;
 
-        console.log("###### ITERATION " + iterationCounter + " ######");
+        console.log("###### ITERATION " + iterationCounter + " (Without impr.: " + iterationsWithoutImprovement + ") ######");
+        // Select numOfWeightSet
+        var numOfWeightSet = getNextWeightSetNumber(iterationCounter, 1);
 
         // a) Apply pertubation on sImproved to obtain sCurrent
         sCurrent = pertubationMechanism.performPertubation(sImproved);
 
-        // b) Apply tabu search on sCurrent to obtain sLocalOptimum
-        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, 1, helper); // TODO Switch weight set number
 
-        // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
-        if(solutionSatisfiesAcceptanceCriterion(sLocalOptimum)) {
-            sImproved = sLocalOptimum;
+        // b) Apply tabu search on sCurrent to obtain sLocalOptimum
+        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, numOfWeightSet, helper);
+        // console.log("new costs s: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sLocalOptimum.actCostFunctionFResult);
+
+        // Update best found solution
+        if(sLocalOptimum != null && sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult) {
+            sBestSolution = sLocalOptimum;
             iterationsWithoutImprovement = 0;
+
+            console.log("Found new best s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
         } else {
             iterationsWithoutImprovement++;
         }
 
+        // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
+        if(sLocalOptimum != null) {
+            /*
+             * - If f1 or f2 was used in the pertuabation and if a worse solution (than the best one) in 3b was found,
+             *   it will replace the current solution
+             * - SECOND CASE: If f3 was used in the pertuabation and if a better solution (than the best) in 3b was found,
+             *   it will NOT directly replace the current solution
+             *   --> Next pertubation with sLocalOptimum
+             *   --> If acceptance criterion will not be satisfied, continue with old sImproved
+             */
+            if(numOfWeightSet == 1 || numOfWeightSet == 2) {
+                // TODO really accept if the f function value is bigger than the best found solution?
+                if(sLocalOptimum.actCostFunctionFResult > sBestSolution.actCostFunctionFResult) {
+                    sImproved = sLocalOptimum;
 
-        // TODO delete me
-        if(iterationCounter == 10) {
+                    secondCaseOfAcceptanceCriterionWasMatched = false;
+                    secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
+                } else if(secondCaseOfAcceptanceCriterionWasMatched) {
+                    // Was not satisfied, return to old s
+                    secondCaseOfAcceptanceCriterionWasMatched = false;
+                    sImproved = secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave;
+                    secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
+                }
+            } else {
+                if(sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult) {
+                    secondCaseOfAcceptanceCriterionWasMatched = true;
+                    secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = sImproved;
+                    sImproved = sLocalOptimum;
+                }
+            }
+        }
+
+        if(iterationCounter == 20) {
             break;
         }
     }
@@ -788,6 +836,12 @@ function performIteratedTabuSearch(s) {
 
     // 4. Return the best found solution
     return sImproved;
+}
+
+function solutionSatisfiesAcceptanceCriterion(sCurrent, sLocalOptimum, sBestSolution, numOfWeightSet) {
+
+
+    return false;
 }
 
 tabuController.controller("integratedTabuSearchController", function ($scope, $http, $location) {
