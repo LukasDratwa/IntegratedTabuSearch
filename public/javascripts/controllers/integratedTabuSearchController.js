@@ -838,6 +838,112 @@ function PertubationMechanisms() {
         //console.log("----------- EOF PERTUBATION MIRROR TRANSFORMING -----------");
     };
 
+    this.moveSubsequence = function(s, subSeqStartIndex, subSeqEndIndex, insertAfterIndex) {
+        var newOrder = [];
+        if(insertAfterIndex < subSeqStartIndex) {
+            console.log("first");
+            // Insert all cars untouched till (inclusive) insertAfterIndex
+            for(var i=0; i<=insertAfterIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add subSeq
+            for(var i=subSeqStartIndex; i<=subSeqEndIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add rest
+            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
+                if(i < subSeqStartIndex || i > subSeqEndIndex) {
+                    newOrder.push(s.vehicles[i]);
+                }
+            }
+        } else {
+            console.log("second");
+            // Add all cars from the left
+            for(var i=0; i<subSeqStartIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // All cars after the sub seq till the insertAfterIndex (incl)
+            for(var i=subSeqEndIndex+1; i<=insertAfterIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add sub seq
+            for(var i=subSeqStartIndex; i<=subSeqEndIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add end (all vehicles after insertAfterIndex)
+            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
+                newOrder.push(s.vehicles[i])
+            }
+        }
+        s.vehicles = newOrder;
+        s.obligatoryUpdateAfterEveryMove();
+    };
+
+    this.removingAndReinsertionOfPaintGroups = function(s) {
+        // Pick random vehicle and get indexes of this consecutive color group
+        var initRandomIndex = getRandomNumber(0, s.vehicles.length-1);
+        var paintGroupStartIndex = initRandomIndex;
+        var paintGroupEndIndex = initRandomIndex;
+        var randomV = s.vehicles[initRandomIndex];
+
+        // Search start index
+        for(var i=initRandomIndex-1; i>=0; i--) {
+            if(s.vehicles[i].paintColor == randomV.paintColor) {
+                paintGroupStartIndex = i;
+            } else {
+                break;
+            }
+        }
+
+        // Search end index
+        for(var i=initRandomIndex+1; i<=s.vehicles.length-1; i++) {
+            if(s.vehicles[i].paintColor == randomV.paintColor) {
+                paintGroupEndIndex = i;
+            } else {
+                break;
+            }
+        }
+
+        // Get i outside this group
+        var i = getRandomNumber(0, s.vehicles.length-1);
+        while(i >= paintGroupStartIndex && i <= paintGroupEndIndex) {
+            i = getRandomNumber(0, s.vehicles.length-1);
+        }
+
+        // Find j >= i, where the car in j and j+1 have different colors
+        var foundJ = -1;
+        for(var j=i; j<=s.vehicles.length-1; j++) {
+            if(j != s.vehicles.length-1) {
+                if(s.vehicles[j].paintColor != s.vehicles[j+1].paintColor) {
+                    foundJ = j;
+                    break;
+                }
+            }
+        }
+
+        // If j was found, insert the color group between j and j+1
+        if(foundJ != -1) {
+            /*console.log("----------- PERTUBATION RANDOM MOVE SUB SEQ -----------");
+            s.printOrderNrOfVehicles();
+            s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+            console.log("Will be inserted after orderNr: " + s.vehicles[insertAfterIndex].orderNr);*/
+            this.moveSubsequence(s, paintGroupStartIndex, paintGroupEndIndex, j);
+            /*s.printOrderNrOfVehicles();
+            console.log("----------- EOF PERTUBATION RANDOM MOVE SUB SEQ -----------");*/
+        } else {
+            console.warn("Couldn't find j within permutation: removal and reinsertion of paint group! No p. performed!");
+        }
+    };
+
+    this.applyImprovingAndPiNeutralSwaps = function(s) {
+
+    };
+
     this.randomMoveOfSubSeq = function(s) {
         var tau = s.parameterSet.getParamWithIdent("t");
         var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
@@ -852,58 +958,9 @@ function PertubationMechanisms() {
         s.printOrderNrOfVehicles();
         s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
         console.log("Will be inserted after orderNr: " + s.vehicles[insertAfterIndex].orderNr);*/
-        var newOrder = [];
-        if(insertAfterIndex < randomStartIndex) {
-            // Insert all cars untouched till (inclusive) insertAfterIndex
-            for(var i=0; i<=insertAfterIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add subSeq
-            for(var i=randomStartIndex; i<=subSeqEndIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add rest
-            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
-                if(i < randomStartIndex || i > subSeqEndIndex) {
-                    newOrder.push(s.vehicles[i]);
-                }
-            }
-        } else {
-            // Add all cars from the left
-            for(var i=0; i<randomStartIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // All cars after the sub seq till the insertAfterIndex (incl)
-            for(var i=subSeqEndIndex+1; i<=insertAfterIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add sub seq
-            for(var i=randomStartIndex; i<=subSeqEndIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add end (all vehicles after insertAfterIndex)
-            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
-                newOrder.push(s.vehicles[i])
-            }
-        }
-        s.vehicles = newOrder;
-        s.obligatoryUpdateAfterEveryMove();
-
-        //s.printOrderNrOfVehicles();
-        //console.log("----------- EOF PERTUBATION RANDOM MOVE SUB SEQ -----------");
-    };
-
-    this.reinsertionOfPaintGroups = function(s) {
-
-    };
-
-    this.applyImprovingAndPiNeutralSwaps = function(s) {
-
+        this.moveSubsequence(s, randomStartIndex, subSeqEndIndex, insertAfterIndex);
+        /*s.printOrderNrOfVehicles();
+        console.log("----------- EOF PERTUBATION RANDOM MOVE SUB SEQ -----------");*/
     };
 
     this.performPertubation = function(solution) {
@@ -933,7 +990,7 @@ function PertubationMechanisms() {
                 break;
         }*/
 
-        this.randomMoveOfSubSeq(solution);
+        this.removingAndReinsertionOfPaintGroups(solution);
 
         return solution;
     };
