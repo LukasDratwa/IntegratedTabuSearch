@@ -839,7 +839,63 @@ function PertubationMechanisms() {
     };
 
     this.randomMoveOfSubSeq = function(s) {
+        var tau = s.parameterSet.getParamWithIdent("t");
+        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
+        var subSeqEndIndex = randomStartIndex + tau.value - 1;
+        var insertAfterIndex = randomStartIndex; // Just that while loop is triggered initially
 
+        while(insertAfterIndex >= randomStartIndex-1 && insertAfterIndex <= subSeqEndIndex) {
+            insertAfterIndex = getRandomNumber(0, s.vehicles.length-1);
+        }
+
+        /*console.log("----------- PERTUBATION RANDOM MOVE SUB SEQ -----------");
+        s.printOrderNrOfVehicles();
+        s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+        console.log("Will be inserted after orderNr: " + s.vehicles[insertAfterIndex].orderNr);*/
+        var newOrder = [];
+        if(insertAfterIndex < randomStartIndex) {
+            // Insert all cars untouched till (inclusive) insertAfterIndex
+            for(var i=0; i<=insertAfterIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add subSeq
+            for(var i=randomStartIndex; i<=subSeqEndIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add rest
+            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
+                if(i < randomStartIndex || i > subSeqEndIndex) {
+                    newOrder.push(s.vehicles[i]);
+                }
+            }
+        } else {
+            // Add all cars from the left
+            for(var i=0; i<randomStartIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // All cars after the sub seq till the insertAfterIndex (incl)
+            for(var i=subSeqEndIndex+1; i<=insertAfterIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add sub seq
+            for(var i=randomStartIndex; i<=subSeqEndIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add end (all vehicles after insertAfterIndex)
+            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
+                newOrder.push(s.vehicles[i])
+            }
+        }
+        s.vehicles = newOrder;
+        s.obligatoryUpdateAfterEveryMove();
+
+        //s.printOrderNrOfVehicles();
+        //console.log("----------- EOF PERTUBATION RANDOM MOVE SUB SEQ -----------");
     };
 
     this.reinsertionOfPaintGroups = function(s) {
@@ -877,7 +933,7 @@ function PertubationMechanisms() {
                 break;
         }*/
 
-        this.mirrorTransformingOfSubSeq(solution);
+        this.randomMoveOfSubSeq(solution);
 
         return solution;
     };
