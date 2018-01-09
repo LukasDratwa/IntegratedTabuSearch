@@ -158,6 +158,7 @@ var Helper = function(vehicles) {
     };
 };
 
+var solutionCounter = 0;
 function Solution(vehicles, parameters, ratios) {
     this.vehicles = cloneVehicles(vehicles);
     this.parameterSet = new ParameterSet(parameters);
@@ -169,6 +170,7 @@ function Solution(vehicles, parameters, ratios) {
     this.actHighPrioViolations = 0;
     this.actLowPrioViolationsExtended = [];
     this.actHighPrioViolationsExtended = [];
+    this.solutionNr = solutionCounter++;
 
     this.solutionHasDuplicatedVehicles = function() {
         for(var i in this.vehicles) {
@@ -281,7 +283,8 @@ function Solution(vehicles, parameters, ratios) {
             if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < parseInt(lastCheckedIndex)) {
                 console.warn("-----> Had to break counting of paint group (" + moveId
                     + ", duplicated v in s: " + this.solutionHasDuplicatedVehicles() + ", Indexes: "
-                    + this.getIndexOfVehicleInS(nextPaintGroupVehicle) + " (now) < " + lastCheckedIndex + " (last checked))", this);
+                    + this.getIndexOfVehicleInS(nextPaintGroupVehicle) + " (now) < " + lastCheckedIndex + " (last checked)"
+                    + " sNr: " + this.solutionNr + ")", this);
                 this.printOrderNrOfVehicles();
                 break;
             }
@@ -426,11 +429,37 @@ function Solution(vehicles, parameters, ratios) {
         var vehicleOldIndex = this.getIndexOfVehicleInS(vehicle);
         this.addMovingProhibition(index, vehicle);
 
-        // console.log("-------- Start Insertion [iFrom: " + vehicleOldIndex + ", iTo: " + index + "]");
-        // this.printOrderNrOfVehicles();
-        this.vehicles.splice(index+1, 0, vehicle);
-        this.vehicles.splice(vehicleOldIndex, 1);
-        // this.printOrderNrOfVehicles();
+        /*console.log("-------- Start Insertion [iFrom: " + vehicleOldIndex + ", iTo: " + index
+            + ", sNr: " + this.solutionNr + ", orderNr1: " + vehicle.orderNr + ", orderNr2: "
+            + this.vehicles[index].orderNr + "]");
+        this.printOrderNrOfVehicles();*/
+
+        // from in tmp speichern
+        if(vehicleOldIndex < index) {
+            var tmp = vehicle;
+
+            for(var i=vehicleOldIndex+1; i<this.vehicles.length; i++) {
+                this.vehicles[i-1] = this.vehicles[i];
+
+                if(i == index) {
+                    this.vehicles[i] = tmp;
+                    break;
+                }
+            }
+        } else {
+            var tmp = vehicle;
+
+
+            for(var i=vehicleOldIndex-1; i>0; i--) {
+                this.vehicles[i+1] = this.vehicles[i];
+
+                if(i == index) {
+                    this.vehicles[i] = tmp;
+                    break;
+                }
+            }
+        }
+        //this.printOrderNrOfVehicles();
         // console.log("-------- End Insertion");
 
         // TODO comment if not needed anymore
@@ -452,13 +481,15 @@ function Solution(vehicles, parameters, ratios) {
             this.addMovingProhibition(firstIndex, this.vehicles[secondIndex]);
         }
 
-        //console.log("-------- Start Swap [i1: " + firstIndex + ", i2: " + secondIndex + "]");
-        // this.printOrderNrOfVehicles();
+        /*console.log("-------- Start Swap [iFrom: " + firstIndex + ", iTo: " + secondIndex
+            + ", sNr: " + this.solutionNr + ", orderNr1: " + this.vehicles[firstIndex].orderNr + ", orderNr2: "
+            + this.vehicles[secondIndex].orderNr + "]");
+        this.printOrderNrOfVehicles();*/
         var tmpVehicle = this.vehicles[firstIndex];
         this.vehicles[firstIndex] = this.vehicles[secondIndex];
         this.vehicles[secondIndex] = tmpVehicle;
-        // this.printOrderNrOfVehicles();
-        // console.log("-------- End Swap");
+        /*this.printOrderNrOfVehicles();
+        console.log("-------- End Swap");*/
 
         if(this.vehicles[firstIndex].orderNr == this.vehicles[secondIndex].orderNr) {
             console.warn("SWAP " + firstIndex + " <-> " + secondIndex + ": Duplicated vehicles in solution!");
@@ -677,6 +708,7 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper, hFunction
         // Consider only if condition applies
         for(var j in s.vehicles) {
             if(i != j && vehicleI.lockArray[j] == iterationCounter % eta) {
+
                 // Re-assign random number
                 vehicleI.lockArray[i] = getRandomNumber(0, eta - 1);
 
