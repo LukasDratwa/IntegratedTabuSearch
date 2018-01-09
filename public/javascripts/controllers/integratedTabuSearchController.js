@@ -795,7 +795,6 @@ function PertubationMechanisms() {
 
     this.randomShufflingWithinSubSeq = function(s) {
         var tau = s.parameterSet.getParamWithIdent("t");
-
         var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
 
         // Shuffle sub sequence randomly
@@ -817,7 +816,26 @@ function PertubationMechanisms() {
     };
 
     this.mirrorTransformingOfSubSeq = function(s) {
+        var tau = s.parameterSet.getParamWithIdent("t");
 
+        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
+        var subSeqEndIndex = randomStartIndex + tau.value - 1;
+
+        var iterationsToPerform = tau.value;
+        if(iterationsToPerform % 2 == 1) {
+            iterationsToPerform--;
+        }
+
+        //console.log("----------- PERTUBATION MIRROR TRANSFORMING -----------");
+        //s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+        for(var z=0; z<iterationsToPerform/2; z++) {
+            var i = randomStartIndex+z;
+            var j = subSeqEndIndex-z;
+
+            s.swapVehicles(i, j, false);
+        }
+        //s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+        //console.log("----------- EOF PERTUBATION MIRROR TRANSFORMING -----------");
     };
 
     this.randomMoveOfSubSeq = function(s) {
@@ -859,7 +877,7 @@ function PertubationMechanisms() {
                 break;
         }*/
 
-        this.randomShufflingWithinSubSeq(solution);
+        this.mirrorTransformingOfSubSeq(solution);
 
         return solution;
     };
