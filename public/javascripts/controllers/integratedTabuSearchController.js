@@ -194,7 +194,7 @@ function Solution(vehicles, parameters, ratios) {
     this.printOrderNrOfVehicleSubSeq = function(startIndex, endIndex) {
         var order = "";
         var counter = 0;
-        for(var i=0; i<endIndex; i++) {
+        for(var i=startIndex; i<=endIndex; i++) {
             order += this.vehicles[i].orderNr + " ";
             counter++;
         }
@@ -796,26 +796,24 @@ function PertubationMechanisms() {
     this.randomShufflingWithinSubSeq = function(s) {
         var tau = s.parameterSet.getParamWithIdent("t");
 
-        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value - 1);
-        while(randomStartIndex > s.vehicles.length - tau.value - 1) {
-            console.log("---------------------------------------------------");
-            randomStartIndex = getRandomNumber(0, s.vehicles.length-1);
-        }
+        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
 
         // Shuffle sub sequence randomly
-        for(var x=0; x<tau.value*2; x++) {
+        //console.log("----------- PERTUBATION RANDOM SHUFFLING -----------");
+        //s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+        for(var x=0; x<50; x++) {
+            var randomI = getRandomNumber(randomStartIndex, randomStartIndex + tau.value - 1);
+            var randomJ = getRandomNumber(randomStartIndex, randomStartIndex + tau.value - 1);
 
-            var randomI = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
-            var randomJ = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
             while(randomI == randomJ) {
-                randomI = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
-                randomJ = getRandomNumber(randomStartIndex, randomStartIndex + tau.value);
+                var randomI = getRandomNumber(randomStartIndex, randomStartIndex + tau.value - 1);
+                var randomJ = getRandomNumber(randomStartIndex, randomStartIndex + tau.value - 1);
             }
 
             s.swapVehicles(randomI, randomJ, false);
-
-            // s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value);
         }
+        //s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+        //console.log("----------- EOF PERTUBATION RANDOM SHUFFLING -----------");
     };
 
     this.mirrorTransformingOfSubSeq = function(s) {
@@ -861,7 +859,7 @@ function PertubationMechanisms() {
                 break;
         }*/
 
-        // this.randomShufflingWithinSubSeq(solution);
+        this.randomShufflingWithinSubSeq(solution);
 
         return solution;
     };
@@ -925,18 +923,21 @@ function performIteratedTabuSearch(s) {
     var pertubationMechanism = new PertubationMechanisms();
     var startingTimestamp = new Date();
     var helper = new Helper(s.vehicles);
-    var logSolCostValues = true;
+    var logSolCostValues = false;
 
     // 1. Init
     var s0 = s;
     costFunctionG(s0, 1);
     console.log(s0);
+    if(logSolCostValues) {
+        console.log("Initial s: g=" + s.actCostFunctionGResult + "; f=" + s.actCostFunctionFResult);
+    }
 
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
     sImproved = performTabuSearch(s0, iterationCounter, 1, helper);
     sBestSolution = sImproved;
     if(logSolCostValues) {
-        console.log("Initial best s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+        console.log("Improved s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
     }
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
@@ -1016,12 +1017,6 @@ function performIteratedTabuSearch(s) {
         console.log("Result s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
     }
     return sImproved;
-}
-
-function solutionSatisfiesAcceptanceCriterion(sCurrent, sLocalOptimum, sBestSolution, numOfWeightSet) {
-
-
-    return false;
 }
 
 tabuController.controller("integratedTabuSearchController", function ($scope, $http, $location) {
