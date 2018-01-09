@@ -208,10 +208,9 @@ function Solution(vehicles, parameters, ratios) {
         for(var i in this.vehicles) {
             var tmp = this.vehicles[i];
             if(vehicle._id === tmp._id) {
-                return i;
+                return parseInt(i);
             }
         }
-
         return null;
     };
 
@@ -279,8 +278,11 @@ function Solution(vehicles, parameters, ratios) {
             nextPaintGroupVehicle = this.getNextPaintGroupVehicle(nextPaintGroupVehicle);
 
             // FIXME From time to time the loop is stucked when following indexorder (f.e.) is analyzed: 8, 9, 8, 9, ...
-            if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < lastCheckedIndex) {
-                console.warn("-----> Had to break counting of paint group (" + moveId + ")", this);
+            if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < parseInt(lastCheckedIndex)) {
+                console.warn("-----> Had to break counting of paint group (" + moveId
+                    + ", duplicated v in s: " + this.solutionHasDuplicatedVehicles() + ", Indexes: "
+                    + this.getIndexOfVehicleInS(nextPaintGroupVehicle) + " (now) < " + lastCheckedIndex + " (last checked))", this);
+                this.printOrderNrOfVehicles();
                 break;
             }
 
@@ -369,7 +371,7 @@ function Solution(vehicles, parameters, ratios) {
         this.updateActViolations(moveId);
         // console.log("Performed obl. update after every move", this);
     };
-    this.obligatoryUpdateAfterEveryMove();
+    this.obligatoryUpdateAfterEveryMove("INIT UPDATE");
 
     this.addMovingProhibition = function(indexTo, vehicle) {
         if(typeof vehicle.movingProhibitions === "undefined") {
@@ -431,11 +433,16 @@ function Solution(vehicles, parameters, ratios) {
         // this.printOrderNrOfVehicles();
         // console.log("-------- End Insertion");
 
+        // TODO comment if not needed anymore
+        if(this.solutionHasDuplicatedVehicles()) {
+            console.warn("INSERT " + vehicleOldIndex + " -> " + index + ": Duplicated vehicles in solution!");
+            this.printOrderNrOfVehicles();
+        }
         this.obligatoryUpdateAfterEveryMove("INSERTION");
+
         return this;
     };
 
-    // TODO überüprüfen & testemn!!!
     this.swapVehicles = function(firstIndex, secondIndex, addMovingProhibition) {
         firstIndex = parseInt(firstIndex);
         secondIndex = parseInt(secondIndex);
@@ -454,7 +461,8 @@ function Solution(vehicles, parameters, ratios) {
         // console.log("-------- End Swap");
 
         if(this.vehicles[firstIndex].orderNr == this.vehicles[secondIndex].orderNr) {
-            console.warn("Duplicated vehicles in solution!")
+            console.warn("SWAP " + firstIndex + " <-> " + secondIndex + ": Duplicated vehicles in solution!");
+            this.printOrderNrOfVehicles();
         }
 
         this.obligatoryUpdateAfterEveryMove("SWAP");
@@ -823,7 +831,7 @@ function PertubationMechanisms() {
                 break;
         }*/
 
-        this.randomShufflingWithinSubSeq(solution);
+        // this.randomShufflingWithinSubSeq(solution);
 
         return solution;
     };
@@ -856,7 +864,7 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
 }
 
 var tookF3LastTime = true;
-function getNextWeightSetNumber(iterationCounter, oldWeightSetNumber) {
+function getNextWeightSetNumber(iterationCounter) {
     /* Pertubation is applied in 3a
      *
      * After every pertubation the parameters a, b and y are modified. Three different configurations:
@@ -906,7 +914,7 @@ function performIteratedTabuSearch(s) {
         iterationCounter++;
 
         // Select numOfWeightSet
-        var numOfWeightSet = getNextWeightSetNumber(iterationCounter, 1);
+        var numOfWeightSet = getNextWeightSetNumber(iterationCounter);
 
         console.log("###### ITERATION " + iterationCounter + " (Without impr.: " + iterationsWithoutImprovement
             + "; Weighset: " + numOfWeightSet + ") ######");
