@@ -449,8 +449,7 @@ function Solution(vehicles, parameters, ratios) {
         } else {
             var tmp = vehicle;
 
-
-            for(var i=vehicleOldIndex-1; i>0; i--) {
+            for(var i=vehicleOldIndex-1; i>=0; i--) {
                 this.vehicles[i+1] = this.vehicles[i];
 
                 if(i == index) {
@@ -774,7 +773,6 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper, hFunction
         }
     }
 
-    console.log(neighbourhood.length);
     return neighbourhood;
 }
 
@@ -886,12 +884,11 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     for(var i in neighbourhood) {
         if(bestS == null) {
             bestS = neighbourhood[i];
-        } else if(neighbourhood[i].actCostFunctionGResult < bestS.actCostFunctionGResult){ // TODO Ask - with g or f function?!
+        } else if(neighbourhood[i].actCostFunctionFResult < bestS.actCostFunctionFResult){ // TODO Ask - with g or f function?!
             bestS = neighbourhood[i];
         }
     }
 
-    neighbourhood = [];
     return bestS;
 }
 
@@ -928,6 +925,7 @@ function performIteratedTabuSearch(s) {
     var pertubationMechanism = new PertubationMechanisms();
     var startingTimestamp = new Date();
     var helper = new Helper(s.vehicles);
+    var logSolCostValues = true;
 
     // 1. Init
     var s0 = s;
@@ -937,6 +935,9 @@ function performIteratedTabuSearch(s) {
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
     sImproved = performTabuSearch(s0, iterationCounter, 1, helper);
     sBestSolution = sImproved;
+    if(logSolCostValues) {
+        console.log("Initial best s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+    }
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
     var iterationsWithoutImprovement = 0;
@@ -957,14 +958,16 @@ function performIteratedTabuSearch(s) {
 
         // b) Apply tabu search on sCurrent to obtain sLocalOptimum
         sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, numOfWeightSet, helper);
-        // console.log("new costs s: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sLocalOptimum.actCostFunctionFResult);
+        // console.log("new costs sLocalOpt: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sLocalOptimum.actCostFunctionFResult);
 
         // Update best found solution
         if(sLocalOptimum != null && sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult) {
             sBestSolution = sLocalOptimum;
             iterationsWithoutImprovement = 0;
 
-            console.log("Found new best s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+            if(logSolCostValues) {
+                console.log("Found new best s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+            }
         } else {
             iterationsWithoutImprovement++;
         }
@@ -1009,6 +1012,9 @@ function performIteratedTabuSearch(s) {
     console.log("Calculation time needed: " + (new Date().valueOf() - startingTimestamp.valueOf()));
 
     // 4. Return the best found solution
+    if(logSolCostValues) {
+        console.log("Result s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+    }
     return sImproved;
 }
 
