@@ -11,6 +11,7 @@ var ParameterSchema = new mongoose.Schema({
     name: String,
     description: String,
     type: String,
-    value: Number
+    value: Number,
+    orderNr: Number
 });
 mongoose.model("Parameter", ParameterSchema);

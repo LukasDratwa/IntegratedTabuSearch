@@ -71,7 +71,8 @@ router.get('/checkdefaultparametervalues', function (req, res, next) {
                         name: sParam.name,
                         description: sParam.description,
                         type: sParam.type,
-                        value: sParam.value
+                        value: sParam.value,
+                        orderNr: sParam.orderNr
                     });
 
                     doc.save(function(err, param) {
@@ -92,7 +93,19 @@ router.get('/checkdefaultparametervalues', function (req, res, next) {
 
 router.get('/standardparameters', function (req, res) {
     Parameter.find({standard: true}, function(err, parameters) {
-        res.json(parameters);
+
+        var sortedParameters  = parameters.sort(function(a, b) {
+            if(a.orderNr > b.orderNr) {
+                return 1;
+            } else if(a.orderNr < b.orderNr) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+
+
+        res.json(sortedParameters);
     });
 });
 
@@ -103,22 +116,34 @@ router.get('/parameters', function(req, res) {
 });
 
 router.post('/parameter', function(req, res) {
-    var newParam = new Parameter({
-        standard: false,
-        ident: req.body.ident,
-        name: req.body.name,
-        description: req.body.description,
-        type: req.body.type,
-        value: req.body.value
-    });
+    Parameter.find({standard: true}, function(err, parameters) {
+        var foundOrderNr = -1;
+        for(var i in parameters) {
+            var sParam = parameters[i];
 
-    newParam.save(function(err, param) {
-        if(err) {
-            console.log(err);
-        } else {
-            console.log("Created new param: " + param.name);
-            res.json(param);
+            if(sParam.ident === req.body.ident) {
+                foundOrderNr = sParam.orderNr;
+            }
         }
+
+        var newParam = new Parameter({
+            standard: false,
+            ident: req.body.ident,
+            name: req.body.name,
+            description: req.body.description,
+            type: req.body.type,
+            value: req.body.value,
+            orderNr: foundOrderNr
+        });
+
+        newParam.save(function(err, param) {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log("Created new param: " + param.name);
+                res.json(param);
+            }
+        });
     });
 });
 
@@ -137,7 +162,16 @@ router.post('/overviewdata', function(req, res) {
         responseObj.tabusearches = tabusearches;
 
         Parameter.find({standard: true}, function(err, standardparameters) {
-            responseObj.standardParameters = standardparameters;
+            var sortedParameters  = standardparameters.sort(function(a, b) {
+                if(a.orderNr > b.orderNr) {
+                    return 1;
+                } else if(a.orderNr < b.orderNr) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+            responseObj.standardParameters = sortedParameters;
 
             DataSet.find({}, "_id description timestamp", function(err, datasetIds) {
                 responseObj.datasetIds = datasetIds;
@@ -282,7 +316,17 @@ router.post('/tabusearch', function(req, res) {
             $in: req.body.parameterIds
         }
     }, function(err, parameterDocs) {
-        tabuSearch.parameters.push.apply(tabuSearch.parameters, parameterDocs);
+        var sortedParameters  = parameterDocs.sort(function(a, b) {
+            if(a.orderNr > b.orderNr) {
+                return 1;
+            } else if(a.orderNr < b.orderNr) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+
+        tabuSearch.parameters.push.apply(tabuSearch.parameters, sortedParameters);
         saveTabuSearch(tabuSearch, res);
     });
 

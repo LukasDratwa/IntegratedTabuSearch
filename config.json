@@ -13,133 +13,152 @@
       "name": "Lota (l)",
       "description": "Maximal length of subsequence with same colour. Is a hard constraint, not allowed to violate.",
       "type": "Integer",
-      "value": 0
+      "value": 0,
+      "orderNr": 0
     },
     {
       "ident": "a1",
       "name": "Alpha (a) 1",
       "description": "Weight colour changes.",
       "type": "Integer",
-      "value": 1000000
+      "value": 1000000,
+      "orderNr": 1
     },
     {
       "ident": "b1",
       "name": "Beta (b) 1",
       "description": "Weight for the number of PRC violations.",
       "type": "Integer",
-      "value": 1000
+      "value": 1000,
+      "orderNr": 2
     },
     {
       "ident": "y1",
       "name": "Gamma (y) 1",
       "description": "Weight for the number of NPRC violations.",
       "type": "Integer",
-      "value": 1
+      "value": 1,
+      "orderNr": 3
     },
     {
       "ident": "a2",
       "name": "Alpha (a) 2",
       "description": "Weight colour changes.",
       "type": "Integer",
-      "value": 10000
+      "value": 10000,
+      "orderNr": 4
     },
     {
       "ident": "b2",
       "name": "Beta (b) 2",
       "description": "Weight for the number of PRC violations.",
       "type": "Integer",
-      "value": 100
+      "value": 100,
+      "orderNr": 5
     },
     {
       "ident": "y2",
       "name": "Gamma (y) 2",
       "description": "Weight for the number of NPRC violations.",
       "type": "Integer",
-      "value": 1
+      "value": 1,
+      "orderNr": 6
     },
     {
       "ident": "a3",
       "name": "Alpha (a) 3",
       "description": "Weight colour changes.",
       "type": "Integer",
-      "value": 10000
+      "value": 10000,
+      "orderNr": 7
     },
     {
       "ident": "b3",
       "name": "Beta (b) 3",
       "description": "Weight for the number of PRC violations.",
       "type": "Integer",
-      "value": 10000
+      "value": 10000,
+      "orderNr": 8
     },
     {
       "ident": "y3",
       "name": "Gamma (y) 3",
       "description": "Weight for the number of NPRC violations.",
       "type": "Integer",
-      "value": 1
+      "value": 1,
+      "orderNr": 9
     },
     {
       "ident": "z",
       "name": "Zeta (z)",
       "description": "Positive parameter for the relaxation mechanism (chapter 2.2.1).",
       "type": "Double",
-      "value": 1.0
+      "value": 1.0,
+      "orderNr": 10
     },
     {
       "ident": "n",
       "name": "Eta (n)",
       "description": "Represents the max value for the definition of Eta = min {n, maxValue}. Every pair of positions (i,j) is in fact considered every Eta iterations.",
       "type": "Integer",
-      "value": 200
+      "value": 200,
+      "orderNr": 11
     },
     {
       "ident": "u",
       "name": "My (u)",
       "description": "An random integer in [0,Eta - 1]. Every pair (i, j) will be assigned to one My. At every iteration t the pair is only considered for a move when My(i,j) = t (mod Eta). The My values are themself regenerated every Eta iterations.",
       "type": "Integer",
-      "value": 0
+      "value": 0,
+      "orderNr": 12
     },
     {
       "ident": "o",
       "name": "Theta (o)",
       "description": "Reinserting forbidden for Theta iterations for the type 1 of moving. Exception is allowed when a solution is found which is better than the best one at this moment. For the reswapping the same.",
       "type": "Integer",
-      "value": 200
+      "value": 200,
+      "orderNr": 13
     },
     {
       "ident": "i",
       "name": "Psi (i)",
       "description": "? (Described in the end of 2.2.4)",
       "type": "Double",
-      "value": 0.1
+      "value": 0.1,
+      "orderNr": 14
     },
     {
       "ident": "k",
       "name": "Kappa (k)",
       "description": "Stopping criterion; describes the amount of iterations without an improvement of f(s).",
       "type": "Integer",
-      "value": 200
+      "value": 200,
+      "orderNr": 15
     },
     {
       "ident": "x",
       "name": "Chi (x)",
       "description": "Perturbation mechanism - Random swaps: 3 random pairs where i != j are swapped.",
       "type": "Integer",
-      "value": 3
+      "value": 3,
+      "orderNr": 16
     },
     {
       "ident": "t",
       "name": "Tau (t)",
       "description": "Perturbation mechanism - Random shuffling within a subsequence: selection of a subsequence with the length Tau and shuffling them randomly.",
       "type": "Integer",
-      "value": 6
+      "value": 6,
+      "orderNr": 17
     },
     {
       "ident": "p",
       "name": "Pi (p)",
       "description": "Perturbation mechanism - Application of all improving swaps and of a proportion Pi of neutral swaps",
       "type": "Double",
-      "value": 0.1
+      "value": 0.1,
+      "orderNr": 18
     }
   ]
 }
