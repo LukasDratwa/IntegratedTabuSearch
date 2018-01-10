@@ -172,6 +172,27 @@ function Solution(vehicles, parameters, ratios) {
     this.actHighPrioViolationsExtended = [];
     this.solutionNr = solutionCounter++;
 
+    this.vehiclesHaveSameActivedFeatures = function(v1, v2) {
+        for(var i in v1.activatedFeatures) {
+            var foundV1FeatureInV2 = false;
+            var v1Feature = v1.activatedFeatures[i];
+
+            for(var j in v2.activatedFeatures) {
+                var v2Feature = v2.activatedFeatures[j];
+
+                if(v1Feature.ident == v2Feature.ident) {
+                    foundV1FeatureInV2 = true;
+                }
+            }
+
+            if(! foundV1FeatureInV2) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
     this.solutionHasDuplicatedVehicles = function() {
         for(var i in this.vehicles) {
             var orderNr = this.vehicles[i];
@@ -838,50 +859,23 @@ function PertubationMechanisms() {
         //console.log("----------- EOF PERTUBATION MIRROR TRANSFORMING -----------");
     };
 
-    this.moveSubsequence = function(s, subSeqStartIndex, subSeqEndIndex, insertAfterIndex) {
-        var newOrder = [];
-        if(insertAfterIndex < subSeqStartIndex) {
-            console.log("first");
-            // Insert all cars untouched till (inclusive) insertAfterIndex
-            for(var i=0; i<=insertAfterIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
+    this.randomMoveOfSubSeq = function(s) {
+        var tau = s.parameterSet.getParamWithIdent("t");
+        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
+        var subSeqEndIndex = randomStartIndex + tau.value - 1;
+        var insertAfterIndex = randomStartIndex; // Just that while loop is triggered initially
 
-            // Add subSeq
-            for(var i=subSeqStartIndex; i<=subSeqEndIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add rest
-            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
-                if(i < subSeqStartIndex || i > subSeqEndIndex) {
-                    newOrder.push(s.vehicles[i]);
-                }
-            }
-        } else {
-            console.log("second");
-            // Add all cars from the left
-            for(var i=0; i<subSeqStartIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // All cars after the sub seq till the insertAfterIndex (incl)
-            for(var i=subSeqEndIndex+1; i<=insertAfterIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add sub seq
-            for(var i=subSeqStartIndex; i<=subSeqEndIndex; i++) {
-                newOrder.push(s.vehicles[i]);
-            }
-
-            // Add end (all vehicles after insertAfterIndex)
-            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
-                newOrder.push(s.vehicles[i])
-            }
+        while(insertAfterIndex >= randomStartIndex-1 && insertAfterIndex <= subSeqEndIndex) {
+            insertAfterIndex = getRandomNumber(0, s.vehicles.length-1);
         }
-        s.vehicles = newOrder;
-        s.obligatoryUpdateAfterEveryMove();
+
+        /*console.log("----------- PERTUBATION RANDOM MOVE SUB SEQ -----------");
+        s.printOrderNrOfVehicles();
+        s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
+        console.log("Will be inserted after orderNr: " + s.vehicles[insertAfterIndex].orderNr);*/
+        this.moveSubsequence(s, randomStartIndex, subSeqEndIndex, insertAfterIndex);
+        /*s.printOrderNrOfVehicles();
+        console.log("----------- EOF PERTUBATION RANDOM MOVE SUB SEQ -----------");*/
     };
 
     this.removingAndReinsertionOfPaintGroups = function(s) {
@@ -940,30 +934,87 @@ function PertubationMechanisms() {
         }
     };
 
-    this.applyImprovingAndPiNeutralSwaps = function(s) {
+    this.applyImprovingAndPiNeutralSwaps = function(s, numOfWeightSet) {
+        var pi = s.parameterSet.getParamWithIdent("p");
 
-    };
+        for(var i=0; i<s.vehicles.length-2; i++) {
+            for(var j=(i+1); j<s.vehicles.length-1; j++) {
+                // Check if swapping (i, j) would improve the solution
+                costFunctionG(s, numOfWeightSet); // Update f(s) and g(s) for s
+                var costsFBefore = s.actCostFunctionFResult;
 
-    this.randomMoveOfSubSeq = function(s) {
-        var tau = s.parameterSet.getParamWithIdent("t");
-        var randomStartIndex = getRandomNumber(0, s.vehicles.length - tau.value);
-        var subSeqEndIndex = randomStartIndex + tau.value - 1;
-        var insertAfterIndex = randomStartIndex; // Just that while loop is triggered initially
+                s.swapVehicles(i, j, false);
+                costFunctionG(s, numOfWeightSet);
+                var costsFAfter = s.actCostFunctionFResult;
 
-        while(insertAfterIndex >= randomStartIndex-1 && insertAfterIndex <= subSeqEndIndex) {
-            insertAfterIndex = getRandomNumber(0, s.vehicles.length-1);
+                if(costsFAfter < costsFBefore) {
+                    // Yes --> Keep the swap
+                    console.log("Improved swap performed");
+                } else if(costsFAfter == costsFBefore){
+                    // "No --> vi not identical vj --> swap performed with probability pi
+                    // [Identical := same color && same activated features]"
+                    // ---> Swap back, when identical OR 1 - pi is matched
+                    var reversedPiMatched = Math.random() > (1-pi.value);
+                    var carsIdentical = s.vehicles[i].paintColor == s.vehicles[j].paintColor
+                        && s.vehiclesHaveSameActivedFeatures(s.vehicles[i].paintColor, s.vehicles[j].paintColor);
+
+                    if(carsIdentical || reversedPiMatched) {
+                        s.swapVehicles(i, j, false);
+                    } else {
+                        console.log("Neutral swap performed")
+                    }
+                } else {
+                    s.swapVehicles(i, j, false);
+                }
+            }
         }
-
-        /*console.log("----------- PERTUBATION RANDOM MOVE SUB SEQ -----------");
-        s.printOrderNrOfVehicles();
-        s.printOrderNrOfVehicleSubSeq(randomStartIndex, randomStartIndex + tau.value - 1);
-        console.log("Will be inserted after orderNr: " + s.vehicles[insertAfterIndex].orderNr);*/
-        this.moveSubsequence(s, randomStartIndex, subSeqEndIndex, insertAfterIndex);
-        /*s.printOrderNrOfVehicles();
-        console.log("----------- EOF PERTUBATION RANDOM MOVE SUB SEQ -----------");*/
     };
 
-    this.performPertubation = function(solution) {
+    this.moveSubsequence = function(s, subSeqStartIndex, subSeqEndIndex, insertAfterIndex) {
+        var newOrder = [];
+        if(insertAfterIndex < subSeqStartIndex) {
+            // Insert all cars untouched till (inclusive) insertAfterIndex
+            for(var i=0; i<=insertAfterIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add subSeq
+            for(var i=subSeqStartIndex; i<=subSeqEndIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add rest
+            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
+                if(i < subSeqStartIndex || i > subSeqEndIndex) {
+                    newOrder.push(s.vehicles[i]);
+                }
+            }
+        } else {
+            // Add all cars from the left
+            for(var i=0; i<subSeqStartIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // All cars after the sub seq till the insertAfterIndex (incl)
+            for(var i=subSeqEndIndex+1; i<=insertAfterIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add sub seq
+            for(var i=subSeqStartIndex; i<=subSeqEndIndex; i++) {
+                newOrder.push(s.vehicles[i]);
+            }
+
+            // Add end (all vehicles after insertAfterIndex)
+            for(var i=insertAfterIndex+1; i<=s.vehicles.length-1; i++) {
+                newOrder.push(s.vehicles[i])
+            }
+        }
+        s.vehicles = newOrder;
+        s.obligatoryUpdateAfterEveryMove();
+    };
+
+    this.performPertubation = function(solution, numOfWeightSet) {
         /*switch(getRandomNumber(0, 5)) {
             case 0:
                 this.randomSwaps(solution);
@@ -990,7 +1041,7 @@ function PertubationMechanisms() {
                 break;
         }*/
 
-        this.removingAndReinsertionOfPaintGroups(solution);
+        this.applyImprovingAndPiNeutralSwaps(solution, numOfWeightSet);
 
         return solution;
     };
@@ -1085,7 +1136,7 @@ function performIteratedTabuSearch(s) {
             + "; Weighset: " + numOfWeightSet + ") ######");
 
         // a) Apply pertubation on sImproved to obtain sCurrent
-        sCurrent = pertubationMechanism.performPertubation(sImproved);
+        sCurrent = pertubationMechanism.performPertubation(sImproved, numOfWeightSet);
 
 
         // b) Apply tabu search on sCurrent to obtain sLocalOptimum
