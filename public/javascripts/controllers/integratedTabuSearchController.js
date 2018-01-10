@@ -744,8 +744,9 @@ function getNeighbourhood(s, iterationCounter, numOfWeightSet, helper, hFunction
 
                     // For 2.2.4 Continuous diversification --> register moves and adapt 'continuousDiversificationValue'
                     helper.registerMove(vehicleI._id, i, j);
-                    if(typeof hFunctionNumber != "undefined" && hFunctionNumber != -1 && costFunctionValue > s.actCostFunctionGResult) {
-                        increaseContinuousDiversificationValue(s, i, j, helper, hFunctionNumber, numOfWeightSet);
+                    if(typeof hFunctionNumber != "undefined" && hFunctionNumber != -1
+                            && newNeighbourhoodSolutionInsertion.actCostFunctionGResult > s.actCostFunctionGResult) {
+                        increaseContinuousDiversificationValue(s, i, j, helper, hFunctionNumber, numOfWeightSet); // TODO check if usefull
                     }
                 } else {
                     // Check for "Attribute based aspiration criterion (2.2.3)

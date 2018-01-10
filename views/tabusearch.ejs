@@ -46,6 +46,13 @@
                     // Performing of the tabu search
                     $("#selectedParametersTabuSearch").tablelist();
                 }
+
+
+                $("#tabuSearchInfoAccordion").accordion({
+                    heightStyle: "content",
+                    collapsible: true,
+                    active: false
+                });
             });
 
             function arrayContainsString(string, array) {
@@ -199,32 +206,38 @@
 
             <!-- Site shown when tabu search is performed -->
             <div ng-show="performTabuSearch">
-                <h2>1. Ausgewählten Optimization Objectives</h2>
-                <div>
-                    <ol>
-                        <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
-                    </ol>
+                <div id="tabuSearchInfoAccordion">
+                    <h2>1. Ausgewählten Optimization Objectives</h2>
+                    <div>
+                        <ol>
+                            <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
+                        </ol>
+                    </div>
+
+                    <h2>2. Ausgewählten Parameter</h2>
+                    <div>
+                        <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
+                        <table id="selectedParametersTabuSearch" data-table-list class="table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th>Wert</th>
+                                <th>Beschreibung</th>
+                            </tr>
+                            </thead>
+                            <tr ng-repeat="param in standardParameters">
+                                <td scope="row">{{param.name}}</td>
+                                <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                                <td>{{param.description}}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <h2>3. Ausgewählter Datensatz</h2>
+                    <div>
+                        <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Link zum Ausgewählter Datensatz</a>
+                    </div>
                 </div>
-
-                <h2>2. Ausgewählten Parameter</h2>
-                <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-                <table id="selectedParametersTabuSearch" data-table-list class="table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th>Wert</th>
-                            <th>Beschreibung</th>
-                        </tr>
-                    </thead>
-                    <tr ng-repeat="param in standardParameters">
-                        <td scope="row">{{param.name}}</td>
-                        <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
-                        <td>{{param.description}}</td>
-                    </tr>
-                </table>
-
-                <h2>3. Ausgewählter Datensatz</h2>
-                <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Ausgewählter Datensatz</a>
             </div>
 
             <!-- ################################# -->
