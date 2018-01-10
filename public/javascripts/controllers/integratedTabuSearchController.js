@@ -32,10 +32,10 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
             window.setTimeout(function() {
                 if(window.Worker) {
-                    var myWorker = new Worker("/javascripts/iteratedTabuSearchAlgorithm.js");
-                    myWorker.postMessage(data);
+                    var itsWorkerThread = new Worker("/javascripts/iteratedTabuSearchAlgorithm.js");
+                    itsWorkerThread.postMessage(data);
 
-                    myWorker.onmessage = function(e) {
+                    itsWorkerThread.onmessage = function(e) {
                         console.log('Message received from worker' , e);
                     };
                 }

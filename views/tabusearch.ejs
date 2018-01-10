@@ -30,6 +30,39 @@
             .hidden {
                 visibility: hidden;
             }
+
+
+            .tabsContainer{
+                margin: 0 auto;
+            }
+
+            ul.tabs{
+                margin: 0px;
+                padding: 0px;
+                list-style: none;
+            }
+            ul.tabs li{
+                background: none;
+                color: #222;
+                display: inline-block;
+                padding: 10px 15px;
+                cursor: pointer;
+            }
+
+            ul.tabs li.current{
+                background: #ededed;
+                color: #222;
+            }
+
+            .tab-content{
+                display: none;
+                background: #ededed;
+                padding: 15px;
+            }
+
+            .tab-content.current{
+                display: inherit;
+            }
         </style>
 
         <script>
@@ -45,14 +78,23 @@
                 } else {
                     // Performing of the tabu search
                     $("#selectedParametersTabuSearch").tablelist();
+
+                    $("#tabuSearchInfoAccordion").accordion({
+                        heightStyle: "content",
+                        collapsible: true,
+                        active: false
+                    });
+
+                    $('ul.tabs li').click(function(){
+                        var tab_id = $(this).attr('data-tab');
+
+                        $('ul.tabs li').removeClass('current');
+                        $('.tab-content').removeClass('current');
+
+                        $(this).addClass('current');
+                        $("#"+tab_id).addClass('current');
+                    });
                 }
-
-
-                $("#tabuSearchInfoAccordion").accordion({
-                    heightStyle: "content",
-                    collapsible: true,
-                    active: false
-                });
             });
 
             function arrayContainsString(string, array) {
@@ -243,6 +285,21 @@
 
             <div class="row">
                 <!-- Row to visualize the ITS -->
+                <h2>Visualisierung</h2>
+                <div class="tabsContainer">
+                    <ul class="tabs">
+                        <li class="tab-link current" data-tab="tab-1">Visualisierung</li>
+                        <li class="tab-link" data-tab="tab-2">Log</li>
+                    </ul>
+
+                    <div id="tab-1" class="tab-content current">
+                        <p>test tab 1</p>
+                    </div>
+
+                    <div id="tab-2" class="tab-content">
+                        <p>test tab 2</p>
+                    </div>
+                </div>
             </div>
 
             <!-- ################################# -->

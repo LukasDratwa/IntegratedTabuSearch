@@ -5,6 +5,10 @@ var onmessage = function(e) {
     performIteratedTabuSearch(s);
 };
 
+function Iteration() {
+
+}
+
 function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -553,10 +557,6 @@ function Solution(vehicles, parameters, ratios) {
 function MovingProhibition(toIndex, theta) {
     this.toIndex = toIndex;
     this.restTheta = theta;
-}
-
-function Iteration() {
-
 }
 
 function cloneActivatedFeatures(activatedFeatures) {
