@@ -1015,7 +1015,7 @@ function PertubationMechanisms() {
     };
 
     this.performPertubation = function(solution, numOfWeightSet) {
-        /*switch(getRandomNumber(0, 5)) {
+        switch(getRandomNumber(0, 5)) {
             case 0:
                 this.randomSwaps(solution);
                 break;
@@ -1033,15 +1033,13 @@ function PertubationMechanisms() {
                 break;
 
             case 4:
-                this.reinsertionOfPaintGroups(solution);
+                this.removingAndReinsertionOfPaintGroups(solution);
                 break;
 
             case 5:
                 this.applyImprovingAndPiNeutralSwaps(solution);
                 break;
-        }*/
-
-        this.applyImprovingAndPiNeutralSwaps(solution, numOfWeightSet);
+        }
 
         return solution;
     };
@@ -1050,9 +1048,9 @@ function PertubationMechanisms() {
 function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     // Perform before every search:
     solution.aspirationCriterionArray = [];
-    for(var i in helper.vehicles) {
-        // console.log(helper.vehicles[i].countMovesFromPositionToAnyOther(i));
-    }
+    /*for(var i in helper.vehicles) {
+        console.log(helper.vehicles[i].countMovesFromPositionToAnyOther(i));
+    }*/
     continuousDiversificationValue = 0;
 
     // For 2.2.4 Continuous diversification --> Select random hFunctionNumber
@@ -1105,7 +1103,7 @@ function performIteratedTabuSearch(s) {
     var pertubationMechanism = new PertubationMechanisms();
     var startingTimestamp = new Date();
     var helper = new Helper(s.vehicles);
-    var logSolCostValues = false;
+    var logSolCostValues = true;
 
     // 1. Init
     var s0 = s;
@@ -1149,7 +1147,7 @@ function performIteratedTabuSearch(s) {
             iterationsWithoutImprovement = 0;
 
             if(logSolCostValues) {
-                console.log("Found new best s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+                console.log("Found new best s: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
             }
         } else {
             iterationsWithoutImprovement++;
@@ -1187,7 +1185,7 @@ function performIteratedTabuSearch(s) {
             }
         }
 
-        if(iterationCounter == 20) {
+        if(iterationCounter == 15) {
             break;
         }
     }
@@ -1198,7 +1196,8 @@ function performIteratedTabuSearch(s) {
     if(logSolCostValues) {
         console.log("Result s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
     }
-    return sImproved;
+    console.log(sBestSolution);
+    return sBestSolution;
 }
 
 tabuController.controller("integratedTabuSearchController", function ($scope, $http, $location) {
@@ -1231,8 +1230,10 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.optObjectives = data.optObjective;
             $scope.optObjectivesNames = data.optObjective.orderDisplayingNames;
 
-            var s = new Solution(data.dataset.vehicles, data.parameters, data.dataset.ratios);
-            performIteratedTabuSearch(s);
+            window.setTimeout(function() {
+                var s = new Solution(data.dataset.vehicles, data.parameters, data.dataset.ratios);
+                performIteratedTabuSearch(s);
+            }, 1000);
         });
         tabuSearchRequest.error(function(err){
             console.log('Error: ' + err);
