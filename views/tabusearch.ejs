@@ -203,21 +203,82 @@
 
         <div class="container">
             <h1>Iterated Tabu Search</h1>
+            <div class="row">
+                <!-- Site shown when tabu search is performed -->
+                <div ng-show="performTabuSearch">
+                    <div id="tabuSearchInfoAccordion">
+                        <h2>1. Ausgewählten Optimization Objectives</h2>
+                        <div>
+                            <ol>
+                                <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
+                            </ol>
+                        </div>
 
-            <!-- Site shown when tabu search is performed -->
-            <div ng-show="performTabuSearch">
-                <div id="tabuSearchInfoAccordion">
-                    <h2>1. Ausgewählten Optimization Objectives</h2>
-                    <div>
-                        <ol>
-                            <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
-                        </ol>
+                        <h2>2. Ausgewählten Parameter</h2>
+                        <div>
+                            <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
+                            <table id="selectedParametersTabuSearch" data-table-list class="table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th>Wert</th>
+                                    <th>Beschreibung</th>
+                                </tr>
+                                </thead>
+                                <tr ng-repeat="param in standardParameters">
+                                    <td scope="row">{{param.name}}</td>
+                                    <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                                    <td>{{param.description}}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <h2>3. Ausgewählter Datensatz</h2>
+                        <div>
+                            <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Link zum Ausgewählter Datensatz</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Row to visualize the ITS -->
+            </div>
+
+            <!-- ################################# -->
+            <!-- Site shown when run is configured -->
+            <!-- ################################# -->
+            <div class="container">
+                <div ng-show="!performTabuSearch">
+                    <div class="row">
+                        <h2>Introduction TODO</h2>
                     </div>
 
-                    <h2>2. Ausgewählten Parameter</h2>
-                    <div>
-                        <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-                        <table id="selectedParametersTabuSearch" data-table-list class="table-striped table-bordered">
+                    <div class="row">
+                        <h2>1. Wahl der Optimization Objectives</h2>
+                        <ul id="sortable" style="width: 100%;">
+                            <li class="ui-state-default optObjOrder" id="paint_color_batches">
+                                <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
+                                <p class="optObjOrderText">Paint color batches</p>
+                            </li>
+
+                            <li class="ui-state-default optObjOrder" id="high_priority" >
+                                <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
+                                <p class="optObjOrderText">High priority ratio constraints</p>
+                                <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('high_priority')"></span>
+                            </li>
+
+                            <li class="ui-state-default optObjOrder" id="low_priority">
+                                <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
+                                <p class="optObjOrderText">Low priority ratio constraints</p>
+                                <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('low_priority')"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="row">
+                        <h2>2. Wahl der Parameter</h2>
+                        <table id="selectedParameters" data-table-list class="table-striped table-bordered">
                             <thead>
                             <tr>
                                 <th scope="col">Name</th>
@@ -227,74 +288,32 @@
                             </thead>
                             <tr ng-repeat="param in standardParameters">
                                 <td scope="row">{{param.name}}</td>
-                                <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                                <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
                                 <td>{{param.description}}</td>
                             </tr>
                         </table>
                     </div>
 
-                    <h2>3. Ausgewählter Datensatz</h2>
-                    <div>
-                        <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Link zum Ausgewählter Datensatz</a>
+                    <div class="row">
+                        <h2>3. Wahl des Datensatzes</h2>
+                        <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
+                            <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
+                        </select>
+                        <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
+                    </div>
+
+                    <div class="row">
+                        <h2>4. Zus. Konfiguration (TODO)</h2>
+                    </div>
+
+                    <div class="row">
+                        <h2>5. Start des Algorithmus</h2>
+                        <p ng-show="selectedDatasetId == ''">Es müssen alle vorherigen Schritte durchgeführt worden sein, bevor der
+                            ITS gestartet werden kann.</p>
+                        <a type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" class="btn btn-lg btn-primary"
+                           onclick="postTabuSearch()">Start</a>
                     </div>
                 </div>
-            </div>
-
-            <!-- ################################# -->
-            <!-- Site shown when run is configured -->
-            <!-- ################################# -->
-            <div ng-show="!performTabuSearch">
-                <h2>Introduction TODO</h2>
-
-                <h2>1. Wahl der Optimization Objectives</h2>
-                <ul id="sortable" style="width: 100%;">
-                    <li class="ui-state-default optObjOrder" id="paint_color_batches">
-                        <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                        <p class="optObjOrderText">Paint color batches</p>
-                    </li>
-
-                    <li class="ui-state-default optObjOrder" id="high_priority" >
-                        <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                        <p class="optObjOrderText">High priority ratio constraints</p>
-                        <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('high_priority')"></span>
-                    </li>
-
-                    <li class="ui-state-default optObjOrder" id="low_priority">
-                        <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                        <p class="optObjOrderText">Low priority ratio constraints</p>
-                        <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('low_priority')"></span>
-                    </li>
-                </ul>
-
-                <h2>2. Wahl der Parameter</h2>
-                <table id="selectedParameters" data-table-list class="table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th>Wert</th>
-                            <th>Beschreibung</th>
-                        </tr>
-                    </thead>
-                    <tr ng-repeat="param in standardParameters">
-                        <td scope="row">{{param.name}}</td>
-                        <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
-                        <td>{{param.description}}</td>
-                    </tr>
-                </table>
-
-                <h2>3. Wahl des Datensatzes</h2>
-                <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
-                    <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
-                </select>
-                <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
-
-                <h2>4. Zus. Konfiguration (TODO)</h2>
-
-                <h2>5. Start des Algorithmus</h2>
-                <p ng-show="selectedDatasetId == ''">Es müssen alle vorherigen Schritte durchgeführt worden sein, bevor der
-                ITS gestartet werden kann.</p>
-                <a type="button" id="btnTabuSearch" value="Start" ng-show="selectedDatasetId != ''" class="btn btn-lg btn-primary"
-                   onclick="postTabuSearch()">Start</a>
             </div>
         </div>
     </body>
