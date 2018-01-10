@@ -954,7 +954,7 @@ function PertubationMechanisms() {
                     // "No --> vi not identical vj --> swap performed with probability pi
                     // [Identical := same color && same activated features]"
                     // ---> Swap back, when identical OR 1 - pi is matched
-                    var reversedPiMatched = Math.random() > (1-pi.value);
+                    var reversedPiMatched = Math.random() < (1-pi.value);
                     var carsIdentical = s.vehicles[i].paintColor == s.vehicles[j].paintColor
                         && s.vehiclesHaveSameActivedFeatures(s.vehicles[i].paintColor, s.vehicles[j].paintColor);
 
