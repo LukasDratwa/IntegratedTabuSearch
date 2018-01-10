@@ -17,9 +17,9 @@
         <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
 
         <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
+        <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
-        <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
         <style>
@@ -31,6 +31,104 @@
                 visibility: hidden;
             }
 
+            .centerDiv {
+                margin: 0 auto;
+            }
+
+            .darkGray {
+                color: #9a9a9a;
+            }
+
+            .hrDarkGray {
+                border-top: 1px solid #9a9a9a;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .rightBorder {
+                border-right: 1px solid #9a9a9a;
+            }
+
+            .solution {
+                margin-top: 5px;
+                height: 100%;
+            }
+
+            .vehicle {
+                height: 30px;
+                width: 40px;
+                margin-bottom: 5px;
+                margin-right: 5px;
+                display: inline-block;
+            }
+
+            .vehicleNr {
+                height: 20px;
+                width: 20px;
+                text-align: center;
+                margin-top: 5px;
+                background-color: #faf1ff;
+            }
+
+            .vehicle.color1 {
+                background-color: #ff9900;
+            }
+
+            .vehicle.color2 {
+                background-color: #000000;
+            }
+
+            .vehicle.color3 {
+                background-color: #48ff1a;
+            }
+
+            .vehicle.color4 {
+                background-color: #1effda;
+            }
+
+            .vehicle.color5 {
+                background-color: #252dff;
+            }
+
+            .vehicle.color6 {
+                background-color: #9f00ff;
+            }
+
+            .vehicle.color7 {
+                background-color: #ff3fe0;
+            }
+
+            .vehicle.color8 {
+                background-color: #faf1ff;
+            }
+
+            .vehicle.color9 {
+                 background-color: #fcff03;
+             }
+
+            .vehicle.color10 {
+                background-color: #daffea;
+            }
+
+            .vehicle.color11 {
+                background-color: #ff8c82;
+            }
+
+            .vehicle.color12 {
+                background-color: #ff006e;
+            }
+
+            .vehicle.color13 {
+                background-color: #ff0e05;
+            }
+
+            .vehicle.color14 {
+                background-color: #8c94ff;
+            }
+
+            .vehicle.color15 {
+                background-color: #3baaff;
+            }
 
             .tabsContainer{
                 margin: 0 auto;
@@ -293,8 +391,61 @@
                     </ul>
 
                     <div id="tab-1" class="tab-content current">
-                        <p>test tab 1</p>
+                        <div class="row iteration">
+                            <div class="col-md-9 rightBorder">
+                                <div>Iteration 1:</div>
+
+                                <div class="solution">
+                                    <div class="vehicle color1"><div class="vehicleNr centerDiv">0</div></div>
+                                    <div class="vehicle color2"><div class="vehicleNr centerDiv">1</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">2</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">3</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">4</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">5</div></div>
+                                    <div class="vehicle color3"><div class="vehicleNr centerDiv">6</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">7</div></div>
+                                    <div class="vehicle color5"><div class="vehicleNr centerDiv">8</div></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div>Informationen:</div>
+                                <ul>
+                                    <li>f(s) und g(s)</li>
+                                    <li>Used weight set</li>
+                                    <li>Color violations</li>
+                                    <li>Ratio constraint violations --> With intervals?</li>
+                                    <li>Amount of color changes</li>
+                                    <li>Amount of paint groups</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <hr class="hrDarkGray">
+
+                        <div class="row iteration">
+                            <div class="col-md-9 rightBorder">
+                                <div>Iteration 2:</div>
+
+                                <div class="solution">
+                                    <div class="vehicle color1"><div class="vehicleNr centerDiv">0</div></div>
+                                    <div class="vehicle color2"><div class="vehicleNr centerDiv">1</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">2</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">3</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">4</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">5</div></div>
+                                    <div class="vehicle color3"><div class="vehicleNr centerDiv">6</div></div>
+                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">7</div></div>
+                                    <div class="vehicle color5"><div class="vehicleNr centerDiv">8</div></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div>Informationen:</div>
+                            </div>
+                        </div>
                     </div>
+
 
                     <div id="tab-2" class="tab-content">
                         <p>test tab 2</p>
