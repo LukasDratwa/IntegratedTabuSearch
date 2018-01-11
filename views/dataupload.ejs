@@ -14,8 +14,8 @@
       <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
 
       <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
-      <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
       <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
+      <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
       <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
       <script type="text/javascript">
@@ -35,38 +35,46 @@
       </div>
 
       <div class="container">
-          <h1>Hochladen der Daten</h1>
-          <p>Bis jetzt ist es nur möglich Daten gleichen Format wie bei der <a href="http://challenge.roadef.org/2005/en/">ROADEF 2005 Herausforderung</a> hochzuladen
-           Diese müssen im CSV-Format, getrennt mit Semikolons in einzelnen Textdateien gespeichert sein. Beispieldaten: <a href="http://challenge.roadef.org/2005/files/Instances_set_A.zip">
-                  Downloadlink</a></p>
-          <!--<p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>-->
+          <div class="row">
+              <div class="col-md-12">
+                  <h1>Hochladen der Daten</h1>
+                  <p>Bis jetzt ist es nur möglich Daten gleichen Format wie bei der <a href="http://challenge.roadef.org/2005/en/">ROADEF 2005 Herausforderung</a> hochzuladen
+                      Diese müssen im CSV-Format, getrennt mit Semikolons in einzelnen Textdateien gespeichert sein. Beispieldaten: <a href="http://challenge.roadef.org/2005/files/Instances_set_A.zip">
+                          Downloadlink</a></p>
+                  <!--<p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>-->
+              </div>
+          </div>
 
-          <h2>ROADEF:</h2>
-          <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
-              <table id="uploadTable" data-table-list class="table-striped table-bordered">
-                  <!--<tr>
-                      <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
-                      <td><input type="file" name="optimizationObjectives"><br></td>
-                  </tr>
+          <div class="row">
+              <div class="col-md-12">
+                  <h2>ROADEF:</h2>
+                  <form id="uploadForm" action="uploadRoadef" method="post" enctype="multipart/form-data">
+                      <table id="uploadTable" data-table-list class="table-striped table-bordered">
+                          <!--<tr>
+                              <td><label for="optimizationObjectives">Optimzation Objectives:</label></td>
+                              <td><input type="file" name="optimizationObjectives"><br></td>
+                          </tr>
 
-                  <tr>
-                      <td><label for="paintBatchLimit">Paint batch limit:</label></td>
-                      <td><input type="file" name="paintBatchLimit"><br></td>
-                  </tr>-->
+                          <tr>
+                              <td><label for="paintBatchLimit">Paint batch limit:</label></td>
+                              <td><input type="file" name="paintBatchLimit"><br></td>
+                          </tr>-->
 
-                  <tr>
-                      <td><label for="ratios">Ratios:</label></td>
-                      <td><input type="file" name="ratios"><br></td>
-                  </tr>
+                          <tr>
+                              <td><label for="ratios">Ratios:</label></td>
+                              <td><input style="height: 100%;" type="file" name="ratios"><br></td>
+                          </tr>
 
-                  <tr>
-                      <td><label for="vehicles">Fahrzeuge:</label></td>
-                      <td><input type="file" name="vehicles"><br></td>
-                  </tr>
-              </table>
+                          <tr>
+                              <td><label for="vehicles">Fahrzeuge:</label></td>
+                              <td><input style="height: 100%;" type="file" name="vehicles"><br></td>
+                          </tr>
+                      </table>
 
-              <input type="submit">
-          </form>
+                      <input type="submit">
+                  </form>
+              </div>
+          </div>
       </div>
   </body>
 </html>

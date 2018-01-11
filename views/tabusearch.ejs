@@ -342,135 +342,112 @@
 
         <div class="container" ng-show="performTabuSearch">
             <div class="row">
-                <h1>Iterated Tabu Search</h1>
+                <div class="col-md-12">
+                    <h1>Iterated Tabu Search</h1>
 
-                <!-- Site shown when tabu search is performed -->
-                <div>
-                    <div id="tabuSearchInfoAccordion">
-                        <h2>1. Ausgewählten Optimization Objectives</h2>
-                        <div>
-                            <ol>
-                                <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
-                            </ol>
-                        </div>
+                    <!-- Site shown when tabu search is performed -->
+                    <div>
+                        <div id="tabuSearchInfoAccordion">
+                            <h2>1. Ausgewählten Optimization Objectives</h2>
+                            <div>
+                                <ol>
+                                    <li ng-repeat="optName in optObjectivesNames">{{optName}}</li>
+                                </ol>
+                            </div>
 
-                        <h2>2. Ausgewählten Parameter</h2>
-                        <div>
-                            <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-                            <table id="selectedParametersTabuSearch" data-table-list class="table-striped table-bordered">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Name</th>
-                                    <th>Wert</th>
-                                    <th>Beschreibung</th>
-                                </tr>
-                                </thead>
-                                <tr ng-repeat="param in standardParameters">
-                                    <td scope="row">{{param.name}}</td>
-                                    <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
-                                    <td>{{param.description}}</td>
-                                </tr>
-                            </table>
-                        </div>
+                            <h2>2. Ausgewählten Parameter</h2>
+                            <div>
+                                <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
+                                <table id="selectedParametersTabuSearch" data-table-list class="table-striped table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th>Wert</th>
+                                        <th>Beschreibung</th>
+                                    </tr>
+                                    </thead>
+                                    <tr ng-repeat="param in standardParameters">
+                                        <td scope="row">{{param.name}}</td>
+                                        <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                                        <td>{{param.description}}</td>
+                                    </tr>
+                                </table>
+                            </div>
 
-                        <h2>3. Ausgewählter Datensatz</h2>
-                        <div>
-                            <p>Beschreibung: {{dataset.description}}</p>
-                            <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Link zum Ausgewählter Datensatz</a>
+                            <h2>3. Ausgewählter Datensatz</h2>
+                            <div>
+                                <p>Beschreibung: {{dataset.description}}</p>
+                                <a href="/viewdataset#?id={{dataset._id}}" target="_blank">Link zum Ausgewählter Datensatz</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <!-- Row to visualize the ITS -->
-                <h2>Visualisierung</h2>
-                <div class="tabsContainer">
-                    <ul class="tabs">
-                        <li class="tab-link current" data-tab="tab-1">Visualisierung</li>
-                        <li class="tab-link" data-tab="tab-2">Log</li>
-                    </ul>
+                <div class="col-md-12">
+                    <h2>Algorithmus</h2>
+                </div>
+            </div>
 
-                    <div id="tab-1" class="tab-content current">
-                        <div class="row iteration">
-                            <div class="col-md-12">
-                                <hr class="hrDarkGray">
-                                <h3 style="margin-top: 10px;">Schritt 1.: Anfängliche Lösung</h3>
-                                <hr class="hrDarkGray"><hr class="hrDarkGray">
-                            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Row to visualize the ITS -->
+                    <h2>Visualisierung</h2>
+                    <div class="tabsContainer">
+                        <ul class="tabs">
+                            <li class="tab-link current" data-tab="tab-1">Visualisierung</li>
+                            <li class="tab-link" data-tab="tab-2">Log</li>
+                        </ul>
 
-                            <div class="col-md-9">
-                                <div class="solution">
-                                    <div ng-repeat="v in dataset.vehicles" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                        <div id="tab-1" class="tab-content current">
+                            <div class="row iteration">
+                                <div class="col-md-12">
+                                    <hr class="hrDarkGray">
+                                    <h3 style="margin-top: 10px;">Schritt 1.: Anfängliche Lösung</h3>
+                                    <hr class="hrDarkGray"><hr class="hrDarkGray">
                                 </div>
-                            </div>
 
-                            <div class="col-md-3">
-                                <div>Informationen:</div>
-                                <ul>
-                                    <li>f(s) und g(s)</li>
-                                    <li>Used weight set</li>
-                                    <li>Color violations</li>
-                                    <li>Ratio constraint violations --> With intervals?</li>
-                                    <li>Amount of color changes</li>
-                                    <li>Amount of paint groups</li>
-                                </ul>
-                            </div>
-
-                            <div class="col-md-12">
-                                <hr class="hrDarkGray">
-                            </div>
-                        </div>
-
-                        <div class="row iteration">
-                            <div ng-show="!improvedSolutionFound">
-                                <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
-                            </div>
-
-                            <div class="col-md-12" ng-show="improvedSolutionFound">
-                                <h3>Schritt 2.: Verbesserte Lösung durch TabuSearch</h3>
-                                <hr class="hrDarkGray"><hr class="hrDarkGray">
-                            </div>
-
-                            <div class="col-md-9" ng-show="improvedSolutionFound">
-                                <div class="solution">
-                                    <div ng-repeat="v in improvedSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3" ng-show="improvedSolutionFound">
-                                <div>Informationen:</div>
-                                <ul>
-                                    <li>f(s) und g(s)</li>
-                                    <li>Used weight set</li>
-                                    <li>Color violations</li>
-                                    <li>Ratio constraint violations --> With intervals?</li>
-                                    <li>Amount of color changes</li>
-                                    <li>Amount of paint groups</li>
-                                </ul>
-                            </div>
-
-                            <div class="col-md-12" ng-show="improvedSolutionFound">
-                                <hr class="hrDarkGray">
-                            </div>
-                        </div>
-
-                        <div class="row iteration">
-                            <div class="col-md-12" ng-show="improvedSolutionFound">
-                                <h3>Schritt 3.: Durchführung des Iterated Tabu Search Algorithmus</h3>
-                                <hr class="hrDarkGray"><hr class="hrDarkGray">
-                            </div>
-
-                            <div class="col-md-12" ng-repeat="iteration in iterations">
                                 <div class="col-md-9">
-                                    <div>Iteration #{{iteration.iterationCounter}}</div>
-
                                     <div class="solution">
-                                        <div ng-repeat="v in iteration.sCurrent.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                        <div ng-repeat="v in dataset.vehicles" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-3">
+                                    <div>Informationen:</div>
+                                    <ul>
+                                        <li>f(s) und g(s)</li>
+                                        <li>Used weight set</li>
+                                        <li>Color violations</li>
+                                        <li>Ratio constraint violations --> With intervals?</li>
+                                        <li>Amount of color changes</li>
+                                        <li>Amount of paint groups</li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <hr class="hrDarkGray">
+                                </div>
+                            </div>
+
+                            <div class="row iteration">
+                                <div ng-show="!improvedSolutionFound">
+                                    <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
+                                </div>
+
+                                <div class="col-md-12" ng-show="improvedSolutionFound">
+                                    <h3>Schritt 2.: Verbesserte Lösung durch TabuSearch</h3>
+                                    <hr class="hrDarkGray"><hr class="hrDarkGray">
+                                </div>
+
+                                <div class="col-md-9" ng-show="improvedSolutionFound">
+                                    <div class="solution">
+                                        <div ng-repeat="v in improvedSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3" ng-show="improvedSolutionFound">
                                     <div>Informationen:</div>
                                     <ul>
                                         <li>f(s) und g(s)</li>
@@ -487,43 +464,76 @@
                                 </div>
                             </div>
 
-                            <div class="cold-md-12" ng-show="improvedSolutionFound && !bestSolutionFound">
-                                <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
-                            </div>
-                        </div>
+                            <div class="row iteration">
+                                <div class="col-md-12" ng-show="improvedSolutionFound">
+                                    <h3>Schritt 3.: Durchführung des Iterated Tabu Search Algorithmus</h3>
+                                    <hr class="hrDarkGray"><hr class="hrDarkGray">
+                                </div>
 
-                        <div class="row iteration" ng-show="bestSolutionFound">
-                            <div class="col-md-12" ng-show="improvedSolutionFound">
-                                <h3>Schritt 4: Beste gefundene Lösung</h3>
-                                <hr class="hrDarkGray"><hr class="hrDarkGray">
-                            </div>
+                                <div class="col-md-12" ng-repeat="iteration in iterations">
+                                    <div class="col-md-9">
+                                        <div>Iteration #{{iteration.iterationCounter}}</div>
 
-                            <div class="col-md-9" >
-                                <div class="solution">
-                                    <div ng-repeat="v in bestSolution.sBestSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                        <div class="solution">
+                                            <div ng-repeat="v in iteration.sCurrent.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div>Informationen:</div>
+                                        <ul>
+                                            <li>f(s) und g(s)</li>
+                                            <li>Used weight set</li>
+                                            <li>Color violations</li>
+                                            <li>Ratio constraint violations --> With intervals?</li>
+                                            <li>Amount of color changes</li>
+                                            <li>Amount of paint groups</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-md-12" ng-show="improvedSolutionFound">
+                                        <hr class="hrDarkGray">
+                                    </div>
+                                </div>
+
+                                <div class="cold-md-12" ng-show="improvedSolutionFound && !bestSolutionFound">
+                                    <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
-                                <div>Informationen:</div>
-                                <ul>
-                                    <li>f(s) und g(s)</li>
-                                    <li>Used weight set</li>
-                                    <li>Color violations</li>
-                                    <li>Ratio constraint violations --> With intervals?</li>
-                                    <li>Amount of color changes</li>
-                                    <li>Amount of paint groups</li>
-                                </ul>
-                            </div>
+                            <div class="row iteration" ng-show="bestSolutionFound">
+                                <div class="col-md-12" ng-show="improvedSolutionFound">
+                                    <h3>Schritt 4: Beste gefundene Lösung</h3>
+                                    <hr class="hrDarkGray"><hr class="hrDarkGray">
+                                </div>
 
-                            <div class="col-md-12">
-                                <hr class="hrDarkGray">
+                                <div class="col-md-9" >
+                                    <div class="solution">
+                                        <div ng-repeat="v in bestSolution.sBestSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div>Informationen:</div>
+                                    <ul>
+                                        <li>f(s) und g(s)</li>
+                                        <li>Used weight set</li>
+                                        <li>Color violations</li>
+                                        <li>Ratio constraint violations --> With intervals?</li>
+                                        <li>Amount of color changes</li>
+                                        <li>Amount of paint groups</li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <hr class="hrDarkGray">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="tab-2" class="tab-content">
-                        <p>test tab 2</p>
+                        <div id="tab-2" class="tab-content">
+                            <p>test tab 2</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -533,12 +543,14 @@
         <!-- Site shown when run is configured -->
         <!-- ################################# -->
         <div class="container" ng-show="!performTabuSearch">
-            <div>
-                <div class="row">
+            <div class="row">
+                <div class="col-md-12">
                     <h2>Introduction TODO</h2>
                 </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
+                <div class="col-md-12">
                     <h2>1. Wahl der Optimization Objectives</h2>
                     <ul id="sortable" style="width: 100%;">
                         <li class="ui-state-default optObjOrder" id="paint_color_batches">
@@ -559,8 +571,10 @@
                         </li>
                     </ul>
                 </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
+                <div class="col-md-12">
                     <h2>2. Wahl der Parameter</h2>
                     <table id="selectedParameters" data-table-list class="table-striped table-bordered">
                         <thead>
@@ -577,20 +591,26 @@
                         </tr>
                     </table>
                 </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
+                <div class="col-md-12">
                     <h2>3. Wahl des Datensatzes</h2>
                     <select ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
                         <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
                     </select>
                     <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>
                 </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
+                <div class="col-md-12">
                     <h2>4. Zus. Konfiguration (TODO)</h2>
                 </div>
+            </div>
 
-                <div class="row">
+            <div class="row">
+                <div class="col-md-12">
                     <h2>5. Start des Algorithmus</h2>
                     <p ng-show="selectedDatasetId == ''">Es müssen alle vorherigen Schritte durchgeführt worden sein, bevor der
                         ITS gestartet werden kann.</p>
