@@ -32,7 +32,8 @@
             }
 
             .centerDiv {
-                margin: 0 auto;
+                margin: auto;
+                display: block;
             }
 
             .darkGray {
@@ -43,10 +44,8 @@
                 border-top: 1px solid #9a9a9a;
                 margin-top: 10px;
                 margin-bottom: 10px;
-            }
-
-            .rightBorder {
-                border-right: 1px solid #9a9a9a;
+                display: block;
+                width: 100%;
             }
 
             .solution {
@@ -392,23 +391,47 @@
 
                     <div id="tab-1" class="tab-content current">
                         <div class="row iteration">
-                            <div class="col-md-9 rightBorder">
-                                <div>Iteration 1:</div>
+                            <div class="col-md-9">
+                                <div>1. Anfängliche Lösung:</div>
 
                                 <div class="solution">
-                                    <div class="vehicle color1"><div class="vehicleNr centerDiv">0</div></div>
-                                    <div class="vehicle color2"><div class="vehicleNr centerDiv">1</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">2</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">3</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">4</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">5</div></div>
-                                    <div class="vehicle color3"><div class="vehicleNr centerDiv">6</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">7</div></div>
-                                    <div class="vehicle color5"><div class="vehicleNr centerDiv">8</div></div>
+                                    <div ng-repeat="v in dataset.vehicles" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-3">
+                                <div>Informationen:</div>
+                                <ul>
+                                    <li>f(s) und g(s)</li>
+                                    <li>Used weight set</li>
+                                    <li>Color violations</li>
+                                    <li>Ratio constraint violations --> With intervals?</li>
+                                    <li>Amount of color changes</li>
+                                    <li>Amount of paint groups</li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-12">
+                                <hr class="hrDarkGray">
+                            </div>
+                        </div>
+
+
+
+                        <div class="row iteration">
+                            <div ng-show="!improvedSolutionFound">
+                                <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
+                            </div>
+
+                            <div class="col-md-9" ng-show="improvedSolutionFound">
+                                <div>2. Verbesserte Lösung durch TabuSearch:</div>
+
+                                <div class="solution">
+                                    <div ng-repeat="v in improvedSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3" ng-show="improvedSolutionFound">
                                 <div>Informationen:</div>
                                 <ul>
                                     <li>f(s) und g(s)</li>
@@ -420,32 +443,7 @@
                                 </ul>
                             </div>
                         </div>
-
-                        <hr class="hrDarkGray">
-
-                        <div class="row iteration">
-                            <div class="col-md-9 rightBorder">
-                                <div>Iteration 2:</div>
-
-                                <div class="solution">
-                                    <div class="vehicle color1"><div class="vehicleNr centerDiv">0</div></div>
-                                    <div class="vehicle color2"><div class="vehicleNr centerDiv">1</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">2</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">3</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">4</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">5</div></div>
-                                    <div class="vehicle color3"><div class="vehicleNr centerDiv">6</div></div>
-                                    <div class="vehicle color4"><div class="vehicleNr centerDiv">7</div></div>
-                                    <div class="vehicle color5"><div class="vehicleNr centerDiv">8</div></div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div>Informationen:</div>
-                            </div>
-                        </div>
                     </div>
-
 
                     <div id="tab-2" class="tab-content">
                         <p>test tab 2</p>

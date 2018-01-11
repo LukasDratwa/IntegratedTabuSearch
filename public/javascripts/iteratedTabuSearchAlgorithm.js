@@ -9,6 +9,18 @@ function Iteration() {
 
 }
 
+function AdditionalInformation(solution) {
+    return {
+        solutionNr: solution.solutionNr,
+        actColorChanges: solution.actColorChanges,
+        actColorViolations: solution.actColorViolations,
+        actHighPrioViolations: solution.actHighPrioViolations,
+        actLowPrioViolations: solution.actLowPrioViolations,
+        actCostFunctionFResult: solution.actCostFunctionFResult,
+        actCostFunctionGResult: solution.actCostFunctionGResult
+    };
+}
+
 function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -219,6 +231,39 @@ function Solution(vehicles, parameters, ratios) {
         }
 
         return false;
+    };
+
+    this.cloneActivatedFeatures = function(features) {
+        var result = [];
+
+        for(var i in features) {
+            var aF = features[i];
+
+            result.push({
+                dataSetRef: aF.dataSetRef,
+                ident: aF.ident,
+                prio: aF.prio,
+                ratio: aF.ratio
+            });
+        }
+
+        return result;
+    };
+
+    this.getVehicleOrderWithNeededInfosForFronted = function() {
+        var order = [];
+
+        for(var i in this.vehicles) {
+            var v = this.vehicles[i];
+
+            order.push({
+                orderNr: v.orderNr,
+                paintColor: v.paintColor,
+                activatedFeatures: this.cloneActivatedFeatures(v.activatedFeatures)
+            });
+        }
+
+        return order;
     };
 
     this.printOrderNrOfVehicleSubSeq = function(startIndex, endIndex) {
@@ -1021,31 +1066,40 @@ function PertubationMechanisms() {
     };
 
     this.performPertubation = function(solution, numOfWeightSet) {
+        var timestamp = new Date().valueOf();
+
         switch(getRandomNumber(0, 5)) {
             case 0:
                 this.randomSwaps(solution);
+                solution.performedPertubation = "Random swaps";
                 break;
 
             case 1:
                 this.randomShufflingWithinSubSeq(solution);
+                solution.performedPertubation = "Random shuffling within a subsequence";
                 break;
 
             case 2:
                 this.mirrorTransformingOfSubSeq(solution);
+                solution.performedPertubation = "Mirror transforming of a subsequence";
                 break;
 
             case 3:
                 this.randomMoveOfSubSeq(solution);
+                solution.performedPertubation = "Random move of a subsequence";
                 break;
 
             case 4:
                 this.removingAndReinsertionOfPaintGroups(solution);
+                solution.performedPertubation = "Removal and reinsertion of a subsequence of cars of the same colour";
                 break;
 
             case 5:
                 this.applyImprovingAndPiNeutralSwaps(solution);
+                solution.performedPertubation = "Application of all improving swaps and of a proportion pi of neutral swaps";
                 break;
         }
+        solution.performedPertubationTime = new Date().valueOf() - timestamp;
 
         return solution;
     };
@@ -1121,10 +1175,15 @@ function performIteratedTabuSearch(s) {
 
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
     sImproved = performTabuSearch(s0, iterationCounter, 1, helper);
-    sBestSolution = sImproved;
+    sBestSolution = sImproved; // TODO check if its better??
     if(logSolCostValues) {
-        console.log("Improved s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
+        console.log("Improved s: g=" + sImproved.actCostFunctionGResult + "; f=" + sImproved.actCostFunctionFResult);
     }
+    postMessage({
+        ident: "IMPROVED",
+        vehicleOrder: sImproved.getVehicleOrderWithNeededInfosForFronted(),
+        additionInformation: new AdditionalInformation(sImproved)
+    });
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
     var iterationsWithoutImprovement = 0;
@@ -1159,6 +1218,7 @@ function performIteratedTabuSearch(s) {
             iterationsWithoutImprovement++;
         }
 
+
         // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
         if(sLocalOptimum != null) {
             /*
@@ -1189,10 +1249,6 @@ function performIteratedTabuSearch(s) {
                     sImproved = sLocalOptimum;
                 }
             }
-        }
-
-        if(iterationCounter == 15) {
-            break;
         }
     }
 

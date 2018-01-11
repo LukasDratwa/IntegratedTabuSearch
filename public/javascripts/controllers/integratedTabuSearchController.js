@@ -30,13 +30,24 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.optObjectives = data.optObjective;
             $scope.optObjectivesNames = data.optObjective.orderDisplayingNames;
 
+            $scope.improvedSolutionFound = false;
+            $scope.improvedSolution = {};
+            $scope.iterations = [];
+
             window.setTimeout(function() {
                 if(window.Worker) {
                     var itsWorkerThread = new Worker("/javascripts/iteratedTabuSearchAlgorithm.js");
                     itsWorkerThread.postMessage(data);
 
                     itsWorkerThread.onmessage = function(e) {
-                        console.log('Message received from worker' , e);
+                        console.log('Message received from worker' , e.data);
+
+                        if(e.data.ident === "IMPROVED") {
+                            $scope.improvedSolutionFound = true;
+                            $scope.improvedSolution.additionalInformation = e.data.additionalInformation;
+                            $scope.improvedSolution.vehicleOrder = e.data.vehicleOrder;
+                            $scope.$apply();
+                        }
                     };
                 }
             }, 1000);
