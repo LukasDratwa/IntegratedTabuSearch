@@ -341,8 +341,9 @@
         </div>
 
         <div class="container">
-            <h1>Iterated Tabu Search</h1>
             <div class="row">
+                <h1>Iterated Tabu Search</h1>
+
                 <!-- Site shown when tabu search is performed -->
                 <div ng-show="performTabuSearch">
                     <div id="tabuSearchInfoAccordion">
@@ -391,9 +392,13 @@
 
                     <div id="tab-1" class="tab-content current">
                         <div class="row iteration">
-                            <div class="col-md-9">
-                                <div>1. Anfängliche Lösung:</div>
+                            <div class="col-md-12">
+                                <hr class="hrDarkGray">
+                                <h3 style="margin-top: 10px;">Schritt 1.: Anfängliche Lösung</h3>
+                                <hr class="hrDarkGray"><hr class="hrDarkGray">
+                            </div>
 
+                            <div class="col-md-9">
                                 <div class="solution">
                                     <div ng-repeat="v in dataset.vehicles" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
                                 </div>
@@ -416,16 +421,17 @@
                             </div>
                         </div>
 
-
-
                         <div class="row iteration">
                             <div ng-show="!improvedSolutionFound">
                                 <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
                             </div>
 
-                            <div class="col-md-9" ng-show="improvedSolutionFound">
-                                <div>2. Verbesserte Lösung durch TabuSearch:</div>
+                            <div class="col-md-12" ng-show="improvedSolutionFound">
+                                <h3>Schritt 2.: Verbesserte Lösung durch TabuSearch</h3>
+                                <hr class="hrDarkGray"><hr class="hrDarkGray">
+                            </div>
 
+                            <div class="col-md-9" ng-show="improvedSolutionFound">
                                 <div class="solution">
                                     <div ng-repeat="v in improvedSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
                                 </div>
@@ -441,6 +447,76 @@
                                     <li>Amount of color changes</li>
                                     <li>Amount of paint groups</li>
                                 </ul>
+                            </div>
+
+                            <div class="col-md-12" ng-show="improvedSolutionFound">
+                                <hr class="hrDarkGray">
+                            </div>
+                        </div>
+
+                        <div class="row iteration">
+                            <div class="col-md-12" ng-show="improvedSolutionFound">
+                                <h3>Schritt 3.: Durchführung des Iterated Tabu Search Algorithmus</h3>
+                                <hr class="hrDarkGray"><hr class="hrDarkGray">
+                            </div>
+
+                            <div class="col-md-12" ng-repeat="iteration in iterations">
+                                <div class="col-md-9">
+                                    <div>Iteration #{{iteration.iterationCounter}}</div>
+
+                                    <div class="solution">
+                                        <div ng-repeat="v in iteration.sCurrent.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div>Informationen:</div>
+                                    <ul>
+                                        <li>f(s) und g(s)</li>
+                                        <li>Used weight set</li>
+                                        <li>Color violations</li>
+                                        <li>Ratio constraint violations --> With intervals?</li>
+                                        <li>Amount of color changes</li>
+                                        <li>Amount of paint groups</li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-md-12" ng-show="improvedSolutionFound">
+                                    <hr class="hrDarkGray">
+                                </div>
+                            </div>
+
+                            <div class="cold-md-12" ng-show="improvedSolutionFound && !bestSolutionFound">
+                                <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
+                            </div>
+                        </div>
+
+                        <div class="row iteration" ng-show="bestSolutionFound">
+                            <div class="col-md-12" ng-show="improvedSolutionFound">
+                                <h3>Schritt 4: Beste gefundene Lösung</h3>
+                                <hr class="hrDarkGray"><hr class="hrDarkGray">
+                            </div>
+
+                            <div class="col-md-9" >
+                                <div class="solution">
+                                    <div ng-repeat="v in bestSolution.sBestSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div>Informationen:</div>
+                                <ul>
+                                    <li>f(s) und g(s)</li>
+                                    <li>Used weight set</li>
+                                    <li>Color violations</li>
+                                    <li>Ratio constraint violations --> With intervals?</li>
+                                    <li>Amount of color changes</li>
+                                    <li>Amount of paint groups</li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-12">
+                                <hr class="hrDarkGray">
                             </div>
                         </div>
                     </div>

@@ -32,7 +32,13 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
             $scope.improvedSolutionFound = false;
             $scope.improvedSolution = {};
+
             $scope.iterations = [];
+
+            $scope.logs = [];
+
+            $scope.bestSolutionFound = false;
+            $scope.bestSolution = {};
 
             window.setTimeout(function() {
                 if(window.Worker) {
@@ -40,12 +46,23 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
                     itsWorkerThread.postMessage(data);
 
                     itsWorkerThread.onmessage = function(e) {
-                        console.log('Message received from worker' , e.data);
+                        // console.log('Message received from worker' , e.data);
 
                         if(e.data.ident === "IMPROVED") {
                             $scope.improvedSolutionFound = true;
                             $scope.improvedSolution.additionalInformation = e.data.additionalInformation;
                             $scope.improvedSolution.vehicleOrder = e.data.vehicleOrder;
+                            $scope.$apply();
+                        }
+
+                        if(e.data.ident === "ITERATION") {
+                            $scope.iterations.push(e.data);
+                            $scope.$apply();
+                        }
+
+                        if(e.data.ident === "END") {
+                            $scope.bestSolutionFound = true;
+                            $scope.bestSolution = e.data;
                             $scope.$apply();
                         }
                     };

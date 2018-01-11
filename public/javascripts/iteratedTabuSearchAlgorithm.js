@@ -1189,6 +1189,7 @@ function performIteratedTabuSearch(s) {
     var iterationsWithoutImprovement = 0;
     var secondCaseOfAcceptanceCriterionWasMatched = false;
     var secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
+
     while(iterationsWithoutImprovement < paramSet.getParamWithIdent("k").value - 1) {
         iterationCounter++;
 
@@ -1201,22 +1202,48 @@ function performIteratedTabuSearch(s) {
         // a) Apply pertubation on sImproved to obtain sCurrent
         sCurrent = pertubationMechanism.performPertubation(sImproved, numOfWeightSet);
 
+        // Data for frontend
+        var postMessageSCurrent = {
+            additionInformation: new AdditionalInformation(sCurrent),
+            vehicleOrder: sCurrent.getVehicleOrderWithNeededInfosForFronted()
+        };
+
 
         // b) Apply tabu search on sCurrent to obtain sLocalOptimum
         sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, numOfWeightSet, helper);
+
+        // Data for frontend
+        var postMessageSLocalOptimum = false;
+        if(sLocalOptimum != null) {
+            postMessageSLocalOptimum = {
+                additionInformation: new AdditionalInformation(sLocalOptimum),
+                vehicleOrder: sLocalOptimum.getVehicleOrderWithNeededInfosForFronted()
+            };
+        }
         // console.log("new costs sLocalOpt: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sLocalOptimum.actCostFunctionFResult);
 
         // Update best found solution
+        var foundNewBestSolution = false;
         if(sLocalOptimum != null && sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult) {
             sBestSolution = sLocalOptimum;
             iterationsWithoutImprovement = 0;
-
+            foundNewBestSolution = true;
             if(logSolCostValues) {
                 console.log("Found new best s: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
             }
         } else {
             iterationsWithoutImprovement++;
         }
+
+        // Data for frontend
+        var postMessageSBestSolution = false;
+        if(foundNewBestSolution) {
+            postMessageSBestSolution = {
+                additionInformation: new AdditionalInformation(sBestSolution),
+                vehicleOrder: sBestSolution.getVehicleOrderWithNeededInfosForFronted()
+            };
+        }
+
 
 
         // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
@@ -1250,6 +1277,25 @@ function performIteratedTabuSearch(s) {
                 }
             }
         }
+
+        // Data for frontend
+        var postMessageSImproved = {
+            additionInformation: new AdditionalInformation(sImproved),
+            vehicleOrder: sImproved.getVehicleOrderWithNeededInfosForFronted()
+        };
+
+        postMessage({
+            ident: "ITERATION",
+            iterationCounter: iterationCounter-1,
+            sCurrent: postMessageSCurrent,
+            sLocalOptimum: postMessageSLocalOptimum,
+            sBestSolution: postMessageSBestSolution,
+            sImproved: postMessageSImproved
+        });
+
+        /*if(iterationCounter == 10) {
+            break;
+        }*/
     }
 
     console.log("Calculation time needed: " + (new Date().valueOf() - startingTimestamp.valueOf()));
@@ -1258,6 +1304,16 @@ function performIteratedTabuSearch(s) {
     if(logSolCostValues) {
         console.log("Result s: g=" + sBestSolution.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
     }
+
+    postMessage({
+        ident: "END",
+        iterationCounter: iterationCounter-1,
+        sBestSolution: {
+            additionInformation: new AdditionalInformation(sBestSolution),
+            vehicleOrder: sBestSolution.getVehicleOrderWithNeededInfosForFronted()
+        }
+    });
+
     console.log(sBestSolution);
     return sBestSolution;
 }
