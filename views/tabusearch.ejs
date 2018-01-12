@@ -48,6 +48,14 @@
                 width: 100%;
             }
 
+            .hrDarkGrayDashed {
+                border-top: 1px dashed #9a9a9a;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                display: block;
+                width: 100%;
+            }
+
             .solution {
                 margin-top: 5px;
                 height: 100%;
@@ -485,11 +493,13 @@
 
                                 <div class="col-md-12" ng-repeat="iteration in iterations">
                                     <div class="col-md-12">
-                                        <div>Iteration #{{iteration.iterationCounter}}</div>
+                                        <h4>Iteration #{{iteration.iterationCounter}}</h4>
                                     </div>
 
-
+                                    <!-- Current solution (after permutation) -->
                                     <div class="col-md-12">
+                                        <h5>a) Lösung nach der Permutation</h5>
+
                                         <div class="col-md-9">
                                             <div class="solution">
                                                 <div ng-repeat="v in iteration.sCurrent.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
@@ -508,8 +518,85 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-12">
+                                        <hr class="hrDarkGrayDashed">
+                                    </div>
+
+                                    <!-- Local solution optimum (after Tabu Search) -->
+                                    <div class="col-md-12">
+                                        <h5>b) Lokales Optimum nach Tabu Suche</h5>
+
+                                        <div class="col-md-9">
+                                            <div class="solution">
+                                                <div ng-repeat="v in iteration.sLocalOptimum.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div>Informationen:</div>
+                                            <ul>
+                                                <li>f(s) = {{iteration.sLocalOptimum.additionalInformation.actCostFunctionFResultFormatted}} und g(s) = {{iteration.sLocalOptimum.additionalInformation.actCostFunctionGResultFormatted}}</li>
+                                                <li>{{iteration.sLocalOptimum.additionalInformation.actColorViolations}} Farbverletzungen mit insgesamt {{iteration.sLocalOptimum.additionalInformation.actColorChanges}} Farbwechslungen
+                                                    ({{iteration.sLocalOptimum.additionalInformation.actPaintGroups}} Farbgruppen)</li>
+                                                <li>Ratio-Constraint Verletzungen (hohe Priorität): {{iteration.sLocalOptimum.additionalInformation.actHighPrioViolations}}</li>
+                                                <li>Ratio-Constraint Verletzungen (niedrige Priorität): {{iteration.sLocalOptimum.additionalInformation.actLowPrioViolations}}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
 
                                     <div class="col-md-12" ng-show="improvedSolutionFound">
+                                        <hr class="hrDarkGray">
+                                    </div>
+
+                                    <!-- sImproved <-- local optimum -->
+                                    <div class="col-md-12">
+                                        <h5>c) Verbesserte Lösung nach dem Akzeptanzkriterum</h5>
+
+                                        <div class="col-md-9">
+                                            <div class="solution">
+                                                <div ng-repeat="v in iteration.sImproved.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div>Informationen:</div>
+                                            <ul>
+                                                <li>f(s) = {{iteration.sImproved.additionalInformation.actCostFunctionFResultFormatted}} und g(s) = {{iteration.sImproved.additionalInformation.actCostFunctionGResultFormatted}}</li>
+                                                <li>{{iteration.sImproved.additionalInformation.actColorViolations}} Farbverletzungen mit insgesamt {{iteration.sImproved.additionalInformation.actColorChanges}} Farbwechslungen
+                                                    ({{iteration.sImproved.additionalInformation.actPaintGroups}} Farbgruppen)</li>
+                                                <li>Ratio-Constraint Verletzungen (hohe Priorität): {{iteration.sImproved.additionalInformation.actHighPrioViolations}}</li>
+                                                <li>Ratio-Constraint Verletzungen (niedrige Priorität): {{iteration.sImproved.additionalInformation.actLowPrioViolations}}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- sImproved <-- local optimum -->
+                                    <div class="col-md-12">
+                                        <hr class="hrDarkGrayDashed">
+                                    </div>
+                                    <div class="col-md-12" ng-show="iteration.sBestSolution">
+                                        <h4 style="text-decoration: underline;">Neue gefundene beste Lösung:</h4>
+
+                                        <div class="col-md-9">
+                                            <div class="solution">
+                                                <div ng-repeat="v in iteration.sBestSolution.vehicleOrder" class="vehicle color{{v.paintColor}}"><div class="vehicleNr centerDiv">{{v.orderNr}}</div></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div>Informationen:</div>
+                                            <ul>
+                                                <li>f(s) = {{iteration.sBestSolution.additionalInformation.actCostFunctionFResultFormatted}} und g(s) = {{iteration.sBestSolution.additionalInformation.actCostFunctionGResultFormatted}}</li>
+                                                <li>{{iteration.sBestSolution.additionalInformation.actColorViolations}} Farbverletzungen mit insgesamt {{iteration.sBestSolution.additionalInformation.actColorChanges}} Farbwechslungen
+                                                    ({{iteration.sBestSolution.additionalInformation.actPaintGroups}} Farbgruppen)</li>
+                                                <li>Ratio-Constraint Verletzungen (hohe Priorität): {{iteration.sBestSolution.additionalInformation.actHighPrioViolations}}</li>
+                                                <li>Ratio-Constraint Verletzungen (niedrige Priorität): {{iteration.sBestSolution.additionalInformation.actLowPrioViolations}}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
                                         <hr class="hrDarkGray">
                                     </div>
                                 </div>
