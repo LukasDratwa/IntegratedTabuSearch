@@ -25,10 +25,20 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
             console.log("Start ITS: " , data);
 
+            $scope.parameterKappa = 0;
+            for(var i in data.parameters) {
+                if(data.parameters[i].ident === "k") {
+                    $scope.parameterKappa = data.parameters[i].value;
+                    break;
+                }
+            }
+
             $scope.standardParameters = data.parameters;
             $scope.dataset = data.dataset;
             $scope.optObjectives = data.optObjective;
             $scope.optObjectivesNames = data.optObjective.orderDisplayingNames;
+
+            $scope.initialSolution = {};
 
             $scope.improvedSolutionFound = false;
             $scope.improvedSolution = {};
@@ -46,7 +56,13 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
                     itsWorkerThread.postMessage(data);
 
                     itsWorkerThread.onmessage = function(e) {
-                        // console.log('Message received from worker' , e.data);
+                        console.log('Message received from worker' , e.data);
+
+                        if(e.data.ident === "INITIAL") {
+                            $scope.initialSolution.additionalInformation = e.data.additionalInformation;
+                            $scope.initialSolution.vehicleOrder = e.data.vehicleOrder;
+                            $scope.$apply();
+                        }
 
                         if(e.data.ident === "IMPROVED") {
                             $scope.improvedSolutionFound = true;

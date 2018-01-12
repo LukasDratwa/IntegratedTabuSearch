@@ -2,22 +2,40 @@ var onmessage = function(e) {
     // Message received from main script
     // postMessage(test2); // posting back to main script
     var s = new Solution(e.data.dataset.vehicles, e.data.parameters, e.data.dataset.ratios);
+    costFunctionG(s, 1);
+
+    postMessage({
+        ident: "INITIAL",
+        vehicleOrder: s.getVehicleOrderWithNeededInfosForFronted(),
+        additionalInformation: new AdditionalInformation(s)
+    });
+
     performIteratedTabuSearch(s);
 };
 
-function Iteration() {
-
-}
+/**
+ * Number.prototype.format(n, x)
+ *
+ * @param integer n: length of decimal
+ * @param integer x: length of sections
+ */
+Number.prototype.format = function(n, x) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+    return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&,');
+};
 
 function AdditionalInformation(solution) {
     return {
         solutionNr: solution.solutionNr,
         actColorChanges: solution.actColorChanges,
+        actPaintGroups: solution.actColorChanges+1,
         actColorViolations: solution.actColorViolations,
         actHighPrioViolations: solution.actHighPrioViolations,
         actLowPrioViolations: solution.actLowPrioViolations,
         actCostFunctionFResult: solution.actCostFunctionFResult,
-        actCostFunctionGResult: solution.actCostFunctionGResult
+        actCostFunctionGResult: solution.actCostFunctionGResult,
+        actCostFunctionFResultFormatted: solution.actCostFunctionFResult.format(2, 3),
+        actCostFunctionGResultFormatted: solution.actCostFunctionGResult.format(2, 3)
     };
 }
 
@@ -1182,7 +1200,7 @@ function performIteratedTabuSearch(s) {
     postMessage({
         ident: "IMPROVED",
         vehicleOrder: sImproved.getVehicleOrderWithNeededInfosForFronted(),
-        additionInformation: new AdditionalInformation(sImproved)
+        additionalInformation: new AdditionalInformation(sImproved)
     });
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
@@ -1204,7 +1222,7 @@ function performIteratedTabuSearch(s) {
 
         // Data for frontend
         var postMessageSCurrent = {
-            additionInformation: new AdditionalInformation(sCurrent),
+            additionalInformation: new AdditionalInformation(sCurrent),
             vehicleOrder: sCurrent.getVehicleOrderWithNeededInfosForFronted()
         };
 
@@ -1216,7 +1234,7 @@ function performIteratedTabuSearch(s) {
         var postMessageSLocalOptimum = false;
         if(sLocalOptimum != null) {
             postMessageSLocalOptimum = {
-                additionInformation: new AdditionalInformation(sLocalOptimum),
+                additionalInformation: new AdditionalInformation(sLocalOptimum),
                 vehicleOrder: sLocalOptimum.getVehicleOrderWithNeededInfosForFronted()
             };
         }
@@ -1239,7 +1257,7 @@ function performIteratedTabuSearch(s) {
         var postMessageSBestSolution = false;
         if(foundNewBestSolution) {
             postMessageSBestSolution = {
-                additionInformation: new AdditionalInformation(sBestSolution),
+                additionalInformation: new AdditionalInformation(sBestSolution),
                 vehicleOrder: sBestSolution.getVehicleOrderWithNeededInfosForFronted()
             };
         }
@@ -1280,7 +1298,7 @@ function performIteratedTabuSearch(s) {
 
         // Data for frontend
         var postMessageSImproved = {
-            additionInformation: new AdditionalInformation(sImproved),
+            additionalInformation: new AdditionalInformation(sImproved),
             vehicleOrder: sImproved.getVehicleOrderWithNeededInfosForFronted()
         };
 
@@ -1309,7 +1327,7 @@ function performIteratedTabuSearch(s) {
         ident: "END",
         iterationCounter: iterationCounter-1,
         sBestSolution: {
-            additionInformation: new AdditionalInformation(sBestSolution),
+            additionalInformation: new AdditionalInformation(sBestSolution),
             vehicleOrder: sBestSolution.getVehicleOrderWithNeededInfosForFronted()
         }
     });

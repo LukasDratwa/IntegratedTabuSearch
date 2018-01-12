@@ -69,6 +69,10 @@
                 background-color: #faf1ff;
             }
 
+            .vehicle.color0 {
+                background-color: #ffb7b5;
+            }
+
             .vehicle.color1 {
                 background-color: #ff9900;
             }
@@ -387,6 +391,17 @@
             <div class="row">
                 <div class="col-md-12">
                     <h2>Algorithmus</h2>
+                    <ol>
+                        <li>Setze den Input als initiale Lösung <b><i>s0</i></b></li>
+                        <li>Anwenden der Tabu Suche auf <b><i>s0</i></b>, um verbesserte Lösung <b><i>s^</i></b> zu erhalten</li>
+                        <li>So lang in {{parameterKappa}} aufeinanderfolgenden Iterationen weitere keine Verbesserung erzielt werden konnte:</li>
+                        <ol type="a">
+                            <li>Wende eine Pertubation auf <b><i>s^</i></b> an, um <b><i>s'</i></b> zu erhalten</li>
+                            <li>Anwenden der Tabu Suche auf <b><i>s'</i></b>, um lokales Optimum <b><i>s~</i></b> zu erhalten</li>
+                            <li>Wenn <b><i>s~</i></b> die Akzeptanzkriterien erfüllt: <b><i>s^</i></b> <-- <b><i>s~</i></b></li>
+                        </ol>
+                        <li>Gebe die beste gefundene Lösung <b><i>s*</i></b> zurück</li>
+                    </ol>
                 </div>
             </div>
 
@@ -417,12 +432,11 @@
                                 <div class="col-md-3">
                                     <div>Informationen:</div>
                                     <ul>
-                                        <li>f(s) und g(s)</li>
-                                        <li>Used weight set</li>
-                                        <li>Color violations</li>
-                                        <li>Ratio constraint violations --> With intervals?</li>
-                                        <li>Amount of color changes</li>
-                                        <li>Amount of paint groups</li>
+                                        <li>f(s) = {{initialSolution.additionalInformation.actCostFunctionFResultFormatted}} und g(s) = {{initialSolution.additionalInformation.actCostFunctionGResultFormatted}}</li>
+                                        <li>{{initialSolution.additionalInformation.actColorViolations}} Farbverletzungen mit insgesamt {{initialSolution.additionalInformation.actColorChanges}} Farbwechslungen
+                                         ({{initialSolution.additionalInformation.actPaintGroups}} Farbgruppen)</li>
+                                        <li>Ratio-Constraint Verletzungen (hohe Prio): ({{initialSolution.additionalInformation.actHighPrioViolations}})</li>
+                                        <li>Ratio-Constraint Verletzungen (niedrige Prio): ({{initialSolution.additionalInformation.actLowPrioViolations}})</li>
                                     </ul>
                                 </div>
 
@@ -450,12 +464,11 @@
                                 <div class="col-md-3" ng-show="improvedSolutionFound">
                                     <div>Informationen:</div>
                                     <ul>
-                                        <li>f(s) und g(s)</li>
-                                        <li>Used weight set</li>
-                                        <li>Color violations</li>
-                                        <li>Ratio constraint violations --> With intervals?</li>
-                                        <li>Amount of color changes</li>
-                                        <li>Amount of paint groups</li>
+                                        <li>f(s) = {{improvedSolution.additionalInformation.actCostFunctionFResultFormatted}} und g(s) = {{improvedSolution.additionalInformation.actCostFunctionGResultFormatted}}</li>
+                                        <li>{{improvedSolution.additionalInformation.actColorViolations}} Farbverletzungen mit insgesamt {{improvedSolution.additionalInformation.actColorChanges}} Farbwechslungen
+                                            ({{improvedSolution.additionalInformation.actPaintGroups}} Farbgruppen)</li>
+                                        <li>Ratio-Constraint Verletzungen (hohe Prio): ({{improvedSolution.additionalInformation.actHighPrioViolations}})</li>
+                                        <li>Ratio-Constraint Verletzungen (niedrige Prio): ({{improvedSolution.additionalInformation.actLowPrioViolations}})</li>
                                     </ul>
                                 </div>
 
@@ -516,12 +529,11 @@
                                 <div class="col-md-3">
                                     <div>Informationen:</div>
                                     <ul>
-                                        <li>f(s) und g(s)</li>
-                                        <li>Used weight set</li>
-                                        <li>Color violations</li>
-                                        <li>Ratio constraint violations --> With intervals?</li>
-                                        <li>Amount of color changes</li>
-                                        <li>Amount of paint groups</li>
+                                        <li>f(s) = {{bestSolution.additionalInformation.actCostFunctionFResultFormatted}} und g(s) = {{bestSolution.additionalInformation.actCostFunctionGResultFormatted}}</li>
+                                        <li>{{bestSolution.additionalInformation.actColorViolations}} Farbverletzungen mit insgesamt {{bestSolution.additionalInformation.actColorChanges}} Farbwechslungen
+                                            ({{bestSolution.additionalInformation.actPaintGroups}} Farbgruppen)</li>
+                                        <li>Ratio-Constraint Verletzungen (hohe Prio): ({{bestSolution.additionalInformation.actHighPrioViolations}})</li>
+                                        <li>Ratio-Constraint Verletzungen (niedrige Prio): ({{bestSolution.additionalInformation.actLowPrioViolations}})</li>
                                     </ul>
                                 </div>
 
