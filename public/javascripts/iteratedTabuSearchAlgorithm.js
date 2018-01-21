@@ -1266,12 +1266,17 @@ function performIteratedTabuSearch(s) {
         // Update best found solution
         var foundNewBestSolution = false;
         if(sLocalOptimum != null && sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult && sLocalOptimum.actColorViolations == 0) {
+            var oldBestSolution = sBestSolution;
+
             sBestSolution = sLocalOptimum;
             iterationsWithoutImprovement = 0;
             foundNewBestSolution = true;
             if(logSolCostValues) {
                 console.log("Found new best s: g=" + sLocalOptimum.actCostFunctionGResult + "; f=" + sBestSolution.actCostFunctionFResult);
             }
+
+            postMessage(new Log("ITERATION", "Neue beste Lösung gefunden: f=" + sBestSolution.actCostFunctionFResultFormatted + ", g=" + sBestSolution.actCostFunctionGResultFormatted
+                + " (Alte beste Lösung: f=" + oldBestSolution.actCostFunctionFResultFormatted + ", g=" + oldBestSolution.actCostFunctionGResultFormatted + ")", iterationCounter, false, true));
         } else {
             iterationsWithoutImprovement++;
         }
@@ -1296,26 +1301,42 @@ function performIteratedTabuSearch(s) {
              *   --> Next pertubation with sLocalOptimum
              *   --> If acceptance criterion will not be satisfied, continue with old sImproved
              */
+            postMessage(new Log("ITERATION", "3 c) Überprüfung des Akzeptanzkriteriums", iterationCounter, false, false));
             if(numOfWeightSet == 1 || numOfWeightSet == 2) {
                 // TODO really accept if the f function value is bigger than the best found solution?
                 if(sLocalOptimum.actCostFunctionFResult > sBestSolution.actCostFunctionFResult) {
+                    postMessage(new Log("ITERATION", "Die Kosten des lokalen gefundenen Optimums aus 3 b) übersteigen die Kosten der bisher besten Lösung." +
+                        " Diese wird als s^ gesetzt. (Benutztes Gewichtsset: " + numOfWeightSet + ")", iterationCounter, false, true));
                     sImproved = sLocalOptimum;
 
                     secondCaseOfAcceptanceCriterionWasMatched = false;
                     secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
                 } else if(secondCaseOfAcceptanceCriterionWasMatched) {
+                    postMessage(new Log("ITERATION", "Die Kosten des lokalen gefundenen Optimums aus 3 b) sind geringer als die Kosten der bisher besten Lösung." +
+                        " Die zuvor vorläufig gespeicherte Lösung s^ erfüllt erneut das Akzeptanzkriterium nicht. Es wird weiter mit der zwischengespeicherten Lösung" +
+                        " s^ gerechnet. (Benutztes Gewichtsset: " + numOfWeightSet + ")", iterationCounter, false, true));
+
                     // Was not satisfied, return to old s
                     secondCaseOfAcceptanceCriterionWasMatched = false;
                     sImproved = secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave;
                     secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
+                } else {
+                    postMessage(new Log("ITERATION", "Das Akzeptanzkriterium wurde nicht erfüllt. (Benutztes Gewichtsset: " + numOfWeightSet + ")", iterationCounter, false, true));
                 }
             } else {
                 if(sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult) {
+                    postMessage(new Log("ITERATION", "Die Kosten des lokalen gefundenen Optimums aus 3 b) sind geringer als die Kosten der bisher besten Lösung." +
+                        " Diese wird vorläufig als s^ gesetzt, jedoch wird die bisherige Lösung s^ zwischengespeichert. (Benutztes Gewichtsset: " + numOfWeightSet + ")", iterationCounter, false, true));
+
                     secondCaseOfAcceptanceCriterionWasMatched = true;
                     secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = sImproved;
                     sImproved = sLocalOptimum;
+                } else {
+                    postMessage(new Log("ITERATION", "Das Akzeptanzkriterium wurde nicht erfüllt. (Benutztes Gewichtsset: " + numOfWeightSet + ")", iterationCounter, false, true));
                 }
             }
+        } else {
+            postMessage(new Log("ITERATION", "Es konnte kein lokales Optimum gefunden werden. (Benutztes Gewichtsset: " + numOfWeightSet + ")", iterationCounter, false, true));
         }
 
         // Data for frontend
