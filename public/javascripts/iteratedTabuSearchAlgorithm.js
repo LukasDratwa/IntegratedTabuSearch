@@ -1181,13 +1181,13 @@ function performIteratedTabuSearch(s) {
     var pertubationMechanism = new PertubationMechanisms();
     var startingTimestamp = new Date();
     var helper = new Helper(s.vehicles);
-    var logSolCostValues = true;
+    var logSolCostValues = false;
 
     // 1. Init
     var s0 = s;
     costFunctionG(s0, 1);
-    console.log(s0);
     if(logSolCostValues) {
+        console.log(s0);
         console.log("Initial s: g=" + s.actCostFunctionGResult + "; f=" + s.actCostFunctionFResult);
     }
 
@@ -1214,8 +1214,10 @@ function performIteratedTabuSearch(s) {
         // Select numOfWeightSet
         var numOfWeightSet = getNextWeightSetNumber(iterationCounter);
 
-        console.log("###### ITERATION " + iterationCounter + " (Without impr.: " + iterationsWithoutImprovement
-            + "; Weighset: " + numOfWeightSet + ") ######");
+        if(logSolCostValues) {
+            console.log("###### ITERATION " + iterationCounter + " (Without impr.: " + iterationsWithoutImprovement
+                + "; Weighset: " + numOfWeightSet + ") ######");
+        }
 
         // a) Apply pertubation on sImproved to obtain sCurrent
         sCurrent = pertubationMechanism.performPertubation(sImproved, numOfWeightSet);

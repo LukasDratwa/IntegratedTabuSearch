@@ -56,7 +56,7 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
                     itsWorkerThread.postMessage(data);
 
                     itsWorkerThread.onmessage = function(e) {
-                        console.log('Message received from worker' , e.data);
+                        // console.log('Message received from worker' , e.data);
 
                         if(e.data.ident === "INITIAL") {
                             $scope.initialSolution.additionalInformation = e.data.additionalInformation;

@@ -19,6 +19,7 @@
         <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+        <link href="/stylesheets/fontawesome-all.min.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
@@ -28,9 +29,14 @@
             #sortable li span { position: absolute; margin-left: -1.3em; }
 
             .hidden {
-                visibility: hidden;
+                display: none;
             }
 
+            .show-more, .show-less {
+                color: #9a9a9a;
+                cursor: pointer;
+                margin-left: 10px;
+            }
             .centerDiv {
                 margin: auto;
                 display: block;
@@ -46,6 +52,10 @@
                 margin-bottom: 10px;
                 display: block;
                 width: 100%;
+            }
+
+            .hrDarkGray.hrDarkGrayThick {
+                border-top: 3px solid #9a9a9a;
             }
 
             .hrDarkGrayDashed {
@@ -203,8 +213,50 @@
                         $(this).addClass('current');
                         $("#"+tab_id).addClass('current');
                     });
+
+                    $(".setting-show").change(function() {
+                        var classToToggle = "";
+
+                        if(this.checked) {
+                            // TODO
+                        }
+                    });
                 }
             });
+
+            function showLessIteration(jQueryElem) {
+                jQueryElem.addClass("hidden");
+                $("#" + jQueryElem.attr("customref")).removeClass("hidden");
+
+                // Minimize childs
+                showLess($("#" + jQueryElem.attr("id") + "-a"));
+                showLess($("#" + jQueryElem.attr("id") + "-b"));
+                showLess($("#" + jQueryElem.attr("id") + "-c"));
+                showLess($("#" + jQueryElem.attr("id") + "-newBest"));
+            }
+
+            function showMoreIteration(jQueryElem) {
+                jQueryElem.addClass("hidden");
+                $("#" + jQueryElem.attr("customref")).removeClass("hidden");
+
+                // Expand childs
+                showMore($("#" + jQueryElem.attr("id") + "-a"));
+                showMore($("#" + jQueryElem.attr("id") + "-b"));
+                showMore($("#" + jQueryElem.attr("id") + "-c"));
+                showMore($("#" + jQueryElem.attr("id") + "-newBest"));
+            }
+
+            function showLess(jQueryElem) {
+                jQueryElem.addClass("hidden");
+                $("#" + jQueryElem.attr("customref")).removeClass("hidden");
+                jQueryElem.parent().nextAll().addClass("hidden");
+            }
+
+            function showMore(jQueryElem) {
+                jQueryElem.addClass("hidden");
+                $("#" + jQueryElem.attr("customref")).removeClass("hidden");
+                jQueryElem.parent().nextAll().removeClass("hidden");
+            }
 
             function arrayContainsString(string, array) {
                 for(var i in array) {
@@ -415,6 +467,33 @@
 
             <div class="row">
                 <div class="col-md-12">
+                    <h2>Einstellungen</h2>
+
+                    <span>Anzeige:</span>
+                    <div class="form-check">
+                        <input style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-a" value="a" checked>
+                        <label class="form-check-label" for="setting-show-a">Zeige 3 a)</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-b" value="b" checked>
+                        <label class="form-check-label" for="setting-show-b">Zeige 3 b)</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-c" value="c" checked>
+                        <label class="form-check-label" for="setting-show-c">Zeige 3 c)</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-newBest" value="newBest" checked>
+                        <label class="form-check-label" for="setting-show-a">Zeige neue beste Lösung</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
                     <!-- Row to visualize the ITS -->
                     <h2>Visualisierung</h2>
                     <div class="tabsContainer">
@@ -491,14 +570,20 @@
                                     <hr class="hrDarkGray"><hr class="hrDarkGray">
                                 </div>
 
-                                <div class="col-md-12" ng-repeat="iteration in iterations">
+                                <div class="col-md-12" ng-repeat="iteration in iterations" ng-class="iteration.sBestSolution ? 'newBest' : ''" id="{{iteration.iterationCounter}}">
                                     <div class="col-md-12">
-                                        <h4>Iteration #{{iteration.iterationCounter}}</h4>
+                                        <h4>Iteration #{{iteration.iterationCounter}}
+                                            <i id="show-less-{{iteration.iterationCounter}}" onclick="showLessIteration($(this))" customref="show-more-{{iteration.iterationCounter}}" class="fas fa-search-minus show-less"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}" onclick="showMoreIteration($(this))" customref="show-less-{{iteration.iterationCounter}}" class="fas fa-search-plus show-more hidden"></i>
+                                        </h4>
                                     </div>
 
                                     <!-- Current solution (after permutation) -->
-                                    <div class="col-md-12">
-                                        <h5>a) Lösung nach der Permutation</h5>
+                                    <div class="col-md-12" id="{{iteration.iterationCounter}}-a">
+                                        <h5>a) Lösung nach der Permutation
+                                            <i id="show-less-{{iteration.iterationCounter}}-a" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-a" class="fas fa-search-minus show-less"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-a" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-a" class="fas fa-search-plus show-more hidden"></i>
+                                        </h5>
 
                                         <div class="col-md-9">
                                             <div class="solution">
@@ -519,12 +604,15 @@
                                     </div>
 
                                     <div class="col-md-12">
-                                        <hr class="hrDarkGrayDashed">
+                                        <hr class="hrDarkGray">
                                     </div>
 
                                     <!-- Local solution optimum (after Tabu Search) -->
-                                    <div class="col-md-12">
-                                        <h5>b) Lokales Optimum nach Tabu Suche</h5>
+                                    <div class="col-md-12" id="{{iteration.iterationCounter}}-b">
+                                        <h5>b) Lokales Optimum nach Tabu Suche
+                                            <i id="show-less-{{iteration.iterationCounter}}-b" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-b" class="fas fa-search-minus show-less"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-b" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-b" class="fas fa-search-plus show-more hidden"></i>
+                                        </h5>
 
                                         <div class="col-md-9">
                                             <div class="solution">
@@ -550,8 +638,11 @@
                                     </div>
 
                                     <!-- sImproved <-- local optimum -->
-                                    <div class="col-md-12">
-                                        <h5>c) Verbesserte Lösung nach dem Akzeptanzkriterum</h5>
+                                    <div class="col-md-12" id="{{iteration.iterationCounter}}-c">
+                                        <h5>c) Verbesserte Lösung nach dem Akzeptanzkriterum
+                                            <i id="show-less-{{iteration.iterationCounter}}-c" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-c" class="fas fa-search-minus show-less"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-c" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-c" class="fas fa-search-plus show-more hidden"></i>
+                                        </h5>
 
                                         <div class="col-md-9">
                                             <div class="solution">
@@ -573,10 +664,13 @@
 
                                     <!-- sImproved <-- local optimum -->
                                     <div class="col-md-12">
-                                        <hr class="hrDarkGrayDashed">
+                                        <hr class="hrDarkGray">
                                     </div>
-                                    <div class="col-md-12" ng-show="iteration.sBestSolution">
-                                        <h4 style="text-decoration: underline;">Neue gefundene beste Lösung:</h4>
+                                    <div class="col-md-12" ng-show="iteration.sBestSolution" id="{{iteration.iterationCounter}}-newBest">
+                                        <h5 style="text-decoration: underline;">Neue gefundene beste Lösung:
+                                            <i id="show-less-{{iteration.iterationCounter}}-newBest" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-newBest" class="fas fa-search-minus show-less"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-newBest" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-newBest" class="fas fa-search-plus show-more hidden"></i>
+                                        </h5>
 
                                         <div class="col-md-9">
                                             <div class="solution">
@@ -597,7 +691,7 @@
                                     </div>
 
                                     <div class="col-md-12">
-                                        <hr class="hrDarkGray">
+                                        <hr class="hrDarkGray hrDarkGrayThick">
                                     </div>
                                 </div>
 
