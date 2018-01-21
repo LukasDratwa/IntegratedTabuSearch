@@ -50,6 +50,11 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.bestSolutionFound = false;
             $scope.bestSolution = {};
 
+            $scope.settingShowA = true;
+            $scope.settingShowB = true;
+            $scope.settingShowC = true;
+            $scope.settingShowNewBest = true;
+
             window.setTimeout(function() {
                 if(window.Worker) {
                     var itsWorkerThread = new Worker("/javascripts/iteratedTabuSearchAlgorithm.js");
