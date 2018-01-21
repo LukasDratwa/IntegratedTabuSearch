@@ -23,8 +23,20 @@ function AdditionalInformation(solution) {
         actLowPrioViolations: solution.actLowPrioViolations,
         actCostFunctionFResult: solution.actCostFunctionFResult,
         actCostFunctionGResult: solution.actCostFunctionGResult,
-        actCostFunctionFResultFormatted: Number(solution.actCostFunctionFResult).toLocaleString("es-ES", {minimumFractionDigits: 2}),
-        actCostFunctionGResultFormatted: Number(solution.actCostFunctionGResult).toLocaleString("es-ES", {minimumFractionDigits: 2})
+        actCostFunctionFResultFormatted: solution.actCostFunctionFResultFormatted,
+        actCostFunctionGResultFormatted: solution.actCostFunctionGResultFormatted
+    };
+}
+
+// stepRef == INITIAL, IMPROVED, ITERATION, END
+function Log(stepRef, text, iterationCounter, marginBottom, marginLeft) {
+    return {
+        ident: "LOG",
+        stepRef: stepRef,
+        text: text,
+        iterationCounter: iterationCounter,
+        marginBottom: marginBottom,
+        marginLeft: marginLeft
     };
 }
 
@@ -744,6 +756,9 @@ function costFunctionG(s, numOfWeightSet) {
     s.actCostFunctionGResult = result;
     s.actCostFunctionFResult = costFunctionFValue;
 
+    s.actCostFunctionFResultFormatted = Number(s.actCostFunctionFResult).toLocaleString("es-ES", {minimumFractionDigits: 2});
+    s.actCostFunctionGResultFormatted = Number(s.actCostFunctionGResult).toLocaleString("es-ES", {minimumFractionDigits: 2});
+
     return result;
 }
 
@@ -1073,9 +1088,10 @@ function PertubationMechanisms() {
         s.obligatoryUpdateAfterEveryMove();
     };
 
-    this.performPertubation = function(solution, numOfWeightSet) {
+    this.performPertubation = function(solution, iterationCounter) {
         var timestamp = new Date().valueOf();
 
+        postMessage(new Log("ITERATION", "3 a) Ausführen eines Pertubations-Mechanismus", iterationCounter, false, false));
         switch(getRandomNumber(0, 5)) {
             case 0:
                 this.randomSwaps(solution);
@@ -1107,13 +1123,18 @@ function PertubationMechanisms() {
                 solution.performedPertubation = "Application of all improving swaps and of a proportion pi of neutral swaps";
                 break;
         }
+
         solution.performedPertubationTime = new Date().valueOf() - timestamp;
+        postMessage(new Log("ITERATION", solution.performedPertubation + " ausgeführt. Dauer (ms): " + solution.performedPertubationTime, iterationCounter, false, true));
 
         return solution;
     };
 }
 
-function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
+function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper, logIdent) {
+    var prepend = logIdent === "ITERATION" ? "3 b) " : "";
+    postMessage(new Log(logIdent, prepend + "Ausführen der Tabu Suche", iterationCounter, false, false));
+
     // Perform before every search:
     solution.aspirationCriterionArray = [];
     /*for(var i in helper.vehicles) {
@@ -1124,7 +1145,10 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
     // For 2.2.4 Continuous diversification --> Select random hFunctionNumber
     var hFunctionNumber = getRandomNumber(1, 2);
 
+
+    postMessage(new Log(logIdent, "Gewichtungssatz: " + numOfWeightSet + ", Kontinuierliche Diversifikationsfunktion: " + hFunctionNumber, iterationCounter, false, true));
     var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet, helper, hFunctionNumber);
+    postMessage(new Log(logIdent, "Gefundene Nachbarschaftsgröße: " + neighbourhood.length, iterationCounter, false, true));
 
     var bestS = null;
     for(var i in neighbourhood) {
@@ -1133,6 +1157,10 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper) {
         } else if(neighbourhood[i].actCostFunctionFResult < bestS.actCostFunctionFResult){ // TODO Ask - with g or f function?!
             bestS = neighbourhood[i];
         }
+    }
+
+    if(bestS != null) {
+        postMessage(new Log(logIdent, "Lokales Optimum in Nachbarschaft: f=" + bestS.actCostFunctionFResultFormatted + ", g=" + bestS.actCostFunctionGResultFormatted, iterationCounter, false, true));
     }
 
     return bestS;
@@ -1148,8 +1176,7 @@ function getNextWeightSetNumber(iterationCounter) {
      *  - f3 = 10^4, 10^4, 1)
      * Following structure is used: (f1, f2, f1, f3, f1, f2, ...)
      */
-
-    if(iterationCounter % 2 == 0) {
+    if(iterationCounter % 2 == 1) {
         // Take f1
         return 1;
     } else {
@@ -1180,9 +1207,11 @@ function performIteratedTabuSearch(s) {
         console.log(s0);
         console.log("Initial s: g=" + s.actCostFunctionGResult + "; f=" + s.actCostFunctionFResult);
     }
+    postMessage(new Log("INITIAL", "Input wurde als initiale Lösung gesetzt.", -1, true, false));
 
     // 2. Apply tabu search on s0 to obtain improved solution sImproved
-    sImproved = performTabuSearch(s0, iterationCounter, 1, helper);
+    postMessage(new Log("IMPROVED", "Start Schritt 2", iterationCounter, false, false));
+    sImproved = performTabuSearch(s0, iterationCounter, 1, helper, "IMPROVED");
     sBestSolution = sImproved; // TODO check if its better??
     if(logSolCostValues) {
         console.log("Improved s: g=" + sImproved.actCostFunctionGResult + "; f=" + sImproved.actCostFunctionFResult);
@@ -1192,14 +1221,16 @@ function performIteratedTabuSearch(s) {
         vehicleOrder: sImproved.getVehicleOrderWithNeededInfosForFronted(),
         additionalInformation: new AdditionalInformation(sImproved)
     });
+    postMessage(new Log("IMPROVED", "Ende Schritt 2", iterationCounter, true, false));
 
     // 3. Perform till no improvement of f(s) since k (Kappa) iterations
     var iterationsWithoutImprovement = 0;
     var secondCaseOfAcceptanceCriterionWasMatched = false;
     var secondCaseOfAcceptanceCriterionWasMatchedSImprovedSave = null;
 
+    postMessage(new Log("ITERATION", "Start Schritt 3", iterationCounter, false, false));
     while(iterationsWithoutImprovement < paramSet.getParamWithIdent("k").value - 1) {
-        iterationCounter++;
+        postMessage(new Log("ITERATION", "### Start Iteration " + iterationCounter + " ###", iterationCounter, false, false));
 
         // Select numOfWeightSet
         var numOfWeightSet = getNextWeightSetNumber(iterationCounter);
@@ -1210,7 +1241,7 @@ function performIteratedTabuSearch(s) {
         }
 
         // a) Apply pertubation on sImproved to obtain sCurrent
-        sCurrent = pertubationMechanism.performPertubation(sImproved, numOfWeightSet);
+        sCurrent = pertubationMechanism.performPertubation(sImproved, iterationCounter);
 
         // Data for frontend
         var postMessageSCurrent = {
@@ -1220,7 +1251,7 @@ function performIteratedTabuSearch(s) {
 
 
         // b) Apply tabu search on sCurrent to obtain sLocalOptimum
-        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, numOfWeightSet, helper);
+        sLocalOptimum = performTabuSearch(sCurrent, iterationCounter, numOfWeightSet, helper, "ITERATION");
 
         // Data for frontend
         var postMessageSLocalOptimum = false;
@@ -1234,7 +1265,7 @@ function performIteratedTabuSearch(s) {
 
         // Update best found solution
         var foundNewBestSolution = false;
-        if(sLocalOptimum != null && sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult) {
+        if(sLocalOptimum != null && sLocalOptimum.actCostFunctionFResult < sBestSolution.actCostFunctionFResult && sLocalOptimum.actColorViolations == 0) {
             sBestSolution = sLocalOptimum;
             iterationsWithoutImprovement = 0;
             foundNewBestSolution = true;
@@ -1253,7 +1284,6 @@ function performIteratedTabuSearch(s) {
                 vehicleOrder: sBestSolution.getVehicleOrderWithNeededInfosForFronted()
             };
         }
-
 
 
         // c) If sLocalOptimum satisfies the acceptance criterion set it to sImproved
@@ -1306,7 +1336,11 @@ function performIteratedTabuSearch(s) {
         /*if(iterationCounter == 10) {
             break;
         }*/
+
+        postMessage(new Log("ITERATION", "### Ende Iteration " + iterationCounter + " ###", iterationCounter, true, false));
+        iterationCounter++;
     }
+    postMessage(new Log("ITERATION", "Ende Schritt 3", iterationCounter, true, false));
 
     console.log("Calculation time needed: " + (new Date().valueOf() - startingTimestamp.valueOf()));
 
@@ -1323,6 +1357,8 @@ function performIteratedTabuSearch(s) {
             vehicleOrder: sBestSolution.getVehicleOrderWithNeededInfosForFronted()
         }
     });
+
+    postMessage(new Log("END", "Ende Schritt 4 - Die beste Lösung wurde gefunden.", iterationCounter));
 
     console.log(sBestSolution);
     return sBestSolution;

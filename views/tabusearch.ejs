@@ -32,6 +32,14 @@
                 display: none;
             }
 
+            .logMarginLeft {
+                margin-left: 15px;
+            }
+
+            .logMarginBottom {
+                margin-bottom: 10px;
+            }
+
             .show-more, .show-less {
                 color: #9a9a9a;
                 cursor: pointer;
@@ -463,22 +471,22 @@
 
                     <span style="text-decoration: underline;">Anzeige:</span>
                     <div class="form-check">
-                        <input ng-model="settingShowA" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-a" value="a" checked>
+                        <input ng-model="settingShowA" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-a" value="a">
                         <label class="form-check-label" for="setting-show-a">Zeige Schritt 3 a)</label>
                     </div>
 
                     <div class="form-check">
-                        <input ng-model="settingShowB" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-b" value="b" checked>
+                        <input ng-model="settingShowB" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-b" value="b">
                         <label class="form-check-label" for="setting-show-b">Zeige Schritt 3 b)</label>
                     </div>
 
                     <div class="form-check">
-                        <input ng-model="settingShowC" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-c" value="c" checked>
+                        <input ng-model="settingShowC" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-c" value="c">
                         <label class="form-check-label" for="setting-show-c">Zeige Schritt 3 c)</label>
                     </div>
 
                     <div class="form-check">
-                        <input ng-model="settingShowNewBest" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-newBest" value="newBest" checked>
+                        <input ng-model="settingShowNewBest" style="display: inline;" class="form-check-input setting-show" type="checkbox" id="setting-show-newBest" value="newBest">
                         <label class="form-check-label" for="setting-show-a">Zeige neue beste Lösung</label>
                     </div>
                 </div>
@@ -689,6 +697,7 @@
                                 </div>
 
                                 <div class="cold-md-12" ng-show="improvedSolutionFound && !bestSolutionFound">
+                                    <div style="text-align: center">{{lastLog}} ({{iterationsSinceLastBestSolution}} Iterationen ohne Verbesserung)</div>
                                     <img class="centerDiv" src="/images/loadingGif.gif" alt="Loading ..."/>
                                 </div>
                             </div>
@@ -723,7 +732,11 @@
                         </div>
 
                         <div id="tab-2" class="tab-content">
-                            <p>test tab 2</p>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div ng-repeat="log in logs" ng-class="{logMarginBottom: log.marginBottom, logMarginLeft:  log.marginLeft}">{{log.text}}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

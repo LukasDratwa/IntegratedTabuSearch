@@ -46,14 +46,16 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.iterations = [];
 
             $scope.logs = [];
+            $scope.lastLog = "";
 
             $scope.bestSolutionFound = false;
             $scope.bestSolution = {};
+            $scope.iterationsSinceLastBestSolution = 0;
 
-            $scope.settingShowA = true;
-            $scope.settingShowB = true;
-            $scope.settingShowC = true;
-            $scope.settingShowNewBest = true;
+            $scope.settingShowA = false;
+            $scope.settingShowB = false;
+            $scope.settingShowC = false;
+            $scope.settingShowNewBest = false;
 
             window.setTimeout(function() {
                 if(window.Worker) {
@@ -78,12 +80,25 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
 
                         if(e.data.ident === "ITERATION") {
                             $scope.iterations.push(e.data);
+
+                            if(e.data.sBestSolution) {
+                                $scope.iterationsSinceLastBestSolution = 0;
+                            } else {
+                                $scope.iterationsSinceLastBestSolution++;
+                            }
+
                             $scope.$apply();
                         }
 
                         if(e.data.ident === "END") {
                             $scope.bestSolutionFound = true;
                             $scope.bestSolution = e.data;
+                            $scope.$apply();
+                        }
+
+                        if(e.data.ident === "LOG") {
+                            $scope.logs.push(e.data);
+                            $scope.lastLog = "Iteration #" + e.data.iterationCounter + ": " + e.data.text;
                             $scope.$apply();
                         }
                     };
