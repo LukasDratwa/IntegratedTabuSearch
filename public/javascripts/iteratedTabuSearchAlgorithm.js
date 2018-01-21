@@ -13,29 +13,18 @@ var onmessage = function(e) {
     performIteratedTabuSearch(s);
 };
 
-/**
- * Number.prototype.format(n, x)
- *
- * @param integer n: length of decimal
- * @param integer x: length of sections
- */
-Number.prototype.format = function(n, x) {
-    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
-    return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), ',$&');
-};
-
 function AdditionalInformation(solution) {
     return {
         solutionNr: solution.solutionNr,
         actColorChanges: solution.actColorChanges,
-        actPaintGroups: solution.actColorChanges+1,
+        actPaintGroups: solution.actColorChanges,
         actColorViolations: solution.actColorViolations,
         actHighPrioViolations: solution.actHighPrioViolations,
         actLowPrioViolations: solution.actLowPrioViolations,
         actCostFunctionFResult: solution.actCostFunctionFResult,
         actCostFunctionGResult: solution.actCostFunctionGResult,
-        actCostFunctionFResultFormatted: solution.actCostFunctionFResult.format(2, 3),
-        actCostFunctionGResultFormatted: solution.actCostFunctionGResult.format(2, 3)
+        actCostFunctionFResultFormatted: Number(solution.actCostFunctionFResult).toLocaleString("es-ES", {minimumFractionDigits: 2}),
+        actCostFunctionGResultFormatted: Number(solution.actCostFunctionGResult).toLocaleString("es-ES", {minimumFractionDigits: 2})
     };
 }
 
@@ -340,6 +329,7 @@ function Solution(vehicles, parameters, ratios) {
 
     this.updateActViolations = function(moveId) {
         // 1. Count color changes
+        this.actColorChanges = 1;
         var lastColor = -1;
         for(var i in this.vehicles) {
             var v = vehicles[i];
