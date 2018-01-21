@@ -563,7 +563,7 @@
                                 </div>
 
                                 <div class="col-md-12" ng-repeat="iteration in iterations" ng-class="iteration.sBestSolution ? 'newBest' : ''" id="{{iteration.iterationCounter}}"
-                                    ng-hide="!settingShowA && !settingShowB && !settingShowC && settingShowNewBest && !iteration.sBestSolution">
+                                    ng-hide="(!settingShowA && !settingShowB && !settingShowC && settingShowNewBest && !iteration.sBestSolution) || (!settingShowA && !settingShowB && !settingShowC && !settingShowNewBest)">
                                     <div class="col-md-12">
                                         <h4>Iteration #{{iteration.iterationCounter}}
                                             <i id="show-less-{{iteration.iterationCounter}}" onclick="showLessIteration($(this))" customref="show-more-{{iteration.iterationCounter}}" class="fas fa-search-minus show-less"></i>
