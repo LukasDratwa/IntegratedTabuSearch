@@ -11,135 +11,135 @@
     {
       "ident": "l",
       "name": "Lota (l)",
-      "description": "Maximal length of subsequence with same colour. Is a hard constraint, not allowed to violate.",
+      "description": "Definiert die maximale Länge einer jeder Fahrzeuggruppe mit der selben Farbe. Stellt eine harte Regel dar, die nicht gebrochen werden darf.",
       "type": "Integer",
       "value": 4,
       "orderNr": 0
     },
     {
+      "ident": "k",
+      "name": "Kappa (k)",
+      "description": "Definiert das Abbruchkriterium; nach Kappa Iterationen ohne eine Lösungsverbesserung wird der Schritt 3 des Algorithmus abgebrochen.",
+      "type": "Integer",
+      "value": 200,
+      "orderNr": 1
+    },
+    {
       "ident": "a1",
       "name": "Alpha (a) 1",
-      "description": "Weight colour changes.",
+      "description": "Gewicht für Farbwechsel in der Kostenfunktion f1(s).",
       "type": "Integer",
       "value": 1000000,
-      "orderNr": 1
+      "orderNr": 2
     },
     {
       "ident": "b1",
       "name": "Beta (b) 1",
-      "description": "Weight for the number of PRC violations.",
+      "description": "Gewicht für Verstöße der Ratio Constraints mit hoher Priorität in der Kostenfunktion f1(s).",
       "type": "Integer",
       "value": 1000,
-      "orderNr": 2
+      "orderNr": 3
     },
     {
       "ident": "y1",
       "name": "Gamma (y) 1",
-      "description": "Weight for the number of NPRC violations.",
+      "description": "Gewicht für Verstöße der Ratio Constraints mit niedriger Priorität in der Kostenfunktion f1(s).",
       "type": "Integer",
       "value": 1,
-      "orderNr": 3
+      "orderNr": 4
     },
     {
       "ident": "a2",
       "name": "Alpha (a) 2",
-      "description": "Weight colour changes.",
+      "description": "Gewicht für Farbwechsel in der Kostenfunktion f2(s).",
       "type": "Integer",
       "value": 10000,
-      "orderNr": 4
+      "orderNr": 5
     },
     {
       "ident": "b2",
       "name": "Beta (b) 2",
-      "description": "Weight for the number of PRC violations.",
+      "description": "Gewicht für Verstöße der Ratio Constraints mit hoher Priorität in der Kostenfunktion f2(s).",
       "type": "Integer",
       "value": 100,
-      "orderNr": 5
+      "orderNr": 6
     },
     {
       "ident": "y2",
       "name": "Gamma (y) 2",
-      "description": "Weight for the number of NPRC violations.",
+      "description": "Gewicht für Verstöße der Ratio Constraints mit niedriger Priorität in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 1,
-      "orderNr": 6
+      "orderNr": 7
     },
     {
       "ident": "a3",
       "name": "Alpha (a) 3",
-      "description": "Weight colour changes.",
-      "type": "Integer",
-      "value": 10000,
-      "orderNr": 7
-    },
-    {
-      "ident": "b3",
-      "name": "Beta (b) 3",
-      "description": "Weight for the number of PRC violations.",
+      "description": "Gewicht für Farbwechsel in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 10000,
       "orderNr": 8
     },
     {
+      "ident": "b3",
+      "name": "Beta (b) 3",
+      "description": "Gewicht für Verstöße der Ratio Constraints mit hoher Priorität in der Kostenfunktion f3(s).",
+      "type": "Integer",
+      "value": 10000,
+      "orderNr": 9
+    },
+    {
       "ident": "y3",
       "name": "Gamma (y) 3",
-      "description": "Weight for the number of NPRC violations.",
+      "description": "Gewicht für Verstöße der Ratio Constraints mit niedriger Priorität in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 1,
-      "orderNr": 9
+      "orderNr": 10
     },
     {
       "ident": "z",
       "name": "Zeta (z)",
-      "description": "Positive parameter for the relaxation mechanism (chapter 2.2.1).",
+      "description": "Positiver Parameter für den Entspannungsmechanismus, der auch die Betrachtung unmöglicher Lösungen ermöglichen soll. (chapter 2.2.1).",
       "type": "Double",
       "value": 1.0,
-      "orderNr": 10
+      "orderNr": 11
     },
     {
       "ident": "n",
       "name": "Eta (n)",
-      "description": "Represents the max value for the definition of Eta = min {n, maxValue}. Every pair of positions (i,j) is in fact considered every Eta iterations.",
+      "description": "Repräsentiert den maximalen Wert für die Definition von Eta = min {n, maxValue}. Jedes Paar von Fahrzeugen mit den Positionen (i,j) wird alle Eta Iterationen genauer für die Generierung einer neuen Lösung in Betracht gezogen..",
       "type": "Integer",
       "value": 200,
-      "orderNr": 11
+      "orderNr": 12
     },
     {
       "ident": "u",
       "name": "My (u)",
-      "description": "An random integer in [0,Eta - 1]. Every pair (i, j) will be assigned to one My. At every iteration t the pair is only considered for a move when My(i,j) = t (mod Eta). The My values are themself regenerated every Eta iterations.",
+      "description": "Ein zufälliger Integer in [0,Eta - 1]. Jedes Paar (i, j) wird ein My zugeordnet. In jeder Iteration t wird das Paar nur für eine Bewegung in Betracht gezogen wenn: My(i,j) = t (mod Eta). Die My Werte an sich werden alle Eta Iterationen neu generiert.",
       "type": "Integer",
       "value": 0,
-      "orderNr": 12
+      "orderNr": 13
     },
     {
       "ident": "o",
       "name": "Theta (o)",
-      "description": "Reinserting forbidden for Theta iterations for the type 1 of moving. Exception is allowed when a solution is found which is better than the best one at this moment. For the reswapping the same.",
+      "description": "Stellt das Tabu-Kriterium dar. Eine erneute Einsortierung in eine alte Position wird dem Fahrzug für Theta Iterationen untersagt. (Es sei denn, dadurch für eine Lösung mit geringeren Kosten als die bisher beste Lösung generiert werden. Das selbe gilt für Fahrzeug-Tauschaktionen.)",
       "type": "Integer",
       "value": 200,
-      "orderNr": 13
+      "orderNr": 14
     },
     {
       "ident": "i",
       "name": "Psi (i)",
-      "description": "? (Described in the end of 2.2.4)",
+      "description": "Stellt einen Faktor zur kontinuierlichen Anpassung der Kostenfunktion g(s) dar. (Erläutert in Kapitel 2.2.4)",
       "type": "Double",
       "value": 0.1,
-      "orderNr": 14
-    },
-    {
-      "ident": "k",
-      "name": "Kappa (k)",
-      "description": "Stopping criterion; describes the amount of iterations without an improvement of f(s).",
-      "type": "Integer",
-      "value": 200,
       "orderNr": 15
     },
     {
       "ident": "x",
       "name": "Chi (x)",
-      "description": "Perturbation mechanism - Random swaps: 3 random pairs where i != j are swapped.",
+      "description": "Dient dem Pertubationsmechanismus 'Random swaps': Chi zufällig ausgewählte Fahrzeugpaare (i != j) werden miteinander vertauscht.",
       "type": "Integer",
       "value": 3,
       "orderNr": 16
@@ -147,7 +147,7 @@
     {
       "ident": "t",
       "name": "Tau (t)",
-      "description": "Perturbation mechanism - Random shuffling within a subsequence: selection of a subsequence with the length Tau and shuffling them randomly.",
+      "description": "Dient dem Pertubationsmechanismus 'Random shuffling within a subsequence': Es wird eine zufällige Subsequenz an Fahrzeugen mit der Tau gewählt und zufällig durchmischt.",
       "type": "Integer",
       "value": 6,
       "orderNr": 17
@@ -155,7 +155,7 @@
     {
       "ident": "p",
       "name": "Pi (p)",
-      "description": "Perturbation mechanism - Application of all improving swaps and of a proportion Pi of neutral swaps",
+      "description": "Dient dem Pertubationsmechanismus 'Application of all improving swaps and of a proportion Pi of neutral swaps'",
       "type": "Double",
       "value": 0.1,
       "orderNr": 18
