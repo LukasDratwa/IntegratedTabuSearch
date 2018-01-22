@@ -198,6 +198,8 @@
         </style>
 
         <script>
+            var warnParamAdaptionOnce = true;
+
             $(document).ready(function() {
                 if(typeof $.urlParam('id') !== "string") {
                     // Creation of the tabu search
@@ -207,6 +209,19 @@
                     });
                     $("#sortable").disableSelection();
                     $("#selectedParameters").tablelist();
+
+                    $("#tabuSearchInfoAccordionWithinConfiguration").accordion({
+                        heightStyle: "content",
+                        collapsible: true,
+                        active: false
+                    });
+
+                    $("#tabuSearchInfoAccordionWithinConfiguration").click(function() {
+                        if(warnParamAdaptionOnce) {
+                            warnParamAdaptionOnce = false;
+                            $.notify("Achtung: Parameter nur mit Wissen über deren Auswirkungen anpassen!", "warn");
+                        }
+                    })
                 } else {
                     // Performing of the tabu search
                     $("#selectedParametersTabuSearch").tablelist();
@@ -786,21 +801,26 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <h2>2. Wahl der Parameter</h2>
-                    <table id="selectedParameters" data-table-list class="table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th>Wert</th>
-                            <th>Beschreibung</th>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="param in standardParameters">
-                            <td scope="row">{{param.name}}</td>
-                            <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
-                            <td>{{param.description}}</td>
-                        </tr>
-                    </table>
+                    <h2>2. Anpassung der Parameter</h2>
+                    <div id="tabuSearchInfoAccordionWithinConfiguration">
+                        <h2>Server-Standardparameter</h2>
+                        <div>
+                            <table id="selectedParameters" data-table-list class="table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th>Wert</th>
+                                    <th>Beschreibung</th>
+                                </tr>
+                                </thead>
+                                <tr ng-repeat="param in standardParameters">
+                                    <td scope="row">{{param.name}}</td>
+                                    <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
+                                    <td>{{param.description}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
