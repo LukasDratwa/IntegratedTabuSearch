@@ -38,7 +38,10 @@ router.get('/checkdefaultparameters', function (req, res, next) {
                         name: sParam.name,
                         description: sParam.description,
                         type: sParam.type,
-                        value: sParam.value
+                        value: sParam.value,
+                        minValue: sParam.minValue,
+                        maxValue: sParam.maxValue,
+                        orderNr: sParam.orderNr
                     });
 
                     newSParam.save(function(err, param) {
@@ -72,6 +75,8 @@ router.get('/checkdefaultparametervalues', function (req, res, next) {
                         description: sParam.description,
                         type: sParam.type,
                         value: sParam.value,
+                        minValue: sParam.minValue,
+                        maxValue: sParam.maxValue,
                         orderNr: sParam.orderNr
                     });
 
@@ -133,6 +138,8 @@ router.post('/parameter', function(req, res) {
             description: req.body.description,
             type: req.body.type,
             value: req.body.value,
+            minValue: req.body.minValue,
+            maxValue: req.body.maxValue,
             orderNr: foundOrderNr
         });
 

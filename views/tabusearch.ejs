@@ -381,7 +381,9 @@
                                 name: sParam.name,
                                 description: sParam.description,
                                 type: sParam.type,
-                                value: $(this).get(0).value
+                                value: $(this).get(0).value,
+                                minValue: sParam.minValue,
+                                maxValue: sParam.maxValue
                             };
 
                             $.post("/parameter", newParameter, function(data) {
@@ -815,7 +817,7 @@
                                 </thead>
                                 <tr ng-repeat="param in standardParameters">
                                     <td scope="row">{{param.name}}</td>
-                                    <td><input class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
+                                    <td><input min="{{param.minValue}}" max="{{param.maxValue}}" class="parameter" id="{{param.ident}}" type="number" value="{{param.value}}"></td>
                                     <td>{{param.description}}</td>
                                 </tr>
                             </table>

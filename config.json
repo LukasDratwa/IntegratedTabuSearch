@@ -14,6 +14,8 @@
       "description": "Definiert die maximale Länge einer jeder Fahrzeuggruppe mit der selben Farbe. Stellt eine harte Regel dar, die nicht gebrochen werden darf.",
       "type": "Integer",
       "value": 4,
+      "minValue": 2,
+      "maxValue": 100,
       "orderNr": 0
     },
     {
@@ -22,6 +24,8 @@
       "description": "Definiert das Abbruchkriterium; nach Kappa Iterationen ohne eine Lösungsverbesserung wird der Schritt 3 des Algorithmus abgebrochen.",
       "type": "Integer",
       "value": 200,
+      "minValue": 1,
+      "maxValue": 500,
       "orderNr": 1
     },
     {
@@ -30,6 +34,8 @@
       "description": "Gewicht für Farbwechsel in der Kostenfunktion f1(s).",
       "type": "Integer",
       "value": 1000000,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 2
     },
     {
@@ -38,6 +44,8 @@
       "description": "Gewicht für Verstöße der Ratio Constraints mit hoher Priorität in der Kostenfunktion f1(s).",
       "type": "Integer",
       "value": 1000,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 3
     },
     {
@@ -46,6 +54,8 @@
       "description": "Gewicht für Verstöße der Ratio Constraints mit niedriger Priorität in der Kostenfunktion f1(s).",
       "type": "Integer",
       "value": 1,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 4
     },
     {
@@ -54,6 +64,8 @@
       "description": "Gewicht für Farbwechsel in der Kostenfunktion f2(s).",
       "type": "Integer",
       "value": 10000,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 5
     },
     {
@@ -62,6 +74,8 @@
       "description": "Gewicht für Verstöße der Ratio Constraints mit hoher Priorität in der Kostenfunktion f2(s).",
       "type": "Integer",
       "value": 100,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 6
     },
     {
@@ -70,6 +84,8 @@
       "description": "Gewicht für Verstöße der Ratio Constraints mit niedriger Priorität in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 1,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 7
     },
     {
@@ -78,6 +94,8 @@
       "description": "Gewicht für Farbwechsel in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 10000,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 8
     },
     {
@@ -86,6 +104,8 @@
       "description": "Gewicht für Verstöße der Ratio Constraints mit hoher Priorität in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 10000,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 9
     },
     {
@@ -94,6 +114,8 @@
       "description": "Gewicht für Verstöße der Ratio Constraints mit niedriger Priorität in der Kostenfunktion f3(s).",
       "type": "Integer",
       "value": 1,
+      "minValue": 1,
+      "maxValue": 9999999,
       "orderNr": 10
     },
     {
@@ -102,6 +124,8 @@
       "description": "Positiver Parameter für den Entspannungsmechanismus, der auch die Betrachtung unmöglicher Lösungen ermöglichen soll. (chapter 2.2.1).",
       "type": "Double",
       "value": 1.0,
+      "minValue": 0.1,
+      "maxValue": 100,
       "orderNr": 11
     },
     {
@@ -110,6 +134,8 @@
       "description": "Repräsentiert den maximalen Wert für die Definition von Eta = min {n, maxValue}. Jedes Paar von Fahrzeugen mit den Positionen (i,j) wird alle Eta Iterationen genauer für die Generierung einer neuen Lösung in Betracht gezogen..",
       "type": "Integer",
       "value": 200,
+      "minValue": 1,
+      "maxValue": 1000,
       "orderNr": 12
     },
     {
@@ -118,6 +144,8 @@
       "description": "Ein zufälliger Integer in [0,Eta - 1]. Jedes Paar (i, j) wird ein My zugeordnet. In jeder Iteration t wird das Paar nur für eine Bewegung in Betracht gezogen wenn: My(i,j) = t (mod Eta). Die My Werte an sich werden alle Eta Iterationen neu generiert.",
       "type": "Integer",
       "value": 0,
+      "minValue": 0,
+      "maxValue": 10000,
       "orderNr": 13
     },
     {
@@ -126,6 +154,8 @@
       "description": "Stellt das Tabu-Kriterium dar. Eine erneute Einsortierung in eine alte Position wird dem Fahrzug für Theta Iterationen untersagt. (Es sei denn, dadurch für eine Lösung mit geringeren Kosten als die bisher beste Lösung generiert werden. Das selbe gilt für Fahrzeug-Tauschaktionen.)",
       "type": "Integer",
       "value": 200,
+      "minValue": 1,
+      "maxValue": 1000,
       "orderNr": 14
     },
     {
@@ -134,6 +164,8 @@
       "description": "Stellt einen Faktor zur kontinuierlichen Anpassung der Kostenfunktion g(s) dar. (Erläutert in Kapitel 2.2.4)",
       "type": "Double",
       "value": 0.1,
+      "minValue": 0.1,
+      "maxValue": 100,
       "orderNr": 15
     },
     {
@@ -142,14 +174,18 @@
       "description": "Dient dem Pertubationsmechanismus 'Random swaps': Chi zufällig ausgewählte Fahrzeugpaare (i != j) werden miteinander vertauscht.",
       "type": "Integer",
       "value": 3,
+      "minValue": 1,
+      "maxValue": 100,
       "orderNr": 16
     },
     {
       "ident": "t",
       "name": "Tau (t)",
-      "description": "Dient dem Pertubationsmechanismus 'Random shuffling within a subsequence': Es wird eine zufällige Subsequenz an Fahrzeugen mit der Tau gewählt und zufällig durchmischt.",
+      "description": "Dient dem Pertubationsmechanismus 'Random shuffling within a subsequence': Es wird eine zufällige Subsequenz an Fahrzeugen mit der Länge Tau gewählt und zufällig durchmischt.",
       "type": "Integer",
       "value": 6,
+      "minValue": 1,
+      "maxValue": 100,
       "orderNr": 17
     },
     {
@@ -158,6 +194,8 @@
       "description": "Dient dem Pertubationsmechanismus 'Application of all improving swaps and of a proportion Pi of neutral swaps'",
       "type": "Double",
       "value": 0.1,
+      "minValue": 0.1,
+      "maxValue": 0.99,
       "orderNr": 18
     }
   ]
