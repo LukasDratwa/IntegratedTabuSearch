@@ -100,7 +100,9 @@ function ParameterSet(parameters) {
         var beta = weightSet[1].value;
         var gamma = onlyUseAlphaAndBeta ? weightSet[1].value : weightSet[2].value; // Case there are only 2 opt. objectives -> use beta instead of gamma
 
-        return "alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma;
+        var prepend = onlyUseAlphaAndBeta ? " (alpha = beta, da nur 2 opt. objetives angegeben wurden.)" : "";
+
+        return "alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma + prepend;
     };
 
     this.getWeightSet = function(number) {
@@ -1017,7 +1019,7 @@ function PertubationMechanisms() {
         }
     };
 
-    this.applyImprovingAndPiNeutralSwaps = function(s, numOfWeightSet) {
+    this.applyImprovingAndPiNeutralSwaps = function(s, numOfWeightSet, iterationCounter) {
         var pi = s.parameterSet.getParamWithIdent("p");
 
         for(var i=0; i<s.vehicles.length-2; i++) {
@@ -1032,8 +1034,7 @@ function PertubationMechanisms() {
 
                 if(costsFAfter < costsFBefore) {
                     // Yes --> Keep the swap
-                    postMessage(new Log("ITERATION", "Verbessernder Fahrzeugtausch wurde durchgeführt! (i, j) = (" + i + ", " + j + ")", false, true))
-                    console.log("Improved swap performed");
+                    postMessage(new Log("ITERATION", "Verbessernder Fahrzeugtausch wurde durchgeführt. (i, j) = (" + i + ", " + j + ")", iterationCounter, false, true));
                 } else if(costsFAfter == costsFBefore){
                     // "No --> vi not identical vj --> swap performed with probability pi
                     // [Identical := same color && same activated features]"
@@ -1098,7 +1099,7 @@ function PertubationMechanisms() {
         s.obligatoryUpdateAfterEveryMove();
     };
 
-    this.performPertubation = function(solution, iterationCounter) {
+    this.performPertubation = function(solution, numOfWeightSet, iterationCounter) {
         var timestamp = new Date().valueOf();
 
         postMessage(new Log("ITERATION", "3 a) Ausführen eines Pertubations-Mechanismus", iterationCounter, false, false));
@@ -1129,7 +1130,7 @@ function PertubationMechanisms() {
                 break;
 
             case 5:
-                this.applyImprovingAndPiNeutralSwaps(solution);
+                this.applyImprovingAndPiNeutralSwaps(solution, numOfWeightSet, iterationCounter);
                 solution.performedPertubation = "Application of all improving swaps and of a proportion pi of neutral swaps";
                 break;
         }
@@ -1252,7 +1253,7 @@ function performIteratedTabuSearch(s) {
         }
 
         // a) Apply pertubation on sImproved to obtain sCurrent
-        sCurrent = pertubationMechanism.performPertubation(sImproved, iterationCounter);
+        sCurrent = pertubationMechanism.performPertubation(sImproved, numOfWeightSet, iterationCounter);
 
         // Data for frontend
         var postMessageSCurrent = {
