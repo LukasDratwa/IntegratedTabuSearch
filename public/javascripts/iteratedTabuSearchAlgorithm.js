@@ -342,20 +342,13 @@ function Solution(vehicles, parameters, ratios) {
     this.updateActViolations = function(moveId) {
         // 1. Count color changes
         this.actColorChanges = 1;
-        var lastColor = -1;
         for(var i in this.vehicles) {
-            var v = vehicles[i];
+            var v = this.vehicles[i];
+            var nextV = i < this.vehicles.length ? this.vehicles[parseInt(i) + 1] : null;
 
-            if(lastColor == -1) {
-                lastColor = v.paintColor;
-                continue;
-            }
-
-            if(v.paintColor != lastColor) {
+            if(nextV != null && v.paintColor != nextV.paintColor) {
                 this.actColorChanges++;
             }
-
-            lastColor = v.paintColor;
         }
 
         // 2. Calc color violations
