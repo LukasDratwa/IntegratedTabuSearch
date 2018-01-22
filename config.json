@@ -29,6 +29,16 @@
       "orderNr": 1
     },
     {
+      "ident": "o",
+      "name": "Theta (o)",
+      "description": "Stellt das Tabu-Kriterium dar. Eine erneute Einsortierung in eine alte Position wird dem Fahrzug für Theta Iterationen untersagt. (Es sei denn, dadurch für eine Lösung mit geringeren Kosten als die bisher beste Lösung generiert werden. Das selbe gilt für Fahrzeug-Tauschaktionen.)",
+      "type": "Integer",
+      "value": 200,
+      "minValue": 1,
+      "maxValue": 1000,
+      "orderNr": 2
+    },
+    {
       "ident": "a1",
       "name": "Alpha (a) 1",
       "description": "Gewicht für Farbwechsel in der Kostenfunktion f1(s).",
@@ -36,7 +46,7 @@
       "value": 1000000,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 2
+      "orderNr": 3
     },
     {
       "ident": "b1",
@@ -46,7 +56,7 @@
       "value": 1000,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 3
+      "orderNr": 4
     },
     {
       "ident": "y1",
@@ -56,7 +66,7 @@
       "value": 1,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 4
+      "orderNr": 5
     },
     {
       "ident": "a2",
@@ -66,7 +76,7 @@
       "value": 10000,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 5
+      "orderNr": 6
     },
     {
       "ident": "b2",
@@ -76,7 +86,7 @@
       "value": 100,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 6
+      "orderNr": 7
     },
     {
       "ident": "y2",
@@ -86,7 +96,7 @@
       "value": 1,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 7
+      "orderNr": 8
     },
     {
       "ident": "a3",
@@ -96,7 +106,7 @@
       "value": 10000,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 8
+      "orderNr": 9
     },
     {
       "ident": "b3",
@@ -106,7 +116,7 @@
       "value": 10000,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 9
+      "orderNr": 10
     },
     {
       "ident": "y3",
@@ -116,7 +126,7 @@
       "value": 1,
       "minValue": 1,
       "maxValue": 9999999,
-      "orderNr": 10
+      "orderNr": 11
     },
     {
       "ident": "z",
@@ -126,7 +136,7 @@
       "value": 1.0,
       "minValue": 0.1,
       "maxValue": 100,
-      "orderNr": 11
+      "orderNr": 12
     },
     {
       "ident": "n",
@@ -136,7 +146,7 @@
       "value": 200,
       "minValue": 1,
       "maxValue": 1000,
-      "orderNr": 12
+      "orderNr": 13
     },
     {
       "ident": "u",
@@ -146,16 +156,6 @@
       "value": 0,
       "minValue": 0,
       "maxValue": 10000,
-      "orderNr": 13
-    },
-    {
-      "ident": "o",
-      "name": "Theta (o)",
-      "description": "Stellt das Tabu-Kriterium dar. Eine erneute Einsortierung in eine alte Position wird dem Fahrzug für Theta Iterationen untersagt. (Es sei denn, dadurch für eine Lösung mit geringeren Kosten als die bisher beste Lösung generiert werden. Das selbe gilt für Fahrzeug-Tauschaktionen.)",
-      "type": "Integer",
-      "value": 200,
-      "minValue": 1,
-      "maxValue": 1000,
       "orderNr": 14
     },
     {
