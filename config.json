@@ -13,7 +13,7 @@
       "name": "Lota (l)",
       "description": "Maximal length of subsequence with same colour. Is a hard constraint, not allowed to violate.",
       "type": "Integer",
-      "value": 0,
+      "value": 4,
       "orderNr": 0
     },
     {
