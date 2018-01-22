@@ -1,6 +1,12 @@
 var onmessage = function(e) {
     // Message received from main script
     // postMessage(test2); // posting back to main script
+    // Initial set to 1.000; should be lowe than 50 if activated
+    if(e.data.optObjective.high_low_priority < 50) {
+        onlyUseAlphaAndBeta = true;
+    }
+
+
     var s = new Solution(e.data.dataset.vehicles, e.data.parameters, e.data.dataset.ratios);
     costFunctionG(s, 1);
 
@@ -12,6 +18,7 @@ var onmessage = function(e) {
 
     performIteratedTabuSearch(s);
 };
+var onlyUseAlphaAndBeta = false;
 
 function AdditionalInformation(solution) {
     return {
@@ -87,6 +94,15 @@ function ParameterSet(parameters) {
         return null;
     };
 
+    this.getWeightSetAsString = function(number) {
+        var weightSet = this.getWeightSet(number);
+        var alpha = weightSet[0].value;
+        var beta = weightSet[1].value;
+        var gamma = onlyUseAlphaAndBeta ? weightSet[1].value : weightSet[2].value; // Case there are only 2 opt. objectives -> use beta instead of gamma
+
+        return "alpha = " + alpha + ", beta = " + beta + ", gamma = " + gamma;
+    };
+
     this.getWeightSet = function(number) {
         if(number < 1 || number > 3) {
             console.warn("The requested weight set should be in [1, 3]!");
@@ -95,23 +111,23 @@ function ParameterSet(parameters) {
         var result = [];
 
         switch(number) {
-            case 3:
-                result.push(this.getParamWithIdent("a1"));
-                result.push(this.getParamWithIdent("b1"));
-                result.push(this.getParamWithIdent("y1"));
-                break;
-
             case 2:
                 result.push(this.getParamWithIdent("a2"));
                 result.push(this.getParamWithIdent("b2"));
                 result.push(this.getParamWithIdent("y2"));
                 break;
 
-            default:
-            case 1:
+            case 3:
                 result.push(this.getParamWithIdent("a3"));
                 result.push(this.getParamWithIdent("b3"));
                 result.push(this.getParamWithIdent("y3"));
+                break;
+
+            default:
+            case 1:
+                result.push(this.getParamWithIdent("a1"));
+                result.push(this.getParamWithIdent("b1"));
+                result.push(this.getParamWithIdent("y1"));
                 break;
         }
 
@@ -722,7 +738,7 @@ function costFunctionF(s, numOfWeightSet) {
     var weightSet = s.parameterSet.getWeightSet(numOfWeightSet);
     var alpha = weightSet[0].value;
     var beta = weightSet[1].value;
-    var gamma = weightSet[2].value;
+    var gamma = onlyUseAlphaAndBeta ? weightSet[1].value : weightSet[2].value; // Case there are only 2 opt. objectives -> use beta instead of gamma
 
     return alpha * s.actColorChanges + beta * s.actHighPrioViolations + gamma * s.actLowPrioViolations;
 }
@@ -1016,6 +1032,7 @@ function PertubationMechanisms() {
 
                 if(costsFAfter < costsFBefore) {
                     // Yes --> Keep the swap
+                    postMessage(new Log("ITERATION", "Verbessernder Fahrzeugtausch wurde durchgeführt! (i, j) = (" + i + ", " + j + ")", false, true))
                     console.log("Improved swap performed");
                 } else if(costsFAfter == costsFBefore){
                     // "No --> vi not identical vj --> swap performed with probability pi
@@ -1139,7 +1156,8 @@ function performTabuSearch(solution, iterationCounter, numOfWeightSet, helper, l
     var hFunctionNumber = getRandomNumber(1, 2);
 
 
-    postMessage(new Log(logIdent, "Gewichtungssatz: " + numOfWeightSet + ", Kontinuierliche Diversifikationsfunktion: " + hFunctionNumber, iterationCounter, false, true));
+    postMessage(new Log(logIdent, "Benutzer Gewichtungssatz (#" + numOfWeightSet + "): " + solution.parameterSet.getWeightSetAsString(numOfWeightSet) + ", Kontinuierliche Diversifikationsfunktion: " + hFunctionNumber, iterationCounter, false, true));
+    postMessage(new Log(logIdent, "Kontinuierliche Diversifikationsfunktion: " + hFunctionNumber, iterationCounter, false, true));
     var neighbourhood = getNeighbourhood(solution, iterationCounter, numOfWeightSet, helper, hFunctionNumber);
     postMessage(new Log(logIdent, "Gefundene Nachbarschaftsgröße: " + neighbourhood.length, iterationCounter, false, true));
 

@@ -52,9 +52,9 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.bestSolution = {};
             $scope.iterationsSinceLastBestSolution = 0;
 
-            $scope.settingShowA = false;
-            $scope.settingShowB = false;
-            $scope.settingShowC = false;
+            $scope.settingShowA = true;
+            $scope.settingShowB = true;
+            $scope.settingShowC = true;
             $scope.settingShowNewBest = true;
 
             window.setTimeout(function() {

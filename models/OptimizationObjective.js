@@ -8,7 +8,8 @@ var mongoose = require('mongoose');
 var OptimizationObjectiveSchema = new mongoose.Schema({
     high_priority: Number,
     low_priority: Number,
-    paint_color_batches: String,
+    high_low_priority: Number,
+    paint_color_batches: Number,
     orderArray: [String],
     orderDisplayingNames: [String]
 });
