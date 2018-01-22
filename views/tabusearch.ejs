@@ -221,7 +221,7 @@
                             warnParamAdaptionOnce = false;
                             $.notify("Achtung: Parameter nur mit Wissen über deren Auswirkungen anpassen!", "warn");
                         }
-                    })
+                    });
                 } else {
                     // Performing of the tabu search
                     $("#selectedParametersTabuSearch").tablelist();
@@ -354,6 +354,28 @@
             }
 
             function postTabuSearch() {
+                // Check if params are in valid borders
+                var foundNotValidValue = null;
+                var minVal = "", maxVal = "";
+                $(".parameter").each(function() {
+                    if(typeof $(this).attr("min") !==  "undefined" && foundNotValidValue == null) {
+                        if($(this).val() < parseFloat($(this).attr("min")) || $(this).val() >  parseFloat($(this).attr("max"))) {
+                            foundNotValidValue = $(this).attr("id");
+                            minVal = parseFloat($(this).attr("min"));
+                            maxVal = parseFloat($(this).attr("max"));
+                        }
+                    }
+                });
+                if(foundNotValidValue != null) {
+                    $.notify("Angegebener Parameterwert von " + foundNotValidValue + " ist nicht erlaubt. Gültige Werte: [" + minVal + "," + maxVal + "]", "error");
+
+                    setTimeout(function() {
+                        $.notify("Start vom ITS wurde abgebrochen.", "info");
+                    }, 500);
+
+                    return;
+                }
+
                 var payload = {
                     dataSetId: $("#dropwdownDatasetSelection").find(":selected").get(0).value,
                     parameterIds: [],
