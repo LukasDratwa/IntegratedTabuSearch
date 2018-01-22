@@ -24,3 +24,13 @@ var removeOptObj = function(id) {
     var otherId = id === "low_priority" ? "high_priority" : "low_priority";
     $($("#" + otherId + " p")[0]).text("High & low priority constraints")
 };
+
+$.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null){
+        return null;
+    }
+    else{
+        return decodeURI(results[1]) || 0;
+    }
+}
