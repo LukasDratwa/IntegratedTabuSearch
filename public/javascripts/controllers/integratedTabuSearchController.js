@@ -55,7 +55,7 @@ tabuController.controller("integratedTabuSearchController", function ($scope, $h
             $scope.settingShowA = false;
             $scope.settingShowB = false;
             $scope.settingShowC = false;
-            $scope.settingShowNewBest = false;
+            $scope.settingShowNewBest = true;
 
             window.setTimeout(function() {
                 if(window.Worker) {

@@ -1125,7 +1125,7 @@ function PertubationMechanisms() {
         }
 
         solution.performedPertubationTime = new Date().valueOf() - timestamp;
-        postMessage(new Log("ITERATION", solution.performedPertubation + " ausgeführt. Dauer (ms): " + solution.performedPertubationTime, iterationCounter, false, true));
+        postMessage(new Log("ITERATION", "'" + solution.performedPertubation + "' ausgeführt. Dauer (ms): " + solution.performedPertubationTime, iterationCounter, false, true));
 
         return solution;
     };
@@ -1347,7 +1347,7 @@ function performIteratedTabuSearch(s) {
 
         postMessage({
             ident: "ITERATION",
-            iterationCounter: iterationCounter-1,
+            iterationCounter: iterationCounter,
             sCurrent: postMessageSCurrent,
             sLocalOptimum: postMessageSLocalOptimum,
             sBestSolution: postMessageSBestSolution,

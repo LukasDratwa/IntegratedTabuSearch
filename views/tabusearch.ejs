@@ -45,6 +45,11 @@
                 cursor: pointer;
                 margin-left: 10px;
             }
+            .show-log {
+                color: #9a9a9a;
+                cursor: pointer;
+            }
+
             .centerDiv {
                 margin: auto;
                 display: block;
@@ -223,6 +228,17 @@
                     });
                 }
             });
+
+            function moveToLog(jQueryElem) {
+                $("#tab-link-1").removeClass("current");
+                $("#tab-link-2").addClass("current");
+                $("#tab-1").removeClass("current");
+                $("#tab-2").addClass("current");
+
+                $('html, body').animate({
+                    scrollTop: $("." + jQueryElem.attr("customref")).offset().top
+                }, 2000);
+            }
 
             function showLessIteration(jQueryElem) {
                 jQueryElem.addClass("hidden");
@@ -488,8 +504,8 @@
                     <h2>Visualisierung</h2>
                     <div class="tabsContainer">
                         <ul class="tabs">
-                            <li class="tab-link current" data-tab="tab-1">Visualisierung</li>
-                            <li class="tab-link" data-tab="tab-2">Log</li>
+                            <li id="tab-link-1" class="tab-link current" data-tab="tab-1">Visualisierung</li>
+                            <li id="tab-link-2" class="tab-link" data-tab="tab-2">Log</li>
                         </ul>
 
                         <div id="tab-1" class="tab-content current">
@@ -564,16 +580,17 @@
                                     ng-hide="(!settingShowA && !settingShowB && !settingShowC && settingShowNewBest && !iteration.sBestSolution) || (!settingShowA && !settingShowB && !settingShowC && !settingShowNewBest)">
                                     <div class="col-md-12">
                                         <h4>Iteration #{{iteration.iterationCounter}}
-                                            <i id="show-less-{{iteration.iterationCounter}}" onclick="showLessIteration($(this))" customref="show-more-{{iteration.iterationCounter}}" class="fas fa-search-minus show-less"></i>
-                                            <i id="show-more-{{iteration.iterationCounter}}" onclick="showMoreIteration($(this))" customref="show-less-{{iteration.iterationCounter}}" class="fas fa-search-plus show-more hidden"></i>
+                                            <i id="show-less-{{iteration.iterationCounter}}" onclick="showLessIteration($(this))" customref="show-more-{{iteration.iterationCounter}}" class="fas fa-search-minus show-less" title="Zeige weniger"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}" onclick="showMoreIteration($(this))" customref="show-less-{{iteration.iterationCounter}}" class="fas fa-search-plus show-more hidden" title="Zeige mehr"></i>
+                                            <i customref="log-{{iteration.iterationCounter}}" onclick="moveToLog($(this))" class="fa fa-info-circle show-log" aria-hidden="true" title="Zeige Iteration-Logs"></i>
                                         </h4>
                                     </div>
 
                                     <!-- Current solution (after permutation) -->
                                     <div class="col-md-12" id="{{iteration.iterationCounter}}-a" ng-show="settingShowA">
                                         <h5>a) Lösung nach der Permutation
-                                            <i id="show-less-{{iteration.iterationCounter}}-a" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-a" class="fas fa-search-minus show-less"></i>
-                                            <i id="show-more-{{iteration.iterationCounter}}-a" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-a" class="fas fa-search-plus show-more hidden"></i>
+                                            <i id="show-less-{{iteration.iterationCounter}}-a" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-a" class="fas fa-search-minus show-less" title="Zeige weniger"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-a" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-a" class="fas fa-search-plus show-more hidden" title="Zeige mehr"></i>
                                         </h5>
 
                                         <div class="col-md-9">
@@ -601,8 +618,8 @@
                                     <!-- Local solution optimum (after Tabu Search) -->
                                     <div class="col-md-12" id="{{iteration.iterationCounter}}-b" ng-show="settingShowB">
                                         <h5>b) Lokales Optimum nach Tabu Suche
-                                            <i id="show-less-{{iteration.iterationCounter}}-b" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-b" class="fas fa-search-minus show-less"></i>
-                                            <i id="show-more-{{iteration.iterationCounter}}-b" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-b" class="fas fa-search-plus show-more hidden"></i>
+                                            <i id="show-less-{{iteration.iterationCounter}}-b" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-b" class="fas fa-search-minus show-less" title="Zeige weniger"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-b" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-b" class="fas fa-search-plus show-more hidden" title="Zeige mehr"></i>
                                         </h5>
 
                                         <div class="col-md-9">
@@ -631,8 +648,8 @@
                                     <!-- sImproved <-- local optimum -->
                                     <div class="col-md-12" id="{{iteration.iterationCounter}}-c" ng-show="settingShowC">
                                         <h5>c) Verbesserte Lösung nach dem Akzeptanzkriterum
-                                            <i id="show-less-{{iteration.iterationCounter}}-c" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-c" class="fas fa-search-minus show-less"></i>
-                                            <i id="show-more-{{iteration.iterationCounter}}-c" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-c" class="fas fa-search-plus show-more hidden"></i>
+                                            <i id="show-less-{{iteration.iterationCounter}}-c" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-c" class="fas fa-search-minus show-less" title="Zeige weniger"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-c" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-c" class="fas fa-search-plus show-more hidden" title="Zeige mehr"></i>
                                         </h5>
 
                                         <div class="col-md-9">
@@ -659,8 +676,8 @@
                                     </div>
                                     <div class="col-md-12" ng-show="iteration.sBestSolution && settingShowNewBest" id="{{iteration.iterationCounter}}-newBest">
                                         <h5 style="text-decoration: underline;">Neue gefundene beste Lösung:
-                                            <i id="show-less-{{iteration.iterationCounter}}-newBest" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-newBest" class="fas fa-search-minus show-less"></i>
-                                            <i id="show-more-{{iteration.iterationCounter}}-newBest" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-newBest" class="fas fa-search-plus show-more hidden"></i>
+                                            <i id="show-less-{{iteration.iterationCounter}}-newBest" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-newBest" class="fas fa-search-minus show-less" title="Zeige weniger"></i>
+                                            <i id="show-more-{{iteration.iterationCounter}}-newBest" onclick="showMore($(this))" customref="show-less-{{iteration.iterationCounter}}-newBest" class="fas fa-search-plus show-more hidden" title="Zeige mehr"></i>
                                         </h5>
 
                                         <div class="col-md-9">
@@ -724,7 +741,7 @@
                         <div id="tab-2" class="tab-content">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div ng-repeat="log in logs" ng-class="{logMarginBottom: log.marginBottom, logMarginLeft:  log.marginLeft}">{{log.text}}</div>
+                                    <div ng-repeat="log in logs" class="log-{{log.iterationCounter}}" ng-class="{logMarginBottom: log.marginBottom, logMarginLeft:  log.marginLeft}">{{log.text}}</div>
                                 </div>
                             </div>
                         </div>
