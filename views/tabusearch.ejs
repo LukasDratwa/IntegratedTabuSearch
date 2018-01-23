@@ -649,9 +649,7 @@
                                                 <li>Ratio-Constraint Verletzungen (niedrige Priorität): {{iteration.sCurrent.additionalInformation.actLowPrioViolations}}</li>
                                             </ul>
                                         </div>
-                                    </div>
 
-                                    <div class="col-md-12" ng-show="settingShowA">
                                         <hr class="hrDarkGray">
                                     </div>
 
@@ -678,12 +676,10 @@
                                                 <li>Ratio-Constraint Verletzungen (niedrige Priorität): {{iteration.sLocalOptimum.additionalInformation.actLowPrioViolations}}</li>
                                             </ul>
                                         </div>
-                                    </div>
 
-
-                                    <div class="col-md-12" ng-show="improvedSolutionFound && settingShowB">
                                         <hr class="hrDarkGray">
                                     </div>
+
 
                                     <!-- sImproved <-- local optimum -->
                                     <div class="col-md-12" id="{{iteration.iterationCounter}}-c" ng-show="settingShowC">
@@ -708,12 +704,11 @@
                                                 <li>Ratio-Constraint Verletzungen (niedrige Priorität): {{iteration.sImproved.additionalInformation.actLowPrioViolations}}</li>
                                             </ul>
                                         </div>
+
+                                        <hr class="hrDarkGray">
                                     </div>
 
                                     <!-- sImproved <-- local optimum -->
-                                    <div class="col-md-12" ng-show="iteration.sBestSolution && settingsShowC">
-                                        <hr class="hrDarkGray">
-                                    </div>
                                     <div class="col-md-12" ng-show="iteration.sBestSolution && settingShowNewBest" id="{{iteration.iterationCounter}}-newBest">
                                         <h5 style="text-decoration: underline;">Neue gefundene beste Lösung:
                                             <i id="show-less-{{iteration.iterationCounter}}-newBest" onclick="showLess($(this))" customref="show-more-{{iteration.iterationCounter}}-newBest" class="fas fa-search-minus show-less" title="Zeige weniger"></i>
