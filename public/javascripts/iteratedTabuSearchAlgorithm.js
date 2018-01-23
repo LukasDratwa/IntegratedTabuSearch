@@ -370,6 +370,7 @@ function Solution(vehicles, parameters, ratios) {
         }
 
         // 2. Calc color violations
+        this.actColorViolations = 0;
         var paramLota = this.parameterSet.getParamWithIdent("l");
         var nextPaintGroupVehicle = this.vehicles[0];
         var lastCheckedIndex = this.getIndexOfVehicleInS(nextPaintGroupVehicle);
@@ -386,6 +387,7 @@ function Solution(vehicles, parameters, ratios) {
             nextPaintGroupVehicle = this.getNextPaintGroupVehicle(nextPaintGroupVehicle);
 
             // FIXME From time to time the loop is stucked when following indexorder (f.e.) is analyzed: 8, 9, 8, 9, ...
+            // 23.01.2018 never occured; should be fixed.
             if(nextPaintGroupVehicle != null && this.getIndexOfVehicleInS(nextPaintGroupVehicle) < parseInt(lastCheckedIndex)) {
                 console.warn("-----> Had to break counting of paint group (" + moveId
                     + ", duplicated v in s: " + this.solutionHasDuplicatedVehicles() + ", Indexes: "
