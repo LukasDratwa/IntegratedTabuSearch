@@ -7,6 +7,7 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
+        <script src="/javascripts/jquery-ui.min.js" type="text/javascript"></script>
         <script src="/javascripts/angular.min-1.5.6.js" type="text/javascript"></script>
         <script src="/javascripts/controllers/dataOverviewController.js" type="text/javascript"></script>
         <script src="/javascripts/tether.min.js" type="text/javascript"></script>
@@ -17,6 +18,7 @@
         <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
+        <link href="/stylesheets/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
         <script type="text/javascript">
@@ -24,6 +26,12 @@
                 $("#selectedParameters").tablelist();
                 $("#datasetsTable").tablelist();
                 $("#performedTabuSearchesTable").tablelist();
+
+                $("#serverParametersAccordionOverviewData").accordion({
+                    heightStyle: "content",
+                    collapsible: true,
+                    active: false
+                });
             });
         </script>
     </head>
@@ -46,22 +54,26 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <h2>Serverseitige Standardwerte der Parameter</h2>
-                    <!--<input type="button" onclick="toggleHiddenClass('selectedParameters')" value="toggle">-->
-                    <table id="selectedParameters" data-table-list class="table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th>Wert</th>
-                            <th>Beschreibung</th>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="param in data.standardParameters">
-                            <td scope="row">{{param.name}}</td>
-                            <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
-                            <td>{{param.description}}</td>
-                        </tr>
-                    </table>
+                    <h2>Serverseitige Standardwerte der Parameterr</h2>
+                    <div id="serverParametersAccordionOverviewData">
+                        <h2>Ausklappen</h2>
+                        <div>
+                            <table id="selectedParameters" data-table-list class="table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th>Wert</th>
+                                    <th>Beschreibung</th>
+                                </tr>
+                                </thead>
+                                <tr ng-repeat="param in data.standardParameters">
+                                    <td scope="row">{{param.name}}</td>
+                                    <td><input class="parameter" id="{{param.ident}}" type="number" disabled value="{{param.value}}"></td>
+                                    <td>{{param.description}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -116,7 +128,7 @@
                             <th>Verwendeter Datensatz</th>
                             <th>Ausführungszeitstempel</th>
                             <th>Ergebnisse</th>
-                            <th>Erneute Ausführung</th>
+                            <th>ITS</th>
                         </tr>
                         </thead>
 
@@ -135,7 +147,7 @@
                             <td><a href="/viewdataset#?id={{tabusearch.dataset._id}}" target="_blank">{{tabusearch.dataset.description}}</a></td>
                             <td>{{tabusearch.parsedTimestamp}}</td>
                             <td>TODO Link to results</td>
-                            <td><a href="/tabusearch#?id={{tabusearch._id}}" target="_blank">Link</a></td>
+                            <td><a href="/tabusearch#?id={{tabusearch._id}}" target="_blank">Erneute Ausführung</a></td>
                         </tr>
                     </table>
                 </div>
