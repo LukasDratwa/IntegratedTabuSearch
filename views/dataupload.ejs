@@ -30,7 +30,17 @@
 
               if(typeof $.urlParam('success') === "string" && $.urlParam('success') === "true") {
                   alertify.success("Daten erfolgreich hochgeladen.")
+              } else if(typeof $.urlParam('success') === "string" && $.urlParam('success') === "false") {
+                  alertify.error("Daten fehlerhaft! Upload abgebrochen.")
               }
+
+              $("#inputRatios, #inputVehciles").change(function() {
+                  if( $("#inputRatios").val() !== "" &&  $("#inputVehciles").val() !== "") {
+                      $("#dataSubmitBtn").removeAttr("disabled");
+                  } else {
+                      $("#dataSubmitBtn").attr("disabled");
+                  }
+              })
           });
       </script>
   </head>
@@ -50,7 +60,7 @@
                   <h1>Hochladen der Daten</h1>
                   <p>Bis jetzt ist es nur möglich Daten gleichen Format wie bei der <a href="http://challenge.roadef.org/2005/en/">ROADEF 2005 Herausforderung</a> hochzuladen
                       Diese müssen im CSV-Format, getrennt mit Semikolons in einzelnen Textdateien gespeichert sein. Beispieldaten: <a href="http://challenge.roadef.org/2005/files/Instances_set_A.zip">
-                          Downloadlink</a></p>
+                          viele</a> und <a href="/dowloaddatasetroadef?id=5a667ab8f976f04904aea6fb" target="_blank">wenige</a> Fahrzeuge</p>
                   <!--<p>Till now it's only possible to upload data in the ROADEF 2005 challenge data csv format (Instances_set_A)</p>-->
               </div>
           </div>
@@ -72,16 +82,16 @@
 
                           <tr>
                               <td><label for="ratios">Ratios:</label></td>
-                              <td><input style="height: 100%;" type="file" name="ratios"><br></td>
+                              <td><input style="height: 100%;" type="file" id="inputRatios" name="ratios"><br></td>
                           </tr>
 
                           <tr>
                               <td><label for="vehicles">Fahrzeuge:</label></td>
-                              <td><input style="height: 100%;" type="file" name="vehicles"><br></td>
+                              <td><input style="height: 100%;" type="file" id="inputVehciles" name="vehicles"><br></td>
                           </tr>
                       </table>
 
-                      <input type="submit">
+                      <input type="submit" id="dataSubmitBtn" disabled>
                   </form>
               </div>
           </div>

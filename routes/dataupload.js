@@ -147,10 +147,52 @@ router.post('/uploadRoadef', function(req, res, next) {
                         jsonData.vehicles.push(jsonObj)
                     })
                     .on('done', (error) => {
-                        saveUploadedDataInDb(res, jsonData);
+                        if(validateUploadedJsonData(jsonData)) {
+                            saveUploadedDataInDb(res, jsonData);
+                        } else {
+                            res.redirect("/dataupload?success=false");
+                        }
                     });
             });
     });
 });
+
+function validateUploadedJsonData(jsonData) {
+    var ratioIdents = [];
+    for(var i in jsonData.ratios) {
+        var ratio = jsonData.ratios[i];
+
+        if(typeof ratio.Ratio === "undefined"
+            || typeof ratio.Prio === "undefined"
+            || typeof ratio.Ident === "undefined") {
+            return false;
+        }
+
+        ratioIdents.push(ratio.Ident);
+    }
+
+
+    for(var i in jsonData.vehicles) {
+        var vehicle = jsonData.vehicles[i];
+
+        // Check normal field
+        if(typeof vehicle.Date === "undefined"
+            || typeof vehicle.SeqRank === "undefined"
+            || typeof vehicle['Paint Color'] === "undefined") {
+            return false;
+        }
+
+        // Check if all ratio constraints are defined in the vehicle
+        for(var x in ratioIdents) {
+            var ratioIdent = ratioIdents[x];
+
+            if(typeof vehicle[ratioIdent] === "undefined") {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 module.exports = router;
