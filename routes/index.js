@@ -301,6 +301,16 @@ router.get('/dowloaddatasetroadef', function(req, res) {
     });
 });
 
+router.get('/downloadpresentationfiles', function(req, res) {
+    res.zip([
+        {path: "public/presentation/Car-Sequencing_Seminar2018.pdf", name: "Car-Sequencing_Seminar2018.pdf"},
+        {path: "public/presentation/Car-Sequencing_Seminar2018.pptx", name: "Car-Sequencing_Seminar2018.pptx"},
+        {path: "public/presentation/Car-Sequencing_Seminar2018-Handout_v2.pdf", name: "Car-Sequencing_Seminar2018-Handout_v2.pdf"}
+    ], "CS-ITS-presentation.zip", function() {
+        res.end();
+    });
+});
+
 router.get('/dataset', function(req, res) {
     DataSet.findById({"_id": req.query.id}, function(err, dataset) {
         if(dataset) {

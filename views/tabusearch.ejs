@@ -793,10 +793,16 @@
                 <div class="col-md-12">
                     <h2>Einleitung</h2>
                     <p>Mithilfe dieser Seite kann der im Prototyp implementierte ITS konfiguiert und gestartet werden.</p>
-                    <p>Zunächst lassen sich die Optimiziation Objectives über Drag & Drop ordnen und definieren, </p>
+                    <p>Zunächst lassen sich die Optimiziation Objectives über Drag & Drop ordnen oder entfernen, wodurch der
+                    Fokus des Algorithmus angepasst werden kann. (So können z.B. Ratio Constraint mit hoher und niedriger
+                    Priorität bei der Kostenberechnung einer Lösung gleichgestellt werden.)</p>
                     <p>Im zweiten Schritt können die gegebenen Standardparameter angepasst werden. Dabei ist zu betonen,
                         dass die Parameter nur mit Wissen über deren Auswirkungen angepasst werden sollten. In der Regel genügt es je
                         nach größe des Datensatzes die ersten drei Parameter (Lota, Kappa und Theta) anzupassen.</p>
+                    <p>Schlussendlich muss noch ein zuvor auf dem Server hochgeladener Input-Datensatz ausgewählt werden, der dem
+                    Algorithmus als initiale Startlösung dienen wird. (Es ist anzumerken, dass der Entwicklungsfokus nicht auf einer
+                    performanten Reimplementierung des Algorithmus lag. Wir empfehlen, auch bzgl. der besseren Veranschaulichung keine
+                    Datensätze mit mehr als 75 Fahrzeugen zu wählen.)</p>
                 </div>
             </div>
 
