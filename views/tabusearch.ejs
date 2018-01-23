@@ -870,7 +870,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h2>3. Wahl des Datensatzes</h2>
-                    <select style="" ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
+                    <select style="height: auto;" ng-model="selectedDatasetId" id="dropwdownDatasetSelection">
                         <option ng-repeat="dataset in datasets" value="{{dataset._id}}">{{dataset.description}}</option>
                     </select>
                     <a href="/viewdataset#?id={{selectedDatasetId}}" target="_blank" ng-show="selectedDatasetId != ''">View dataset</a>

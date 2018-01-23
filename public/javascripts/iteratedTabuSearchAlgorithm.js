@@ -400,6 +400,10 @@ function Solution(vehicles, parameters, ratios) {
         // console.log("Checked " + counterPaintGroups + " paint groups");
 
         // 3. Calc low priority violations && 4. Calc high priority violations
+        this.actHighPrioViolations = 0;
+        this.actHighPrioViolationsExtended = [];
+        this.actLowPrioViolations = 0;
+        this.actLowPrioViolationsExtended = [];
         for(var i in this.ratioSet.ratios) {
             var ratio = this.ratioSet.ratios[i];
 
