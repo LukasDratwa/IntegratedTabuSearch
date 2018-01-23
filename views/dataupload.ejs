@@ -12,19 +12,24 @@
       <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
       <script src="/javascripts/its-utility.js" type="text/javascript"></script>
       <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
-      <script src="/javascripts/notify.min.js" type="text/javascript"></script>
+      <script src="/javascripts/alertify.min.js" type="text/javascript"></script>
 
       <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
       <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
+      <link href="/stylesheets/alertify.css" rel="stylesheet" type="text/css"/>
+      <link href="/stylesheets/alertify.bootstrap.min.css" rel="stylesheet" type="text/css"/>
       <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
       <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
 
       <script type="text/javascript">
+          // Change alertify defaults
+          alertify.defaults.notifier.position = "top-right";
+
           $(document).ready(function() {
               $("#uploadTable").tablelist();
 
               if(typeof $.urlParam('success') === "string" && $.urlParam('success') === "true") {
-                  $.notify("Daten erfolgreich hochgeladen", "success");
+                  alertify.success("Daten erfolgreich hochgeladen.")
               }
           });
       </script>

@@ -7,7 +7,6 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="/javascripts/jquery-3.2.1.min.js" type="text/javascript"></script>
-        <script src="/javascripts/notify.min.js" type="text/javascript"></script>
         <script src="/javascripts/angular.min-1.5.6.js" type="text/javascript"></script>
         <script src="/javascripts/controllers/integratedTabuSearchController.js" type="text/javascript"></script>
         <script src="/javascripts/jquery-ui.min.js" type="text/javascript"></script>
@@ -15,9 +14,12 @@
         <script src="/javascripts/bootstrap.min.js" type="text/javascript"></script>
         <script src="/javascripts/its-utility.js" type="text/javascript"></script>
         <script src="/javascripts/responsive.min.js" type="text/javascript"></script>
+        <script src="/javascripts/alertify.min.js" type="text/javascript"></script>
 
         <link href="/stylesheets/tether.min.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/responsive.min.css" rel="stylesheet" type="text/css"/>
+        <link href="/stylesheets/alertify.css" rel="stylesheet" type="text/css"/>
+        <link href="/stylesheets/alertify.bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <link href="/stylesheets/pigendo-bootstrap-default.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/fontawesome-all.min.css" rel="stylesheet" type="text/css">
         <link href="/stylesheets/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
@@ -198,8 +200,10 @@
         </style>
 
         <script>
-            var warnParamAdaptionOnce = true;
+            // Change alertify defaults
+            alertify.defaults.notifier.position = "top-right";
 
+            var warnParamAdaptionOnce = true;
 
             $(document).ready(function() {
                 if(typeof $.urlParam('id') !== "string") {
@@ -220,7 +224,7 @@
                     $("#tabuSearchInfoAccordionWithinConfiguration").click(function() {
                         if(warnParamAdaptionOnce) {
                             warnParamAdaptionOnce = false;
-                            $.notify("Achtung: Parameter nur mit Wissen über deren Auswirkungen anpassen!", "warn");
+                            alertify.warning("Achtung: Parameter nur mit Wissen über deren Auswirkungen anpassen!");
                         }
                     });
                 } else {
@@ -368,10 +372,10 @@
                     }
                 });
                 if(foundNotValidValue != null) {
-                    $.notify("Angegebener Parameterwert von " + foundNotValidValue + " ist nicht erlaubt. Gültige Werte: [" + minVal + "," + maxVal + "]", "error");
+                    alertify.error("Angegebener Parameterwert von " + foundNotValidValue + " ist nicht erlaubt. Gültige Werte: [" + minVal + "," + maxVal + "]")
 
                     setTimeout(function() {
-                        $.notify("Start vom ITS wurde abgebrochen.", "info");
+                        alertify.notify("Start vom ITS wurde abgebrochen.");
                     }, 500);
 
                     return;
