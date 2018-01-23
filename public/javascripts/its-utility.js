@@ -17,12 +17,30 @@ var toggleNavbarClass = function(id) {
     }
 };
 
+function moveOptObjUp(jQueryFaIcon) {
+    var prev = jQueryFaIcon.parent().parent().prev();
+    if(prev.length != 0) {
+        jQueryFaIcon.parent().parent().insertBefore(prev);
+    }
+}
+
+function moveOptObjDown(jQueryFaIcon) {
+    var next = jQueryFaIcon.parent().parent().next();
+    if(next.length != 0) {
+        jQueryFaIcon.parent().parent().insertAfter(next);
+    }
+}
+
 var removeOptObj = function(id) {
     $("#" + id).remove();
     $(".optObjOrderIconDelte").remove();
 
     var otherId = id === "low_priority" ? "high_priority" : "low_priority";
-    $($("#" + otherId + " p")[0]).text("High & low priority constraints")
+
+    // Quick & dirty ... shame on me :-D
+    var html = "<p class='optObjOrderText'><i class='fas fa-arrow-up optObjUp optObjOrderIcon' onclick='moveOptObjUp($(this))'></i><i class='fas fa-arrow-down optObjDown optObjOrderIcon' onclick='moveOptObjDown($(this))'></i>High & low priority constraints</p>";
+
+    $($("#" + otherId + " p")[0]).parent().html(html);
 };
 
 $.urlParam = function(name){
@@ -33,4 +51,4 @@ $.urlParam = function(name){
     else{
         return decodeURI(results[1]) || 0;
     }
-}
+};

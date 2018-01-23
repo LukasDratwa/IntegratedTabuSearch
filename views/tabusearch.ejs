@@ -200,6 +200,7 @@
         <script>
             var warnParamAdaptionOnce = true;
 
+
             $(document).ready(function() {
                 if(typeof $.urlParam('id') !== "string") {
                     // Creation of the tabu search
@@ -795,7 +796,12 @@
         <div class="container" ng-show="!performTabuSearch">
             <div class="row">
                 <div class="col-md-12">
-                    <h2>Introduction TODO</h2>
+                    <h2>Einleitung</h2>
+                    <p>Mithilfe dieser Seite kann der im Prototyp implementierte ITS konfiguiert und gestartet werden.</p>
+                    <p>Zunächst lassen sich die Optimiziation Objectives über Drag & Drop ordnen und definieren, </p>
+                    <p>Im zweiten Schritt können die gegebenen Standardparameter angepasst werden. Dabei ist zu betonen,
+                        dass die Parameter nur mit Wissen über deren Auswirkungen angepasst werden sollten. In der Regel genügt es je
+                        nach größe des Datensatzes die ersten drei Parameter (Lota, Kappa und Theta) anzupassen.</p>
                 </div>
             </div>
 
@@ -804,20 +810,33 @@
                     <h2>1. Wahl der Optimization Objectives</h2>
                     <ul id="sortable" style="width: 100%;">
                         <li class="ui-state-default optObjOrder" id="paint_color_batches">
-                            <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                            <p class="optObjOrderText">Paint color batches</p>
+                            <p class="optObjOrderText">
+                                <i class="fas fa-arrow-up optObjUp optObjOrderIcon" onclick="moveOptObjUp($(this))"></i>
+                                <i class="fas fa-arrow-down optObjDown optObjOrderIcon" onclick="moveOptObjDown($(this))"></i>
+                                Paint color batches
+                            </p>
                         </li>
 
                         <li class="ui-state-default optObjOrder" id="high_priority" >
-                            <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                            <p class="optObjOrderText">High priority ratio constraints</p>
-                            <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('high_priority')"></span>
+                            <p class="optObjOrderText">
+                                <i class="fas fa-arrow-up optObjUp optObjOrderIcon" onclick="moveOptObjUp($(this))"></i>
+                                <i class="fas fa-arrow-down optObjDown optObjOrderIcon" onclick="moveOptObjDown($(this))"></i>
+                                High priority ratio constraints
+                            </p>
+
+                            <i class="far fa-trash-alt optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('high_priority')"></i>
+                            <!--<span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('high_priority')"></span>-->
                         </li>
 
                         <li class="ui-state-default optObjOrder" id="low_priority">
-                            <span class="ui-icon ui-icon-arrowthick-2-n-s optObjOrderIcon"></span>
-                            <p class="optObjOrderText">Low priority ratio constraints</p>
-                            <span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('low_priority')"></span>
+                            <p class="optObjOrderText">
+                                <i class="fas fa-arrow-up optObjUp optObjOrderIcon" onclick="moveOptObjUp($(this))"></i>
+                                <i class="fas fa-arrow-down optObjDown optObjOrderIcon" onclick="moveOptObjDown($(this))"></i>
+                                Low priority ratio constraints
+                            </p>
+
+                            <i class="far fa-trash-alt optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('low_priority')"></i>
+                            <!--<span class="ui-icon ui-icon-minusthick optObjOrderIcon optObjOrderIconDelte" onclick="removeOptObj('low_priority')"></span>-->
                         </li>
                     </ul>
                 </div>
