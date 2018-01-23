@@ -74,7 +74,8 @@
                             <th scope="col">Nr.</th>
                             <th>Beschreibung</th>
                             <th>Erstellungszeitstempel</th>
-                            <th>Link</th>
+                            <th>Datensatz öffnen</th>
+                            <th>Datensatz herunterladen</th>
                         </tr>
                         </thead>
 
@@ -83,7 +84,20 @@
                             <td>{{datasetId.description}}</td>
                             <td>{{datasetId.parsedTimestamp}}</td>
                             <td>
-                                <a href="/viewdataset#?id={{datasetId._id}}" target="_blank">View dataset</a>
+                                <a href="/viewdataset#?id={{datasetId._id}}" target="_blank">Link</a>
+                            </td>
+
+                            <td>
+                                <a href="/dowloaddatasetroadef?id={{datasetId._id}}" target="_blank" class="btn btn-primary">Download im ROADEF Format</a>
+                                <!--<div class="input-group">
+                                    <select id="format-selector-{{datasetId._id}}" style="height: auto;" class="custom-select" id="inputGroupSelect04">
+                                        <option value="ROADEF" selected>ROADEF</option>
+                                        <option value="JSON">JSON</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <a href="/dowloaddatasetroadef?id={{datasetId._id}}" target="_blank" class="btn btn-primary" >Link</a>
+                                    </div>
+                                </div>-->
                             </td>
                         </tr>
                     </table>

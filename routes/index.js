@@ -11,6 +11,7 @@ var fs = require('fs');
 var mongoose = require('mongoose');
 var csv = require('csvtojson');
 var config = require('../config.json');
+var zip = require('express-zip');
 
 var Parameter = mongoose.model('Parameter');
 var DataSet = mongoose.model("DataSet");
@@ -195,6 +196,109 @@ router.post('/overviewdata', function(req, res) {
  */
 router.get('/viewdataset', function (req, res) {
     res.render('viewdataset');
+});
+
+function saveDataSetAsRoadefInFileSystem(dataset) {
+    // Check if ratios were already saved
+    if(fs.existsSync("public/datasetDownloads/roadef/ratios-roadef-" + dataset._id + ".txt")) {
+        return;
+    }
+    // Check if vehicles were already saved
+    if(fs.existsSync("public/datasetDownloads/roadef/vehicles-roadef-" + dataset._id + ".txt")) {
+        return;
+    }
+
+    var textFileLines = [[], []]; // 0 = Text lines of rations, 1 = Text lines of vehicles
+
+    // Ratio
+    var ratioFinalString = "Ratio;Prio;Ident;\n";
+    var ratioIdents = "";
+    for(var i in dataset.ratios) {
+        var ratio = dataset.ratios[i];
+
+        if(typeof ratio.ident !== "undefined") {
+            ratioIdents += ratio.ident + ";";
+            ratioFinalString += ratio.ratio + ";" + ratio.prio + ";" + ratio.ident + ";\n";
+        }
+    }
+
+    // Vehicles - sort them firstly
+    var vehicleFinalString = "Date;SeqRank;Ident;Paint Color;" + ratioIdents + "\n";
+    dataset.vehicles = dataset.vehicles.sort(function(a, b) {
+        if(a.orderNr > b.orderNr) {
+            return 1;
+        } else if(a.orderNr < b.orderNr) {
+            return -1;
+        } else {
+            return 0;
+        }
+    });
+
+    for(var i in dataset.vehicles) {
+        var vehicle = dataset.vehicles[i];
+
+        if(typeof vehicle.ident === "undefined") {
+            continue;
+        }
+
+        var ratioBinaryString = "";
+        for(var x in dataset.ratios) {
+            var ratio = dataset.ratios[x];
+            var ratioIsActivatedInVehicle = false;
+
+            if(typeof ratio.ident === "undefined") {
+                continue;
+            }
+
+            for(var y in vehicle.activatedFeatures) {
+                var activatedFeature = vehicle.activatedFeatures[y];
+
+                if(typeof activatedFeature.ident === "undefined") {
+                    continue;
+                }
+
+                if(ratio.ident === activatedFeature.ident) {
+                    ratioIsActivatedInVehicle = true;
+                    break;
+                }
+            }
+
+            if(ratioIsActivatedInVehicle) {
+                ratioBinaryString += "1;";
+            } else {
+                ratioBinaryString += "0;";
+            }
+        }
+
+        vehicleFinalString += vehicle.dateString + ";" + vehicle.seqRank + ";" + vehicle.ident + ";" + vehicle.paintColor + ";" + ratioBinaryString + "\n";
+
+        fs.writeFile("public/datasetDownloads/roadef/ratios-roadef-" + dataset._id + ".txt", ratioFinalString, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+        });
+        fs.writeFile("public/datasetDownloads/roadef/vehicles-roadef-" + dataset._id + ".txt", vehicleFinalString, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+        });
+    }
+}
+
+router.get('/dowloaddatasetroadef', function(req, res) {
+    DataSet.findById({"_id": req.query.id}, function(err, dataset) {
+        if(dataset) {
+            dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, enrichedDataset) {
+                saveDataSetAsRoadefInFileSystem(enrichedDataset);
+                res.zip([
+                    {path: "public/datasetDownloads/roadef/ratios-roadef-" + req.query.id + ".txt", name: "ratios-roadef-" + req.query.id + ".txt"},
+                    {path: "public/datasetDownloads/roadef/vehicles-roadef-" + req.query.id + ".txt", name: "vehicles-roadef-" + req.query.id + ".txt"}
+                ], "ITS-ROADEF-Data.zip", function() {
+                    res.end();
+                });
+            });
+        }
+    });
 });
 
 router.get('/dataset', function(req, res) {

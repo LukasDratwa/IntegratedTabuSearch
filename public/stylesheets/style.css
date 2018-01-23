@@ -1,3 +1,8 @@
+td, th {
+    text-align: center !important;
+    vertical-align :middle !important;
+}
+
 .optObjOrder {
     display: table;
     height: 30px !important;
@@ -14,7 +19,6 @@
     vertical-align: center;
     width: 100%;
 }
-
 
 /* Responsive Navbar example from: https://www.w3schools.com/howto/howto_js_topnav_responsive.asp*/
 /* Add a black background color to the top navigation */
