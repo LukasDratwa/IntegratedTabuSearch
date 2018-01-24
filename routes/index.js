@@ -293,9 +293,7 @@ router.get('/dowloaddatasetroadef', function(req, res) {
                 res.zip([
                     {path: "public/datasetDownloads/roadef/ratios-roadef-" + req.query.id + ".txt", name: "ratios-roadef-" + req.query.id + ".txt"},
                     {path: "public/datasetDownloads/roadef/vehicles-roadef-" + req.query.id + ".txt", name: "vehicles-roadef-" + req.query.id + ".txt"}
-                ], "ITS-ROADEF-Data.zip", function() {
-                    res.end();
-                });
+                ], "ITS-ROADEF-Data.zip");
             });
         }
     });
@@ -306,9 +304,7 @@ router.get('/downloadpresentationfiles', function(req, res) {
         {path: "public/presentation/Car-Sequencing_Seminar2018.pdf", name: "Car-Sequencing_Seminar2018.pdf"},
         {path: "public/presentation/Car-Sequencing_Seminar2018.pptx", name: "Car-Sequencing_Seminar2018.pptx"},
         {path: "public/presentation/Car-Sequencing_Seminar2018-Handout_v2.pdf", name: "Car-Sequencing_Seminar2018-Handout_v2.pdf"}
-    ], "CS-ITS-presentation.zip", function() {
-        res.end();
-    });
+    ], "CS-ITS-presentation.zip");
 });
 
 router.get('/dataset', function(req, res) {
