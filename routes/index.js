@@ -285,18 +285,25 @@ function saveDataSetAsRoadefInFileSystem(dataset) {
     }
 }
 
-router.get('/dowloaddatasetroadef', function(req, res) {
-    DataSet.findById({"_id": req.query.id}, function(err, dataset) {
-        if(dataset) {
-            dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, enrichedDataset) {
-                saveDataSetAsRoadefInFileSystem(enrichedDataset);
-                res.zip([
-                    {path: "public/datasetDownloads/roadef/ratios-roadef-" + req.query.id + ".txt", name: "ratios-roadef-" + req.query.id + ".txt"},
-                    {path: "public/datasetDownloads/roadef/vehicles-roadef-" + req.query.id + ".txt", name: "vehicles-roadef-" + req.query.id + ".txt"}
-                ], "ITS-ROADEF-Data.zip");
-            });
-        }
-    });
+router.get('/downloaddatasetroadef', function(req, res) {
+    if(req.query.id === "exampleset") {
+        res.zip([
+            {path: "public/datasetDownloads/roadef/ratios-roadef-exampleset.txt", name: "ratios-roadef-" + req.query.id + ".txt"},
+            {path: "public/datasetDownloads/roadef/vehicles-roadef-exampleset.txt", name: "vehicles-roadef-" + req.query.id + ".txt"}
+        ], "ITS-ROADEF-Data.zip");
+    } else {
+        DataSet.findById({"_id": req.query.id}, function(err, dataset) {
+            if(dataset) {
+                dataset.deepPopulate("ratios vehicles vehicles.activatedFeatures", function(err, enrichedDataset) {
+                    saveDataSetAsRoadefInFileSystem(enrichedDataset);
+                    res.zip([
+                        {path: "public/datasetDownloads/roadef/ratios-roadef-" + req.query.id + ".txt", name: "ratios-roadef-" + req.query.id + ".txt"},
+                        {path: "public/datasetDownloads/roadef/vehicles-roadef-" + req.query.id + ".txt", name: "vehicles-roadef-" + req.query.id + ".txt"}
+                    ], "ITS-ROADEF-Data.zip");
+                });
+            }
+        });
+    }
 });
 
 router.get('/downloadpresentationfiles', function(req, res) {
