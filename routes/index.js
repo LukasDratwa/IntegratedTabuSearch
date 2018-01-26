@@ -314,6 +314,20 @@ router.get('/downloadpresentationfiles', function(req, res) {
     ], "CS-ITS-presentation.zip");
 });
 
+router.get('/deletedataset', function(req, res) {
+    if(typeof req.query.id === "string") {
+        TabuSearch.find({"dataset": req.query.id}).remove(function() {
+            DataSet.findById({"_id": req.query.id}).remove(function() {
+                res.status(200);
+                res.end();
+            });
+        });
+    } else {
+        res.status(400);
+        res.end();
+    }
+});
+
 router.get('/dataset', function(req, res) {
     DataSet.findById({"_id": req.query.id}, function(err, dataset) {
         if(dataset) {
