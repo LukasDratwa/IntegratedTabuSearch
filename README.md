@@ -8,7 +8,7 @@
 
 
 ## Klonen des GitHub-Repositories
-GutHub Desktop muss gestartet werden und unten rechts sollte eine Funktion "clone repository" angezeigt werden, dessen Anleitung einfach nur gefolgt werden muss. In diesem Prozess müssen die Credentials des eigenen GitHub-Kontos eingegeben werden. Folgend wird der gespeicherte Code aus dem Repository herungerladen und lokal gespeichert. 
+GitHub Desktop muss gestartet werden und unten rechts sollte eine Funktion "clone repository" angezeigt werden, dessen Anleitung einfach nur gefolgt werden muss. In diesem Prozess müssen die Credentials des eigenen GitHub-Kontos eingegeben werden. Folgend wird der gespeicherte Code aus dem Repository herungerladen und lokal gespeichert.
 
 
 ## Aufsetzen der Datenbank
@@ -38,11 +38,11 @@ mode con: cols=200 lines=30
 cd C:/PFAD_ANPASSEN/MongoDB/Server/3.4/bin 
 mongod.exe --dbpath D:/PFAD_ZUM_SPEICHERORT_DER_DATENBANK/MongoDB/db --logpath D:/PFAD_ANPASSEN/MongoDB/logs/logs.txt --auth
 ```
-(Bei einer lokalen Instaz kann die Flag --auth ruhig weggelassen werden. Der Log-Path-Teil "--logpath D:/PFAD_ANPASSEN/MongoDB/logs/logs.txt" ist ebenfalls optional.)
+(Bei einer lokalen Instanz kann die Flag --auth ruhig weggelassen werden. Der Log-Path-Teil "--logpath D:/PFAD_ANPASSEN/MongoDB/logs/logs.txt" ist ebenfalls optional.)
 
 ### Node.js-Server
 Es muss lediglich in den Ordner navigiert werden, in dem das ITS-Repository aus GitHub lokal gespeichert worden ist. In diesem Ordner ist die Datei "startServer.bat" zu finden, mit dem der Server gestartet wird.
-(Nach dem erfogreichen Starten der Datenbank erst ausführen!)
+(Nach dem erfolgreichen Starten der Datenbank erst ausführen!)
 
 
 ## Benutzen der Applikation
