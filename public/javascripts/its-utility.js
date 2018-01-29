@@ -1,5 +1,7 @@
 /**
  * @author Lukas Dratwa
+ *
+ * 29.01.2018.
  */
 var customScrollTo = function(idTo, speed) {
     $('html, body').animate({

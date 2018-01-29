@@ -1,3 +1,8 @@
+/**
+ * @author Lukas Dratwa
+ *
+ * 29.01.2018.
+ */
 var onmessage = function(e) {
     // Message received from main script
     // postMessage(test2); // posting back to main script

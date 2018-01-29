@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Module dependencies.
+ * @author Lukas Dratwa
+ *
+ * 29.01.2018.
  */
 
+/**
+ * Module dependencies.
+ */
 var app = require('../app');
 var debug = require('debug')('integratedtabusearch:server');
 var http = require('http');

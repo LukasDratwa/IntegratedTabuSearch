@@ -1,3 +1,8 @@
+/**
+ * @author Lukas Dratwa
+ *
+ * 29.01.2018.
+ */
 var tabuController = angular.module('integratedTabuSearchApp', []);
 
 tabuController.controller("integratedTabuSearchController", function ($scope, $http, $location) {
