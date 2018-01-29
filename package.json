@@ -20,7 +20,11 @@
     "type": "git",
     "url": "git+https://github.com/LukasDratwa/IntegratedTabuSearch.git"
   },
-  "author": "Lukas Dratwa",
+  "author": {
+    "name": "Lukas Dratwa",
+    "email": "lukasdratwa@yahoo.de",
+    "url": "http://www.dratwabrothers.de/"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/LukasDratwa/IntegratedTabuSearch/issues"

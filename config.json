@@ -1,4 +1,9 @@
 {
+  "author": {
+    "name": "Lukas Dratwa",
+    "email": "lukasdratwa@yahoo.de",
+    "url": "http://www.dratwabrothers.de/"
+  },
   "server": {
     "host": "127.0.0.1"
   },
